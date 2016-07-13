@@ -8,38 +8,9 @@ load('regretTasktrialWheels1shotDataset.mat')       % Load the preset wheel prob
 regretTasktrialWheels1shot = regretTasktrialWheels1shotDataset; % Needed to equate variable to different filename
 % DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
 
-%% Screen -1: Participant number entry [delete when combined with Patent Race]
-% 
-% %% Enter participant number (taken from:
-% %% http://www.academia.edu/2614964/Creating_experiments_using_Matlab_and_Psychtoolbox)
-% fail1='Please enter a participant number.'; %error  message
-% prompt = {'Enter participant number:'};
-% dlg_title ='New Participant';
-% num_lines = 1;
-% def = {'0'};
-% answer = inputdlg(prompt,dlg_title,num_l ines,def);%presents box to enterdata into
-% switch isempty(answer)
-%     case 1 %deals with both cancel and X presses 
-%         error(fail1)
-%     case 0
-%         particNum=(answer{1});
-% end
 
-% uncomment after debugging
-% HideCursor;
 
 %% Here we call some default settings for setting up Psychtoolbox
-% PsychDefaultSetup(2);
-
-% Screen('Preference', 'SkipSyncTests', 1);
-% KbName('UnifyKeyNames');
-% 
-% % Get the screen numbers
-% screens = Screen('Screens');
-% 
-% % Draw to the external screen if avaliable
-% % screenNumber = max(screens);
-% screenNumber = 0;
 
 % Define black and white and other colors
 white = WhiteIndex(screenNumber);
@@ -52,10 +23,6 @@ loseColors = [.8039, .2157, 0]; %OrangeRed3
 % winColors = black; %black
 % loseColors = black; %black
 chooseColors = [1, .84, 0]; %Gold
-
-% Open an on screen window
-% [window, windowRect] = PsychImaging('OpenWindow', screenNumber, white, [0 0 640 480]);
-% [window, windowRect] = PsychImaging('OpenWindow', screenNumber, white);
 
 % Get the size of the on screen window
 [screenXpixels, screenYpixels] = Screen('WindowSize', window);
@@ -116,18 +83,39 @@ fontSize = round(screenYpixels * 2/60);
     
 % Set some variables
 NUMROUNDS = 1;
-lotteryOutcome1shot = [.70*regretTasktrialWheels1shot.wlp2 1.6*regretTasktrialWheels1shot.wrp2; 1.7*regretTasktrialWheels1shot.wlp2 0.8*regretTasktrialWheels1shot.wrp2]; % Creates array of outcomes for both wheels for either left choice (:,1) or right choice (:,2)
 
-% outcome values from earlier iterations
-% OUTCOME1 = 50;
-% OUTCOME2 = -50;
-% OUTCOME3 = 200;
-% OUTCOME4 = -50;
-% % outcome strings
-% winL = num2str(OUTCOME1);
-% loseL = num2str(OUTCOME2);
-% winR = num2str(OUTCOME3);
-% loseR = num2str(OUTCOME4);
+% Determines type of outcome - reversed so that even numbers represented by
+% "2" condition
+if mod(particNum,2) == 0
+  condition = 2; %Even numbers: satisfaction & relief
+else
+  condition = 1; %Odd numbers: regret & disappointment
+end
+
+% Generate random percentages in a uniform distribution within certain desired range on the interval [a, b] with r = a + (b-a).*rand(100,1).
+
+switch condition % could probably tidy this up so it gets selected for down below in the same if statement as the selection (maybe a big switch involving 2 factors or set conditions at beginning)
+    case 1    % make it so selection loses, other wins (arrow has to make it past losing portion to win)
+        wlp2r1 = .60 + (.85-.60).*rand(1); % randomized range .60-.85 for losing arrow
+        wrp2r1 = 1.1 + (1.3-1.1).*rand(1); % randomized range 1.1-1.3 for winning arrow
+        wlp2r2 = 1.1 + (1.3-1.1).*rand(1); % randomized range 1.1-1.3 for winning arrow
+        wrp2r2 = .60 + (.85-.60).*rand(1); % randomized range .60-.85 for losing arrow
+        % Generate pseudo-random outcomes with determined win/loss results
+        lotteryOutcome1shot = [wlp2r1*regretTasktrialWheels1shot.wlp2 wrp2r1*regretTasktrialWheels1shot.wrp2; ...
+            wlp2r2*regretTasktrialWheels1shot.wlp2 wrp2r2*regretTasktrialWheels1shot.wrp2]; % Creates array of outcomes for both wheels for either left choice (:,1) or right choice (:,2)
+
+    case 2    % make it so selection wins, other loses (arrow has to make it past losing portion to win)
+        wlp2r1 = 1.1 + (1.3-1.1).*rand(1); % randomized range 1.1-1.3 for winning arrow
+        wrp2r1 = .60 + (.85-.60).*rand(1); % randomized range .60-.85 for losing arrow
+        wlp2r2 = .60 + (.85-.60).*rand(1); % randomized range .60-.85 for losing arrow
+        wrp2r2 = 1.1 + (1.3-1.1).*rand(1); % randomized range 1.1-1.3 for winning arrow
+        % Generate pseudo-random outcomes with determined win/loss results
+        lotteryOutcome1shot = [wlp2r1*regretTasktrialWheels1shot.wlp2 wrp2r1*regretTasktrialWheels1shot.wrp2; ...
+            wlp2r2*regretTasktrialWheels1shot.wlp2 wrp2r2*regretTasktrialWheels1shot.wrp2]; % Creates array of outcomes for both wheels for either left choice (:,1) or right choice (:,2)
+
+end
+
+
 
 %% back to original
 % Maximum priority level
@@ -139,11 +127,6 @@ ifi = Screen('GetFlipInterval', window);
 
 % We will set the rotations angles to increase by 1 degree on every frame
 degPerFrame = 10;
-
-% We position the squares in the middle of the screen in Y, spaced equally
-% scross the screen in X
-% posXs = [screenXpixels * 0.25 screenXpixels * 0.5 screenXpixels * 0.75];
-% posYs = ones(1, numRects) .* (screenYpixels / 2);
 
 arrow=imread(fullfile('arrow.png'), 'BackgroundColor',BG); %load image of arrow
 texArrow = Screen('MakeTexture', window, arrow); % Draw arrow to the offscreen window
@@ -158,15 +141,6 @@ texProb50 = Screen('MakeTexture', window, prop50); % Draw circle to the offscree
 texProb66 = Screen('MakeTexture', window, prop66); % Draw circle to the offscreen window
 texProb75 = Screen('MakeTexture', window, prop75); % Draw circle to the offscreen window
 
-%     [...] = imread(...,'BackgroundColor',BG) composites any transparent 
-%     pixels in the input image against the color specified in BG.  If BG is
-%     'none', then no compositing is performed. Otherwise, if the input image
-%     is indexed, BG should be an integer in the range [1,P] where P is the
-%     colormap length. If the input image is grayscale, BG should be a value
-%     in the range [0,1].  If the input image is RGB, BG should be a 
-%     three-element vector whose values are in the range [0,1]. The string
-%     'BackgroundColor' may be abbreviated. 
-    
 % Sync us and get a time stamp
 vbl = Screen('Flip', window);
 waitframes = 1;
@@ -206,18 +180,6 @@ instructText16 = ['As before, choose which wheel to play'];
 instructText17 = ['by pressing the left arrow key or the'];
 instructText18 = ['right arrow key.'];
 % instructText19 = [''];
-% 
-% instructText20 = ['You will also see the result of the'];
-% instructText21 = ['wheel you did not choose, but it will'];
-% instructText22 = ['not change your score.'];
-% 
-% instructText23 = ['You will practice 10 times, but these'];
-% instructText24 = ['trials do not affect your payment.'];
-% instructText25 = ['The final game is the only one that'];
-% instructText26 = ['matters, and you will be told when'];
-% instructText27 = ['that game is about to happen.'];
-% instructText28 = ['In that game, you can either add to'];
-% instructText29 = ['your 50 euros or lose from it.'];
 
 % Instruction text colors
 instructCola = [0, 0.4078, 0.5451]; %DeepSkyBlue4
@@ -237,16 +199,6 @@ while(~strcmp(keyName,'1!')) % continues until the 1 button is pressed
     DrawFormattedText(window, instructText16, 'center', instruct8TextYpos, instructColb); % Draw betting instructions
     DrawFormattedText(window, instructText17, 'center', instruct9TextYpos, instructColb); % Draw betting instructions
     DrawFormattedText(window, instructText18, 'center', instruct10TextYpos, instructColb); % Draw betting instructions
-%     DrawFormattedText(window, instructText19, 'center', instruct9TextYpos, instructCola); % Draw betting instructions
-%     DrawFormattedText(window, instructText20, 'center', instruct10TextYpos, instructColb); % Draw betting instructions
-%     DrawFormattedText(window, instructText21, 'center', instruct11TextYpos, instructColb); % Draw betting instructions
-%     DrawFormattedText(window, instructText22, 'center', instruct12TextYpos, instructColb); % Draw betting instructions
-%     DrawFormattedText(window, instructText23, 'center', instruct13TextYpos, instructCola); % Draw betting instructions
-%     DrawFormattedText(window, instructText24, 'center', instruct14TextYpos, instructCola); % Draw betting instructions
-%     DrawFormattedText(window, instructText25, 'center', instruct15TextYpos, instructCola); % Draw betting instructions
-%     DrawFormattedText(window, instructText26, 'center', instruct16TextYpos, instructCola); % Draw betting instructions
-%     DrawFormattedText(window, instructText27, 'center', instruct17TextYpos, instructCola); % Draw betting instructions
-%     DrawFormattedText(window, instructText28, 'center', instruct18TextYpos, instructCola); % Draw betting instructions
 %     DrawFormattedText(window, instructText29, 'center', instruct19TextYpos, instructCola); % Draw betting instructions
     DrawFormattedText(window, instructText0, 'center', instruct19TextYpos, black); % Draw betting instructions
     Screen('Flip', window); % Flip to the screen
@@ -267,25 +219,11 @@ for i=1:NUMROUNDS
 
 keyName=''; % empty initial value
 
-%     [keyTime, keyCode]=KbWait([],2);
-%     keyName=KbName(keyCode);
-% 
-% while(strcmp(keyName,'')) % continues until any key pressed
-    
-%         switch keyName
-%             case 'LeftArrow' 
-%                 currPlayerSelection = 0; % choice is left lottery
-%             case 'RightArrow'
-%                 currPlayerSelection = 1; % choice is right lottery
-%         end
-
 % Set win/lose values based on trial round
-winL = num2str(regretTasktrialWheels1shot.wlv1(i));
-loseL = num2str(regretTasktrialWheels1shot.wlv2(i));
-winR = num2str(regretTasktrialWheels1shot.wrv1(i));
-loseR = num2str(regretTasktrialWheels1shot.wrv2(i));
-% wheelL = ['texProb' num2str(regretTasktrialWheels.wlp1(i)*100)];
-% wheelR = ['texProb' num2str(regretTasktrialWheels.wrp1(i)*100)];
+winL = ['?' num2str(regretTasktrialWheels1shot.wlv1(i))];
+loseL = ['?' num2str(regretTasktrialWheels1shot.wlv2(i))];
+winR = ['?' num2str(regretTasktrialWheels1shot.wrv1(i))];
+loseR = ['?' num2str(regretTasktrialWheels1shot.wrv2(i))];
 
 wheelL = [];
 wheelR = [];
@@ -376,24 +314,7 @@ RestrictKeysForKbCheck([]); % re-recognize all key presses
     
  WaitSecs(1);   
 
-%             switch keyName
-%             case 'LeftArrow' 
-%                 currPlayerSelection = currPlayerSelection - 1;
-%                 if currPlayerSelection < 0
-%                     currPlayerSelection = 0;
-%                 end
-%             case 'RightArrow'
-%                 currPlayerSelection = currPlayerSelection + 1;
-%                 if currPlayerSelection > PLAYER1MAXBID
-%                     currPlayerSelection = PLAYER1MAXBID;
-%                 end
-%         end
 %% Determine results and log
-
-% arrowAngleL=360*lotteryOutcome1shot(j,1); % reflects final position of arrow
-% arrowAngleR=360*lotteryOutcome1shot(j,2);
-% winResultText = ['You won ' num2str(winAmount(i)) '.'];
-% lossResultText = ['You lost ' num2str(lossAmount(i)) '.'];
  
 % Determine whether the selection resulted in win or loss
 if wof1shotChoice(i) == 1    % Participant chose wheel 1
@@ -500,7 +421,12 @@ totalEarnings = sum(wof1shotEarnings);
 % Write logfile
 save([num2str(particNum) '-' DateTime '_2oneshot-subj'], 'regretTasktrialWheels1shotDataset', 'wof1shotChoice', 'wof1shotEarnings', 'wof1shotChoiceDuration', 'wof1shotemotionalRating', 'wof1shotRatingDuration');
 
-    WaitSecs(2);
+%% Screen 6 - Wait screen
+message = 'Si prega di attendere un attimo.';
+DrawFormattedText(window, message, 'center', 'center', instructCola); % Draw wait message
+Screen('Flip', window);
+
+WaitSecs(10);
 
 RestrictKeysForKbCheck([]); % re-recognize all key presses
     
