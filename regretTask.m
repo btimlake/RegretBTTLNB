@@ -3,6 +3,8 @@
 % close all;
 % clearvars;
 
+enabledKeys;
+
 % load('regretTasktrialWheels.mat')       % Load the preset wheel probabilites and values TABLE
 load('regretTasktrialWheelsDataset.mat')       % Load the preset wheel probabilites and values DATASET
 regretTasktrialWheels = regretTasktrialWheelsDataset; % Needed to equate variable to different filename
@@ -283,10 +285,10 @@ keyName=''; % empty initial value
 %         end
 
 % Set win/lose values based on trial round
-winL = num2str(regretTasktrialWheels.wlv1(i));
-loseL = num2str(regretTasktrialWheels.wlv2(i));
-winR = num2str(regretTasktrialWheels.wrv1(i));
-loseR = num2str(regretTasktrialWheels.wrv2(i));
+winL = num2str(regretTasktrialWheels.wlv1(i), '%.2f');
+loseL = num2str(regretTasktrialWheels.wlv2(i), '%.2f');
+winR = num2str(regretTasktrialWheels.wrv1(i), '%.2f');
+loseR = num2str(regretTasktrialWheels.wrv2(i), '%.2f');
 % wheelL = ['texProb' num2str(regretTasktrialWheels.wlp1(i)*100)];
 % wheelR = ['texProb' num2str(regretTasktrialWheels.wrp1(i)*100)];
 
@@ -300,7 +302,7 @@ switch probL
     case {'0.25'}
     wheelL=texProb25;
     case {'0.33'}
-    wheelL=texProb3';
+    wheelL=texProb33';
     case {'0.5'}
     wheelL=texProb50;
     case {'0.66'}
@@ -347,7 +349,7 @@ end
 wofTrialStartTime(i) = GetSecs; % trial time start
 
 % RestrictKeysForKbCheck([79, 80]); % limit recognized presses to left and right arrows MAC
-RestrictKeysForKbCheck([37,39,32]); % limit recognized presses to left and right arrows PC
+% RestrictKeysForKbCheck([37,39,32]); % limit recognized presses to left and right arrows PC
 [keyTime, keyCode]=KbWait([],2); % Wait for a key to be pushed and released
 keyName=KbName(keyCode); % get the name of which key was pressed
 
@@ -481,7 +483,7 @@ WaitSecs(2);
 
 currentRound = i;
 
-[currRatingSelection(i), ratingDuration(i,1)] = likert_slider(window, windowRect);
+[currRatingSelection(i), ratingDuration(i,1)] = likert_slider(window, windowRect, enabledKeys);
  
 emotionalRating(i,1) = currRatingSelection(i);
 
@@ -499,7 +501,7 @@ totalEarnings = sum(wofEarnings);
 % Write logfile
 save([num2str(particNum) '-' DateTime '_1wofPractice-subj'], 'regretTasktrialWheelsDataset', 'wofChoice', 'lotteryOutcome', 'wofEarnings', 'wofChoiceDuration', 'emotionalRating', 'ratingDuration');
 
-RestrictKeysForKbCheck([]); % re-recognize all key presses
+% RestrictKeysForKbCheck([]); % re-recognize all key presses
 
 WaitSecs(2);
     

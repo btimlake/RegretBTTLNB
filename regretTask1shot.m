@@ -1,7 +1,7 @@
  % Clear the workspace and the screen
 % sca;
 % close all;
-clearvars -except particNum DateTime screens screenNumber window windowRect prop* tex* arrow*;  
+clearvars -except particNum DateTime screens screenNumber window windowRect prop* tex* arrow* enabledKeys;  
 
 % load('regretTasktrialWheels1shot.mat')       % Load the preset wheel probabilites and values TABLE
 load('regretTasktrialWheels1shotDataset.mat')       % Load the preset wheel probabilites and values DATASET
@@ -72,7 +72,7 @@ arrowChoice = leftArrowpos;
 arrowNonChoice = rightArrowpos;
 
 % Display text
-topInstructText = ['Choose which wheel to play.'];
+topInstructText = ['Choose which wheel to play\n\n (win/loss amounts are in euros).'];
 
 % Select specific text font, style and size:
 fontSize = round(screenYpixels * 2/60);
@@ -86,7 +86,10 @@ NUMROUNDS = 1;
 
 % Determines type of outcome - reversed so that even numbers represented by
 % "2" condition
-if mod(particNum,2) == 0
+
+particPosition=str2num(particNum); % turn particNum into a position number usable in determining if even or odd
+
+if mod(particPosition,2) == 0
   condition = 2; %Even numbers: satisfaction & relief
 else
   condition = 1; %Odd numbers: regret & disappointment
@@ -187,7 +190,8 @@ instructColb = [0.8039, 0.5843, 0.0471]; %DarkGoldenRod3
 
 keyName=''; % empty initial value
 
-RestrictKeysForKbCheck([37,39,32,49]); % limit recognized presses to left and right arrows PC
+% RestrictKeysForKbCheck([37,39,32,49]); % limit recognized presses to left and right arrows PC
+% RestrictKeysForKbCheck([30, 44, 79, 80]); % limit recognized presses to 1!, space, left and right arrows MAC
 
 while(~strcmp(keyName,'1!')) % continues until the 1 button is pressed
     
@@ -219,11 +223,13 @@ for i=1:NUMROUNDS
 
 keyName=''; % empty initial value
 
+% Screen('TextFont', window, 'Arial');
 % Set win/lose values based on trial round
-winL = ['?' num2str(regretTasktrialWheels1shot.wlv1(i))];
-loseL = ['?' num2str(regretTasktrialWheels1shot.wlv2(i))];
-winR = ['?' num2str(regretTasktrialWheels1shot.wrv1(i))];
-loseR = ['?' num2str(regretTasktrialWheels1shot.wrv2(i))];
+winL = [num2str(regretTasktrialWheels1shot.wlv1(i))];
+loseL = [num2str(regretTasktrialWheels1shot.wlv2(i))];
+winR = [num2str(regretTasktrialWheels1shot.wrv1(i))];
+loseR = [num2str(regretTasktrialWheels1shot.wrv2(i))];
+Screen('TextFont', window, 'Courier New');
 
 wheelL = [];
 wheelR = [];
@@ -282,7 +288,7 @@ end
 wofTrialStartTime(i) = GetSecs; % trial time start
 
 % RestrictKeysForKbCheck([79, 80]); % limit recognized presses to left and right arrows MAC
-RestrictKeysForKbCheck([37,39]); % limit recognized presses to left and right arrows PC
+% RestrictKeysForKbCheck([37,39]); % limit recognized presses to left and right arrows PC
 [keyTime, keyCode]=KbWait([],2); % Wait for a key to be pushed and released
 keyName=KbName(keyCode); % get the name of which key was pressed
 
@@ -296,7 +302,7 @@ keyName=KbName(keyCode); % get the name of which key was pressed
     
 wofTrialEndTime(i) = GetSecs; % trial time end
 
-RestrictKeysForKbCheck([]); % re-recognize all key presses
+% RestrictKeysForKbCheck([]); % re-recognize all key presses
 
 %% show choice rect over wheels
     Screen('DrawTexture', window, wheelL, [0 0 550 550], locChoice); % Draw probability circle
@@ -406,7 +412,7 @@ WaitSecs(5);
 
 currentRound = i;
 
-[currRatingSelection, wof1shotRatingDuration] = likert_slider(window, windowRect);
+[currRatingSelection, wof1shotRatingDuration] = likert_slider(window, windowRect, enabledKeys);
  
 wof1shotemotionalRating = currRatingSelection;
 
@@ -428,7 +434,7 @@ Screen('Flip', window);
 
 WaitSecs(10);
 
-RestrictKeysForKbCheck([]); % re-recognize all key presses
+% RestrictKeysForKbCheck([]); % re-recognize all key presses
     
 % Clear the screen
 % sca;
