@@ -1,4 +1,7 @@
-function [totalEarnings] = regretTask(particNum, DateTime, window, windowRect, enabledKeys)% Clear the workspace and the screen
+function [currRatingSelection, ratingDuration] = regretTask(window, windowRect, enabledKeys)% Clear the workspace and the screen
+% sca;
+% close all;
+% clearvars;
 
 enabledKeys;
 
@@ -7,6 +10,25 @@ load('regretTasktrialWheelsDataset.mat')       % Load the preset wheel probabili
 regretTasktrialWheels = regretTasktrialWheelsDataset; % Needed to equate variable to different filename
 % DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
 
+%% Screen -1: Participant number entry [delete when combined with Patent Race]
+% 
+% %%% Enter participant number (taken from:
+% %%% http://www.academia.edu/2614964/Creating_experiments_using_Matlab_and_Psychtoolbox)
+% fail1='Please enter a participant number.'; %error  message
+% prompt = {'Enter participant number:'};
+% dlg_title ='New Participant';
+% num_lines = 1;
+% def = {'0'};
+% answer = inputdlg(prompt,dlg_title,num_lines,def);%presents box to enterdata into
+% switch isempty(answer)
+%     case 1 %deals with both cancel and X presses 
+%         error(fail1)
+%     case 0
+%         particNum=(answer{1});
+% end
+
+% uncomment after debugging
+% HideCursor;
 
 %% Here we call some default settings for setting up Psychtoolbox
 % PsychDefaultSetup(2);
@@ -483,4 +505,5 @@ save([num2str(particNum) '-' DateTime '_1wofPractice-subj'], 'regretTasktrialWhe
 
 WaitSecs(2);
     
-end
+% Clear the screen
+% sca;

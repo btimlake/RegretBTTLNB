@@ -1,8 +1,15 @@
-function [total1shotEarnings] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber)% Clear the workspace and the screen
+function [totalEarnings] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys)% Clear the workspace and the screen
+
+
+
+clearvars -except  screens screenNumber  prop* tex* arrow* enabledKeys;  
 
 % load('regretTasktrialWheels1shot.mat')       % Load the preset wheel probabilites and values TABLE
 load('regretTasktrialWheels1shotDataset.mat')       % Load the preset wheel probabilites and values DATASET
 regretTasktrialWheels1shot = regretTasktrialWheels1shotDataset; % Needed to equate variable to different filename
+% DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
+
+
 
 %% Here we call some default settings for setting up Psychtoolbox
 
@@ -463,7 +470,7 @@ for i=1:NUMROUNDS
         wof1shotChoiceDuration(i) = wofTrialEndTime(i)-wofTrialStartTime(i);
 end
 
-total1shotEarnings = sum(wof1shotEarnings);
+totalEarnings = sum(wof1shotEarnings);
 
 % Write logfile
 save([num2str(particNum) '-' DateTime '_2oneshot-subj'], 'regretTasktrialWheels1shotDataset', 'wof1shotChoice', 'wof1shotEarnings', 'wof1shotChoiceDuration', 'wof1shotemotionalRating', 'wof1shotRatingDuration');

@@ -1,5 +1,8 @@
-function payouts
+function payouts(gamesdatafilename)
 
+Var2Str(gamesdatafilename);
+
+load('gamesdatafilename');
 % input the three randomly drawn numbers 1-48 for the 2x2 games
 
 % access the results of those games from this participant's results

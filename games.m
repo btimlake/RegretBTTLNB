@@ -1,4 +1,4 @@
-function games(subNo, anni, w, wRect, NUMROUNDS, enabledKeys)
+function [gamesdatafilename]=games(subNo, anni, w, wRect, NUMROUNDS, enabledKeys)
 % games(participant number, date/time, window size, window rectangle size,
 % number of rounds)
 
@@ -45,6 +45,7 @@ addpath(matlabroot,'games/instructions');
 % Define filenames of input files and result file:
 datafilename = strcat(num2str(subNo), '-', DateTime, '_4games2x2.dat'); % name of data file to write to
 %strcat corrisponde a concatena, infatti concatena le stringhe successive
+gamesdatafilename=datafilename; %different variable for exporting to umbrella script
 
 %provafilename = 'Blocco0_colonna_trial_prova.txt';                           % Training list
 testfilename  = 'stimoli.txt';                            % Experimental list
