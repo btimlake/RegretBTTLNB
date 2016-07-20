@@ -1,6 +1,6 @@
 % Function to run graphical patent race task
-% So far only setup so participant is the strong player
-% And only 2 methods of weak player strategies implemented, 'RL', and
+% Participant can be strong or weak player
+% Only 2 methods of computer player strategies implemented: 'RL', and
 % learning from 'Fictive' earnings.
 % Tobias Larsen, November 2015
 % modified and amended Ben Timberlake, Feburary 2016
@@ -16,15 +16,17 @@ NUMROUNDS=5;                           % Number of rounds played against this op
 PLAYER1MAXBID=player1maxbid;                        % Endowment for player1
 PLAYER2MAXBID=9-PLAYER1MAXBID;                        % Endowment for player2
 TAU=2;                                  % Softmax temperature
-player1Options=zeros(1,6);              % Not used yet, maybe never will...
-player2Options=5*ones(1,5);             % Keeps track of the values for each betting amount
+numPlayer1Options=1+PLAYER1MAXBID;      % Max bid plus one accounts for possibility of bidding 0
+numPlayer2Options=1+PLAYER2MAXBID;      % Max bid plus one accounts for possibility of bidding 0
+player1Options=zeros(1,numPlayer1Options);              % Not used yet, maybe never will...
+player2Options=5*ones(1,numPlayer2Options);             % Keeps track of the values for each betting amount
 player1Earnings=nan(NUMROUNDS,1);       % Keeps track of winnings for player1
 player2Earnings=nan(NUMROUNDS,1);       % Keeps track of winnings for player2
 player1Choice=nan(NUMROUNDS,1);         % Keeps track of player1 choices
 player2Choice=nan(NUMROUNDS,1);         % Keeps track of player2 choices
 trialLength=nan(NUMROUNDS,1);           % Keeps track of length of each trial
 % player2Strategy='Fictive';
-player2Strategy='random'; %COMMENT AFTER DEBUGGING
+% player2Strategy='random'; %COMMENT AFTER DEBUGGING
 % Shorter delays
 fixationDelay = 1 + (2-1).*rand(NUMROUNDS,1); % Creates array of random fixation cross presentation time of 1-2 seconds
 feedbackDelay = 1 + (3-1).*rand(NUMROUNDS,1); % Creates array of random delay between choice and feedback of 1-3 seconds
@@ -77,9 +79,9 @@ screenCenter = [xCenter, yCenter]; % center coordinates
 
 %Rectangle positions
 fullRowXpos = [screenXpixels * 0.09 screenXpixels * 0.18 screenXpixels * 0.27 screenXpixels * 0.36 screenXpixels * 0.45];
-topRectXpos = fullRowXpos(1:PLAYER1MAXBID)
+topRectXpos = fullRowXpos(1:PLAYER1MAXBID);
 numtopRect = length(topRectXpos); % Screen X positions of top five rectangles
-uppRectXpos = fullRowXpos(1:PLAYER2MAXBID)
+uppRectXpos = fullRowXpos(1:PLAYER2MAXBID);
 numuppRect = length(uppRectXpos); % Screen X positions of upper four rectangles
 lowRectXposFull = [screenXpixels * 0.09 screenXpixels * 0.18 screenXpixels * 0.27 screenXpixels * 0.36 screenXpixels * 0.45 screenXpixels * 0.54 screenXpixels * 0.63 screenXpixels * 0.72 screenXpixels * 0.81 screenXpixels * 0.9];
 lowRectXpos = lowRectXposFull([1:PLAYER1MAXBID 6:end]);
@@ -261,7 +263,8 @@ botSelectText = botInstructText;
     
     player1ChoiceInd = player1Choice(i)+1;      %because choosing 0 is an option, there's a discrepancy between choices and index of options...
     
-    player2Choice(i)=find(rand < cumsum(exp(player2Options.*TAU)/sum(exp(player2Options.*TAU))),1);  % uses softmax to make a choice (TAU -> 0 = more random)
+    player2ChoiceInd=find(rand < cumsum(exp(player2Options.*TAU)/sum(exp(player2Options.*TAU))),1);  % uses softmax to make a choice (TAU -> 0 = more random)
+    player2Choice(i)=player2ChoiceInd-1;
     
     player1Earnings(i) = PLAYER1MAXBID + (PRIZE-player1Choice(i))*(player1ChoiceInd > player2Choice(i)) - player1Choice(i)*(player1ChoiceInd<=player2Choice(i)); %calculates how much the strong player wins
     player2Earnings(i) = PLAYER2MAXBID + (PRIZE-player2Choice(i))*(player2Choice(i) > player1ChoiceInd) - player2Choice(i)*(player2Choice(i)<=player1ChoiceInd); %calculates how much the weak player wins
@@ -275,7 +278,7 @@ unselectedRects = topRects(:,unSelected:PLAYER1MAXBID);
 
 % Win Result text strings
 topWinText = topSelectText;
-uppWinText = ['Your opponent invested ' num2str(player2Choice(i)-1) '.'];
+uppWinText = ['Your opponent invested ' num2str(player2Choice(i)) '.'];
 botWinText = ['You earned ' num2str(player1Earnings(i)) ' in this round.']; 
 lowWinText = ['Your opponent earned ' num2str(player2Earnings(i)) ' in this round.']; 
 
@@ -310,7 +313,7 @@ Screen('Flip', window); % Flip to the screen
 WaitSecs(feedbackDelay(i));
 
 %% Screen 3: Result
-weakSelection = player2Choice(i)-1;
+weakSelection = player2Choice(i);
 if weakSelection ~= 0
     weakselRects = uppRects(:,1:weakSelection);
 else
@@ -376,6 +379,8 @@ p2GameEarnings=sum(player2Earnings);
 % Earnings text
 earningsText11 = ['Your earnings this game: ' num2str(p1GameEarnings)];
 earningsText12 = ['Opponent''s earnings this game: ' num2str(p2GameEarnings)];
+instruct1TextYpos = screenYpixels * 2/40; 
+instruct3TextYpos = screenYpixels * 8/40; 
 
     DrawFormattedText(window, earningsText11, 'center', instruct1TextYpos); % Draw player earnings text
     DrawFormattedText(window, earningsText12, 'center', instruct3TextYpos); % Draw opponent earnings text
