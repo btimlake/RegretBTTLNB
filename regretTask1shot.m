@@ -41,17 +41,39 @@ rightWheelpos = [screenXpixels*.75-wheelRadius screenYpixels*.5-wheelRadius scre
 leftArrowpos = [screenXpixels*.25-wheelRadius*.25 screenYpixels*.5-wheelRadius*.75 screenXpixels*.25+wheelRadius*.25 screenYpixels*.5+wheelRadius*.75];
 rightArrowpos = [screenXpixels*.75-wheelRadius*.25 screenYpixels*.5-wheelRadius*.75 screenXpixels*.75+wheelRadius*.25 screenYpixels*.5+wheelRadius*.75];
 
-% Set positions of text elements
+% Select specific text font, style and size:
+fontSize = round(screenYpixels * 2/60);
+    Screen('TextFont', window, 'Courier New');
+    Screen('TextSize', window, fontSize);
+    Screen('TextStyle', window);
+    Screen('TextColor', window, [0, 0, 0]);
+
+    % Set positions of text elements
 topTextYpos = screenYpixels * 2/40; % Screen Y positions of top/instruction text
 botTextYpos = screenYpixels * 35/40; % Screen Y positions of bottom/result text
-leftwheelLeftTextXpos = screenXpixels*.035;
-leftwheelRightTextXpos = screenXpixels*.40;
-rightwheelLeftTextXpos = screenXpixels*.52;
-rightwheelRightTextXpos = screenXpixels*.91;
+leftwheelLeftEuroXpos = screenXpixels*.035;
+leftwheelRightEuroXpos = screenXpixels*.40;
+rightwheelLeftEuroXpos = screenXpixels*.52;
+rightwheelRightEuroXpos = screenXpixels*.91;
 leftwheelLeftTextYpos = screenYpixels*.38;
 leftwheelRightTextYpos = screenYpixels*.43;
 rightwheelLeftTextYpos = screenYpixels*.38;
 rightwheelRightTextYpos = screenYpixels*.43;
+% old positioning (now done using nx output of DrawFormattedText
+% leftwheelLeftTextXpos = screenXpixels*.035;
+% leftwheelRightTextXpos = screenXpixels*.40;
+% rightwheelLeftTextXpos = screenXpixels*.52;
+% rightwheelRightTextXpos = screenXpixels*.91;
+% leftwheelLeftEuroXpos = screenXpixels*.035 - fontSize*.7;
+% leftwheelRightEuroXpos = screenXpixels*.40 - fontSize*.7;
+% rightwheelLeftEuroXpos = screenXpixels*.52 - fontSize*.7;
+% rightwheelRightEuroXpos = screenXpixels*.91 - fontSize*.7;
+[leftwheelLeftTextXpos, yPos, textRect] = DrawFormattedText(window, hex2dec('20ac'), leftwheelLeftEuroXpos, leftwheelRightTextYpos, white); % euro symbol
+[leftwheelRightTextXpos, yPos] = DrawFormattedText(window, '-', leftwheelRightEuroXpos, leftwheelLeftTextYpos, white); % euro symbol
+[rightwheelLeftTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), rightwheelLeftEuroXpos, rightwheelRightTextYpos, white); % euro symbol
+[rightwheelRightTextXpos, yPos] = DrawFormattedText(window, '-', rightwheelRightEuroXpos, rightwheelLeftTextYpos, white); % euro symbol
+textHalfHeight=(textRect(2)-textRect(4))/2;
+rightText = rightwheelRightTextYpos - textHalfHeight;
 
 % Rect positions/dimensions based on wheel positions/dimensions
 rectWidth = screenXpixels*.3; % based on wheelRadius = (screenXpixels*.13);
@@ -72,14 +94,7 @@ arrowChoice = leftArrowpos;
 arrowNonChoice = rightArrowpos;
 
 % Display text
-topInstructText = ['Choose which wheel to play\n\n (win/loss amounts are in euros).'];
-
-% Select specific text font, style and size:
-fontSize = round(screenYpixels * 2/60);
-    Screen('TextFont', window, 'Courier New');
-    Screen('TextSize', window, fontSize);
-    Screen('TextStyle', window);
-    Screen('TextColor', window, [0, 0, 0]);
+topInstructText = ['Choose which wheel to play.'];
     
 % Set some variables
 NUMROUNDS = 1;
@@ -226,10 +241,10 @@ keyName=''; % empty initial value
 % Screen('TextFont', window, 'Arial');
 % Set win/lose values based on trial round
 winL = [num2str(regretTasktrialWheels1shot.wlv1(i))];
-loseL = [num2str(regretTasktrialWheels1shot.wlv2(i))];
+loseL = [num2str(abs(regretTasktrialWheels1shot.wlv2(i)))];
 winR = [num2str(regretTasktrialWheels1shot.wrv1(i))];
-loseR = [num2str(regretTasktrialWheels1shot.wrv2(i))];
-Screen('TextFont', window, 'Courier New');
+loseR = [num2str(abs(regretTasktrialWheels1shot.wrv2(i)))];
+% Screen('TextFont', window, 'Courier New');
 
 wheelL = [];
 wheelR = [];
@@ -267,22 +282,35 @@ end
 % wheelL = texProb66
 % wheelR = texProb50 
 
+% I think the simplest workaround is to print the ? symbol in a separate string and print it next to the amount string.
+% The string with the ? symbol should look something like this:
+%        DrawFormattedText(window,hex2dec('20ac'),'center',500,winColors);
+% 
+% where hex2dec('20ac') of course is a way of writing the ?
+% and you "just" need to adjust the 'center' and 500 and green to the needed x, y, and colour
+% 
     angChoice=0;
     angNonChoice=0;
     
     DrawFormattedText(window, topInstructText, 'center', topTextYpos, black); % Instruction text
-
+   
     % Show lottery choices
     Screen('DrawTexture', window, wheelL, [0 0 550 550], locChoice); % Draw probability circle
     Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowChoice, angChoice);
+    [leftwheelLeftTextXpos, yPos, textRect] = DrawFormattedText(window, hex2dec('20ac'), leftwheelLeftEuroXpos, leftwheelLeftTextYpos, winColors); % euro symbol
     DrawFormattedText(window, winL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount 
+    [leftwheelRightTextXpos, yPos] = DrawFormattedText(window, '- ', leftwheelRightEuroXpos, rightText, loseColors); % euro symbol
+    [leftwheelRightTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), leftwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % euro symbol
     DrawFormattedText(window, loseL, leftwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
     % non-choice wheel & arrow
      
     Screen('DrawTexture', window, wheelR, [0 0 550 550], locNonChoice); % Draw probability circle
     Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowNonChoice, angNonChoice);
-    DrawFormattedText(window, winR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount
-    DrawFormattedText(window, loseR, rightwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
+    [rightwheelLeftTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), rightwheelLeftEuroXpos, rightwheelLeftTextYpos, winColors); % euro symbol
+    DrawFormattedText(window, winR, rightwheelLeftTextXpos, rightwheelLeftTextYpos, winColors); % win amount
+    [rightwheelRightTextXpos, yPos] = DrawFormattedText(window, '- ', rightwheelRightEuroXpos, rightText, loseColors); % euro symbol
+    [rightwheelRightTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), rightwheelRightTextXpos,rightwheelRightTextYpos, loseColors); % euro symbol
+    DrawFormattedText(window, loseR, rightwheelRightTextXpos, rightwheelRightTextYpos, loseColors); % loss amount
     Screen('Flip', window)
  
 wofTrialStartTime(i) = GetSecs; % trial time start
@@ -307,13 +335,19 @@ wofTrialEndTime(i) = GetSecs; % trial time end
 %% show choice rect over wheels
     Screen('DrawTexture', window, wheelL, [0 0 550 550], locChoice); % Draw probability circle
     Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowChoice, angChoice);
+    [leftwheelLeftTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), leftwheelLeftEuroXpos, leftwheelLeftTextYpos, winColors); % euro symbol
     DrawFormattedText(window, winL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount 
+    [leftwheelRightTextXpos, yPos] = DrawFormattedText(window, '- ', leftwheelRightEuroXpos, rightText, loseColors); % euro symbol
+    [leftwheelRightTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), leftwheelRightEuroXpos, leftwheelRightTextYpos, loseColors); % euro symbol
     DrawFormattedText(window, loseL, leftwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
     % non-choice wheel & arrow
     
     Screen('DrawTexture', window, wheelR, [0 0 550 550], locNonChoice); % Draw probability circle
     Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowNonChoice, angNonChoice);
+    [rightwheelLeftTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), rightwheelLeftEuroXpos, rightwheelLeftTextYpos, winColors); % euro symbol
     DrawFormattedText(window, winR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount
+    [rightwheelRightTextXpos, yPos] = DrawFormattedText(window, '- ', rightwheelRightEuroXpos, rightText, loseColors); % euro symbol
+    [rightwheelRightTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), rightwheelRightEuroXpos, rightwheelRightTextYpos, loseColors); % euro symbol
     DrawFormattedText(window, loseR, rightwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
         Screen('FrameRect', window, chooseColors, rectPos, lineWeight); % Draw the choice rect to the screen
         Screen('Flip', window)
@@ -332,12 +366,12 @@ arrowAngleR=360*lotteryOutcome1shot(j,2);
     if arrowAngleL > 360*regretTasktrialWheels1shot.wlp2(i);   % If endpoint of arrow is greater than loss zone, win
     winAmount(i) = regretTasktrialWheels1shot.wlv1(i);
     wof1shotEarnings(i) = winAmount(i);  % set earngings for log file
-    botResultText = ['You won ' num2str(winAmount(i)) '.'];  % Set feedback text to winning message
+    botResultText = ['Hai vinto ' num2str(winAmount(i)) ' euro.'];  % Set feedback text to winning message
     botTextColor = winColors;
     else   % If endpoint of arrow is less than loss zone, loss
     lossAmount(i) = regretTasktrialWheels1shot.wlv2(i);
     wof1shotEarnings(i) = lossAmount(i);  % set losses for log file
-    botResultText = ['You lost ' num2str(-lossAmount(i)) '.'];  % Set feedback text to losing message
+    botResultText = ['Hai perso ' num2str(-lossAmount(i)) ' euro.'];  % Set feedback text to losing message
     botTextColor = loseColors;
     end
 
@@ -350,12 +384,12 @@ arrowAngleR=360*lotteryOutcome1shot(j,2);
     if arrowAngleR > 360*regretTasktrialWheels1shot.wrp2(i);   % If endpoint of arrow is greater than loss zone, win
     winAmount(i) = regretTasktrialWheels1shot.wrv1(i);
     wof1shotEarnings(i) = winAmount(i);  % set earngings for log file
-    botResultText = ['You won ' num2str(winAmount(i)) '.'];  % Set feedback text to winning message
+    botResultText = ['Hai vinto ' num2str(winAmount(i)) ' euro.'];  % Set feedback text to winning message
     botTextColor = winColors;
     else   % If endpoint of arrow is less than loss zone, loss
     lossAmount(i) = regretTasktrialWheels1shot.wrv2(i);
     wof1shotEarnings(i) = lossAmount(i);  % set losses for log file
-    botResultText = ['You lost ' num2str(-lossAmount(i)) '.'];  % Set feedback text to losing message
+    botResultText = ['Hai perso ' num2str(-lossAmount(i)) ' euro.'];  % Set feedback text to losing message
     botTextColor = loseColors;
     end
 
@@ -377,12 +411,19 @@ while( (angChoice < (4*360 + 360*lotteryOutcome1shot(j,1))) || (angNonChoice < (
 % Left wheel & arrow
     Screen('DrawTexture', window, wheelL, [0 0 550 550], locChoice); % Draw probability circle
     Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowChoice, angChoice);
+    [leftwheelLeftTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), leftwheelLeftEuroXpos, leftwheelLeftTextYpos, winColors); % euro symbol
     DrawFormattedText(window, winL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount 
+    [leftwheelRightTextXpos, yPos] = DrawFormattedText(window, '- ', leftwheelRightEuroXpos, rightText, loseColors); % euro symbol
+    [leftwheelRightTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), leftwheelRightEuroXpos, leftwheelRightTextYpos, loseColors); % euro symbol
     DrawFormattedText(window, loseL, leftwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
+
 % Right wheel & arrow    
     Screen('DrawTexture', window, wheelR, [0 0 550 550], locNonChoice); % Draw probability circle
     Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowNonChoice, angNonChoice);
+    [rightwheelLeftTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), rightwheelLeftEuroXpos, rightwheelLeftTextYpos, winColors); % euro symbol
     DrawFormattedText(window, winR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount
+    [rightwheelRightTextXpos, yPos] = DrawFormattedText(window, '- ', rightwheelRightEuroXpos, rightText, loseColors); % euro symbol
+    [rightwheelRightTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), rightwheelRightEuroXpos, rightwheelRightTextYpos, loseColors); % euro symbol
     DrawFormattedText(window, loseR, rightwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
         Screen('FrameRect', window, chooseColors, rectPos, lineWeight); % Draw the choice rect to the screen
         vbl  = Screen('Flip', window, vbl + (waitframes - 0.5) * ifi);
@@ -396,12 +437,18 @@ end
 % Left wheel & arrow
     Screen('DrawTexture', window, wheelL, [0 0 550 550], locChoice); % Draw probability circle
     Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowChoice, angLeftArrow);
+    [leftwheelLeftTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), leftwheelLeftEuroXpos, leftwheelLeftTextYpos, winColors); % euro symbol
     DrawFormattedText(window, winL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount 
+    [leftwheelRightTextXpos, yPos] = DrawFormattedText(window, '- ', leftwheelRightEuroXpos, rightText, loseColors); % euro symbol
+    [leftwheelRightTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), leftwheelRightEuroXpos, leftwheelRightTextYpos, loseColors); % euro symbol
     DrawFormattedText(window, loseL, leftwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
 % Right wheel & arrow        
     Screen('DrawTexture', window, wheelR, [0 0 550 550], locNonChoice); % Draw probability circle
     Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowNonChoice, angRightArrow);
+    [rightwheelLeftTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), rightwheelLeftEuroXpos, rightwheelLeftTextYpos, winColors); % euro symbol
     DrawFormattedText(window, winR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount
+    [rightwheelRightTextXpos, yPos] = DrawFormattedText(window, '- ', rightwheelRightEuroXpos, rightText, loseColors); % euro symbol
+    [rightwheelRightTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), rightwheelRightEuroXpos, rightwheelRightTextYpos, loseColors); % euro symbol
     DrawFormattedText(window, loseR, rightwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
         Screen('FrameRect', window, chooseColors, rectPos, lineWeight); % Draw the choice rect to the screen
         DrawFormattedText(window, botResultText, 'center', botTextYpos, botTextColor); % Result text
