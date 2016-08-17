@@ -1,4 +1,4 @@
-function [total1shotEarnings] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber)% Clear the workspace and the screen
+function [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber)% Clear the workspace and the screen
 
 % load('regretTasktrialWheels1shot.mat')       % Load the preset wheel probabilites and values TABLE
 load('regretTasktrialWheels1shotDataset.mat')       % Load the preset wheel probabilites and values DATASET
@@ -45,6 +45,7 @@ fontSize = round(screenYpixels * 2/60);
     % Set positions of text elements
 topTextYpos = screenYpixels * 2/40; % Screen Y positions of top/instruction text
 botTextYpos = screenYpixels * 35/40; % Screen Y positions of bottom/result text
+waitTextYpos = screenYpixels * 39/40; % Y position of lowest "Please Wait" text
 leftwheelLeftEuroXpos = screenXpixels*.035;
 leftwheelRightEuroXpos = screenXpixels*.40;
 rightwheelLeftEuroXpos = screenXpixels*.52;
@@ -448,7 +449,37 @@ end
         DrawFormattedText(window, botResultText, 'center', botTextYpos, botTextColor); % Result text
     Screen('Flip', window)
 
-WaitSecs(5); 
+WaitSecs(2.5); 
+
+%% Screen 4a - Please wait; hold on result
+
+for i = 1:16; % multiply second number by .75 to get seconds; i.e. 16 means 12 seconds
+    
+    % Left wheel & arrow
+    Screen('DrawTexture', window, wheelL, [0 0 550 550], locChoice); % Draw probability circle
+    Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowChoice, angLeftArrow);
+    DrawFormattedText(window, winL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount
+    DrawFormattedText(window, loseL, leftwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
+    % Right wheel & arrow
+    Screen('DrawTexture', window, wheelR, [0 0 550 550], locNonChoice); % Draw probability circle
+    Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowNonChoice, angRightArrow);
+    DrawFormattedText(window, winR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount
+    DrawFormattedText(window, loseR, rightwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
+    Screen('FrameRect', window, chooseColors, rectPos, lineWeight); % Draw the choice rect to the screen
+    DrawFormattedText(window, botResultText, 'center', botTextYpos, botTextColor); % Result text
+    
+    if mod(i,2) == 0 %Even numbers: wait text on
+        % Please Wait text
+        DrawFormattedTExt(window, 'Si prega di attendere un attimo ... ', 'center', waitTextYpos, instructCola);
+        Screen('Flip', window)
+        WaitSecs(1);
+    else %Odd numbers: wait text off
+        WaitSecs(.5);
+    end
+    
+end
+ 
+
 %% Screen 5 - Emotional rating
 
 currentRound = i;
@@ -466,14 +497,14 @@ end
 total1shotEarnings = sum(wof1shotEarnings);
 
 % Write logfile
-save([num2str(particNum) '-' DateTime '_2oneshot-subj'], 'regretTasktrialWheels1shotDataset', 'wof1shotChoice', 'wof1shotEarnings', 'wof1shotChoiceDuration', 'wof1shotemotionalRating', 'wof1shotRatingDuration');
+save(['sub' num2str(particNum) '-' DateTime '_2oneshot'], 'regretTasktrialWheels1shotDataset', 'wof1shotChoice', 'wof1shotEarnings', 'wof1shotChoiceDuration', 'wof1shotemotionalRating', 'wof1shotRatingDuration');
 
 %% Screen 6 - Wait screen
-message = 'Si prega di attendere un attimo.';
-DrawFormattedText(window, message, 'center', 'center', instructCola); % Draw wait message
-Screen('Flip', window);
-
-WaitSecs(10);
+% message = 'Si prega di attendere un attimo.';
+% DrawFormattedText(window, message, 'center', 'center', instructCola); % Draw wait message
+% Screen('Flip', window);
+% 
+% WaitSecs(10);
 
 % RestrictKeysForKbCheck([]); % re-recognize all key presses
     
