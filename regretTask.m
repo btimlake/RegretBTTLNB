@@ -206,6 +206,7 @@ instructText29 = ['your 50 euros or lose from it.'];
 % Instruction text colors
 instructCola = [0, 0.4078, 0.5451]; %DeepSkyBlue4
 instructColb = [0.8039, 0.5843, 0.0471]; %DarkGoldenRod3
+black = [0, 0 , 0];
 
 keyName=''; % empty initial value
 
@@ -455,7 +456,7 @@ end
         DrawFormattedText(window, botResultText, 'center', botTextYpos, botTextColor); % Result text
     Screen('Flip', window)
 
-WaitSecs(2); 
+WaitSecs(2.5); 
 
 %% Screen 5 - Emotional rating
 
@@ -477,7 +478,7 @@ totalEarnings = sum(wofEarnings);
 % wofTrialLength = wofTrialLength';
 
 % Write logfile
-save([num2str(particNum) '-' DateTime '_1wofPractice-subj'], 'regretTasktrialWheelsDataset', 'wofChoice', 'lotteryOutcome', 'wofEarnings', 'wofChoiceDuration', 'emotionalRating', 'ratingDuration');
+save(['sub' num2str(particNum) '-' DateTime '_1wofPractice'], 'regretTasktrialWheelsDataset', 'wofChoice', 'lotteryOutcome', 'wofEarnings', 'wofChoiceDuration', 'emotionalRating', 'ratingDuration');
 
 % RestrictKeysForKbCheck([]); % re-recognize all key presses
 
