@@ -12,7 +12,7 @@ function [player1Earnings] = patentTaskBTMP(particNum, DateTime, window, windowR
 
 % DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
 PRIZE=10;                               % Winnings aside from bidding endowment, currently a fixed value
-NUMROUNDS=5;                           % Number of rounds played against this opponent
+NUMROUNDS=20;                           % Number of rounds played against this opponent
 PLAYER1MAXBID=player1maxbid;                        % Endowment for player1
 PLAYER2MAXBID=9-PLAYER1MAXBID;                        % Endowment for player2
 TAU=2;                                  % Softmax temperature
@@ -151,9 +151,9 @@ end
 
 % Instruction text strings
 topInstructText = ['Scegli il tuo investimento (0 - ' num2str(PLAYER1MAXBID) ').'];
-uppInstructText = ['Your opponent can invest up to ' num2str(PLAYER2MAXBID) '.'];
-lowInstructText = 'You can win 10, plus';
-botInstructText = 'the amount you don''t invest.';
+uppInstructText = ['Il tuo avversario puo'' investire fino a ' num2str(PLAYER2MAXBID) '.'];
+lowInstructText = 'Puoi vincere 10, piu'' la quantita'' che non investi';
+% botInstructText = 'the amount you don''t invest.';
 
 % Trials begin here
 for i=1:NUMROUNDS
@@ -202,7 +202,7 @@ Screen('DrawLine', window, black, lineEndXpos, sepLineYpos, textXpos, sepLineYpo
 % Screen('Flip', win); % Flip to the screen
 
 DrawFormattedText(window, lowInstructText, textXpos, low1TextYpos); % Draw reward explanation
-DrawFormattedText(window, botInstructText, textXpos, lowTextYpos); % Draw reward explanation
+% DrawFormattedText(window, botInstructText, textXpos, lowTextYpos); % Draw reward explanation
 Screen('FrameRect', window, winColors, lowRects); % Draw the lower rects to the screen 
 Screen('FrameRect', window, winColors, botRects); % Draw the bottom rects to the screen 
 Screen('Flip', window); % Flip to the screen
@@ -237,7 +237,7 @@ DrawFormattedText(window, uppInstructText, textXpos, uppTextYpos); % Draw oppone
 Screen('FrameRect', window, p2Colors, uppRects); % Draw the upper rects to the screen
 Screen('DrawLine', window, black, lineEndXpos, sepLineYpos, textXpos, sepLineYpos, lineWidthPix); % Make this a line separating the sections
 DrawFormattedText(window, lowInstructText, textXpos, low1TextYpos); % Draw reward explanation
-DrawFormattedText(window, botInstructText, textXpos, lowTextYpos); % Draw reward explanation
+% DrawFormattedText(window, botInstructText, textXpos, lowTextYpos); % Draw reward explanation
 Screen('FrameRect', window, winColors, lowRects); % Draw the lower rects to the screen 
 Screen('FrameRect', window, winColors, botRects); % Draw the bottom rects to the screen 
 
@@ -257,17 +257,20 @@ trialEndTime(i) = GetSecs;
 player1Choice(i) = currPlayerSelection; 
 
 % Selection text strings
-topSelectText = ['You invested ' num2str(player1Choice(i)) '.'];
-uppSelectText = ['Your opponent can invest up to ' num2str(PLAYER2MAXBID) '.'];
-botSelectText = botInstructText;
+topSelectText = ['Hai investito ' num2str(player1Choice(i)) '.'];
+uppSelectText = ['Il tuo avversario puo'' investire fino a ' num2str(PLAYER2MAXBID) '.'];
+% botSelectText = botInstructText;
     
     player1ChoiceInd = player1Choice(i)+1;      %because choosing 0 is an option, there's a discrepancy between choices and index of options...
     
     player2ChoiceInd=find(rand < cumsum(exp(player2Options.*TAU)/sum(exp(player2Options.*TAU))),1);  % uses softmax to make a choice (TAU -> 0 = more random)
     player2Choice(i)=player2ChoiceInd-1;
     
-    player1Earnings(i) = PLAYER1MAXBID + (PRIZE-player1Choice(i))*(player1ChoiceInd > player2Choice(i)) - player1Choice(i)*(player1ChoiceInd<=player2Choice(i)); %calculates how much the strong player wins
-    player2Earnings(i) = PLAYER2MAXBID + (PRIZE-player2Choice(i))*(player2Choice(i) > player1ChoiceInd) - player2Choice(i)*(player2Choice(i)<=player1ChoiceInd); %calculates how much the weak player wins
+player1Earnings(i) = PLAYER1MAXBID + (PRIZE-player1Choice(i))*(player1ChoiceInd > player2ChoiceInd) - player1Choice(i)*(player1ChoiceInd<=player2ChoiceInd); %calculates how much the strong player wins
+   player2Earnings(i) = PLAYER2MAXBID + (PRIZE-player2Choice(i))*((player2ChoiceInd) > player1ChoiceInd) - player2Choice(i)*(player2ChoiceInd<=player1ChoiceInd); %calculates how much the weak player wins
+   
+%    player1Earnings(i) = PLAYER1MAXBID + (PRIZE-player1Choice(i))*(player1ChoiceInd > player2Choice(i)) - player1Choice(i)*(player1ChoiceInd<=player2Choice(i)); %calculates how much the strong player wins
+%     player2Earnings(i) = PLAYER2MAXBID + (PRIZE-player2Choice(i))*(player2Choice(i) > player1ChoiceInd) - player2Choice(i)*(player2Choice(i)<=player1ChoiceInd); %calculates how much the weak player wins
     player2Options = player2Update(player2Options, player2Strategy, player2Choice(i), player2Earnings(i), player1ChoiceInd, PRIZE, PLAYER2MAXBID);  %calls the function that determines how player2 will update its values
     
 %% Screen 2: Player's selection
@@ -278,9 +281,9 @@ unselectedRects = topRects(:,unSelected:PLAYER1MAXBID);
 
 % Win Result text strings
 topWinText = topSelectText;
-uppWinText = ['Your opponent invested ' num2str(player2Choice(i)) '.'];
-botWinText = ['You earned ' num2str(player1Earnings(i)) ' in this round.']; 
-lowWinText = ['Your opponent earned ' num2str(player2Earnings(i)) ' in this round.']; 
+uppWinText = ['Il tuo avversario ha investito ' num2str(player2Choice(i)) '.'];
+botWinText = ['Hai guadagnato ' num2str(player1Earnings(i)) ' in questa prova.']; 
+% lowWinText = ['Your opponent earned ' num2str(player2Earnings(i)) ' in this round.']; 
 
 % Draw choice explanation
 DrawFormattedText(window, topSelectText, textXpos, topTextYpos);
@@ -292,7 +295,7 @@ DrawFormattedText(window, uppSelectText, textXpos, uppTextYpos); % Draw opponent
 Screen('FrameRect', window, p2Colors, uppRects); % Draw the upper rects to the screen
 Screen('DrawLine', window, black, lineEndXpos, sepLineYpos, textXpos, sepLineYpos, lineWidthPix); % Make this a line separating the sections
 DrawFormattedText(window, lowInstructText, textXpos, low1TextYpos); % Draw reward explanation
-DrawFormattedText(window, botInstructText, textXpos, lowTextYpos); % Draw reward explanation
+% DrawFormattedText(window, botInstructText, textXpos, lowTextYpos); % Draw reward explanation
 Screen('FrameRect', window, winColors, lowRects); % Draw the lower rects to the screen 
 Screen('FrameRect', window, winColors, botRects); % Draw the bottom rects to the screen 
 % Screen('FrameRect', win, botColors, unselectWinRects); % Draw the lower lost rects to the screen
@@ -377,8 +380,8 @@ p1GameEarnings=sum(player1Earnings);
 p2GameEarnings=sum(player2Earnings);
 
 % Earnings text
-earningsText11 = ['Your earnings this game: ' num2str(p1GameEarnings)];
-earningsText12 = ['Opponent''s earnings this game: ' num2str(p2GameEarnings)];
+earningsText11 = ['Hai guadagnato in totale in questo gioco: ' num2str(p1GameEarnings)];
+earningsText12 = ['L''avversario ha guadagnato in totale in questo gioco: ' num2str(p2GameEarnings)];
 instruct1TextYpos = screenYpixels * 2/40; 
 instruct3TextYpos = screenYpixels * 8/40; 
 
@@ -414,7 +417,7 @@ for i=1:NUMROUNDS
 end
 
 % save(['/Users/bentimberlake/Documents/MATLAB/patentTaskBTMP/logfiles/patent_race-subj_' num2str(particNum) '-' DateTime], 'player1Choice', 'player2Choice', 'player1Earnings', 'player2Earnings', 'trialLength');
-save([num2str(particNum) '-' DateTime '_3patent_race-subj'], 'player1Choice', 'player2Choice', 'player1Earnings', 'player2Earnings', 'trialLength');
+save(['sub' num2str(particNum) '-' num2str(DateTime) '_3patent_race'], 'player1Choice', 'player2Choice', 'player1Earnings', 'player2Earnings', 'trialLength');
 
 end
 

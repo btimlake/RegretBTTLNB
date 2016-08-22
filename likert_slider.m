@@ -29,13 +29,21 @@ function [currRatingSelection, ratingDuration] = likert_slider(window, windowRec
     % may not be necessary with broader Restrict Keys in umbrella script
 enabledKeys;
 
-%set parameters
+%set parameters 
 scale_range = 1:1:13; %requires odd number of intervals
 scale_middle = mean([1:length(scale_range)]); % gets half the scale range
-scale_question = {'Please rate how you feel';
-'by tapping the arrow keys.'; 'Press ''SPACE'' to continue.'};
+% ENGLISH
+% scale_question = {'Please rate how you feel';
+% 'by tapping the arrow keys.'; 'Press ''SPACE'' to continue.'};
+% scale_hi_label = 'positive';
+% scale_middle_label = 'neutral';
+% scale_low_label = 'negative';
+
+% ITALIAN
+scale_question = {'Si prega si valuta le tue emozione corrente';
+'usando i tasti freccia.'; 'Clicca SPAZIO per confermare la tua scelta.'};
 scale_hi_label = 'positive';
-scale_middle_label = 'neutral';
+scale_middle_label = 'neutrale';
 scale_low_label = 'negative';
 
 % [window, windowRect] = Screen('OpenWindow', 0, [255, 255, 255], [0 0 640 480]); %white background

@@ -45,7 +45,7 @@ fontSize = round(screenYpixels * 2/60);
     % Set positions of text elements
 topTextYpos = screenYpixels * 2/40; % Screen Y positions of top/instruction text
 botTextYpos = screenYpixels * 35/40; % Screen Y positions of bottom/result text
-waitTextYpos = screenYpixels * 39/40; % Y position of lowest "Please Wait" text
+waitTextYpos = screenYpixels * 38/40; % Y position of lowest "Please Wait" text
 leftwheelLeftEuroXpos = screenXpixels*.035;
 leftwheelRightEuroXpos = screenXpixels*.40;
 rightwheelLeftEuroXpos = screenXpixels*.52;
@@ -89,7 +89,8 @@ arrowChoice = leftArrowpos;
 arrowNonChoice = rightArrowpos;
 
 % Display text
-topInstructText = ['Choose which wheel to play.'];
+% topInstructText = ['Choose which wheel to play.']; % English
+topInstructText = 'Scegli quale ruota girare.' % Italian
     
 % Set some variables
 NUMROUNDS = 1;
@@ -181,17 +182,30 @@ instruct18TextYpos = screenYpixels * 36/42;
 instruct19TextYpos = screenYpixels * 38/42; 
 instructbotTextYpos = screenYpixels * 40/42; 
 
-% Instruction text
-instructText0 = ['Please wait to be told to continue.'];
+% % Instruction text ENGLISH
+% instructText0 = ['Please wait to be told to continue.'];
+% 
+% instructText11 = ['Now you will play the important'];
+% instructText12 = ['lottery wheel game.'];
+% instructText13 = ['You will spin one wheel, and the outcome'];
+% instructText14 = ['of this game alone can change your winnings.'];
+% % instructText15 = [''];
+% instructText16 = ['As before, choose which wheel to play'];
+% instructText17 = ['by pressing the left arrow key or the'];
+% instructText18 = ['right arrow key.'];
+% % instructText19 = [''];
 
-instructText11 = ['Now you will play the important'];
-instructText12 = ['lottery wheel game.'];
-instructText13 = ['You will spin one wheel, and the outcome'];
-instructText14 = ['of this game alone can change your winnings.'];
+% Instruction text ITALIAN
+instructText0 = ['Per favore, aspetta nostre istruzioni prima di iniziare.'];
+
+instructText11 = ['Ora giocherai il turno decisivo.'];
+instructText12 = ['Farai girare una ruota della fortuna come prima,'];
+instructText13 = ['ma in questo caso il risultato'];
+instructText14 = ['della giocata puo'' cambiare il tuo punteggio.'];
 % instructText15 = [''];
-instructText16 = ['As before, choose which wheel to play'];
-instructText17 = ['by pressing the left arrow key or the'];
-instructText18 = ['right arrow key.'];
+instructText16 = ['Come prima, scegli quale ruota giocare'];
+instructText17 = ['cliccando il tasto freccia sinistro o destro.'];
+% instructText18 = ['right arrow key.'];
 % instructText19 = [''];
 
 % Instruction text colors
@@ -212,7 +226,7 @@ while(~strcmp(keyName,'1!')) % continues until the 1 button is pressed
 %     DrawFormattedText(window, instructText15, 'center', instruct5TextYpos, instructCola); % Draw betting instructions
     DrawFormattedText(window, instructText16, 'center', instruct8TextYpos, instructColb); % Draw betting instructions
     DrawFormattedText(window, instructText17, 'center', instruct9TextYpos, instructColb); % Draw betting instructions
-    DrawFormattedText(window, instructText18, 'center', instruct10TextYpos, instructColb); % Draw betting instructions
+%     DrawFormattedText(window, instructText18, 'center', instruct10TextYpos, instructColb); % Draw betting instructions
 %     DrawFormattedText(window, instructText29, 'center', instruct19TextYpos, instructCola); % Draw betting instructions
     DrawFormattedText(window, instructText0, 'center', instruct19TextYpos, black); % Draw betting instructions
     Screen('Flip', window); % Flip to the screen
@@ -333,7 +347,7 @@ wofTrialEndTime(i) = GetSecs; % trial time end
     [leftwheelLeftTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), leftwheelLeftEuroXpos, leftwheelLeftTextYpos, winColors); % euro symbol
     DrawFormattedText(window, winL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount 
     [leftwheelRightTextXpos, yPos] = DrawFormattedText(window, '- ', leftwheelRightEuroXpos, rightText, loseColors); % euro symbol
-    [leftwheelRightTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), leftwheelRightEuroXpos, leftwheelRightTextYpos, loseColors); % euro symbol
+    [leftwheelRightTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), leftwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % euro symbol
     DrawFormattedText(window, loseL, leftwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
     % non-choice wheel & arrow
     
@@ -342,7 +356,7 @@ wofTrialEndTime(i) = GetSecs; % trial time end
     [rightwheelLeftTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), rightwheelLeftEuroXpos, rightwheelLeftTextYpos, winColors); % euro symbol
     DrawFormattedText(window, winR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount
     [rightwheelRightTextXpos, yPos] = DrawFormattedText(window, '- ', rightwheelRightEuroXpos, rightText, loseColors); % euro symbol
-    [rightwheelRightTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), rightwheelRightEuroXpos, rightwheelRightTextYpos, loseColors); % euro symbol
+    [rightwheelRightTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), rightwheelRightTextXpos, rightwheelRightTextYpos, loseColors); % euro symbol
     DrawFormattedText(window, loseR, rightwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
         Screen('FrameRect', window, chooseColors, rectPos, lineWeight); % Draw the choice rect to the screen
         Screen('Flip', window)
@@ -409,7 +423,7 @@ while( (angChoice < (4*360 + 360*lotteryOutcome1shot(j,1))) || (angNonChoice < (
     [leftwheelLeftTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), leftwheelLeftEuroXpos, leftwheelLeftTextYpos, winColors); % euro symbol
     DrawFormattedText(window, winL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount 
     [leftwheelRightTextXpos, yPos] = DrawFormattedText(window, '- ', leftwheelRightEuroXpos, rightText, loseColors); % euro symbol
-    [leftwheelRightTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), leftwheelRightEuroXpos, leftwheelRightTextYpos, loseColors); % euro symbol
+    [leftwheelRightTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), leftwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % euro symbol
     DrawFormattedText(window, loseL, leftwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
 
 % Right wheel & arrow    
@@ -418,7 +432,7 @@ while( (angChoice < (4*360 + 360*lotteryOutcome1shot(j,1))) || (angNonChoice < (
     [rightwheelLeftTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), rightwheelLeftEuroXpos, rightwheelLeftTextYpos, winColors); % euro symbol
     DrawFormattedText(window, winR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount
     [rightwheelRightTextXpos, yPos] = DrawFormattedText(window, '- ', rightwheelRightEuroXpos, rightText, loseColors); % euro symbol
-    [rightwheelRightTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), rightwheelRightEuroXpos, rightwheelRightTextYpos, loseColors); % euro symbol
+    [rightwheelRightTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), rightwheelRightTextXpos, rightwheelRightTextYpos, loseColors); % euro symbol
     DrawFormattedText(window, loseR, rightwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
         Screen('FrameRect', window, chooseColors, rectPos, lineWeight); % Draw the choice rect to the screen
         vbl  = Screen('Flip', window, vbl + (waitframes - 0.5) * ifi);
@@ -435,7 +449,7 @@ end
     [leftwheelLeftTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), leftwheelLeftEuroXpos, leftwheelLeftTextYpos, winColors); % euro symbol
     DrawFormattedText(window, winL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount 
     [leftwheelRightTextXpos, yPos] = DrawFormattedText(window, '- ', leftwheelRightEuroXpos, rightText, loseColors); % euro symbol
-    [leftwheelRightTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), leftwheelRightEuroXpos, leftwheelRightTextYpos, loseColors); % euro symbol
+    [leftwheelRightTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), leftwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % euro symbol
     DrawFormattedText(window, loseL, leftwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
 % Right wheel & arrow        
     Screen('DrawTexture', window, wheelR, [0 0 550 550], locNonChoice); % Draw probability circle
@@ -443,7 +457,7 @@ end
     [rightwheelLeftTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), rightwheelLeftEuroXpos, rightwheelLeftTextYpos, winColors); % euro symbol
     DrawFormattedText(window, winR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount
     [rightwheelRightTextXpos, yPos] = DrawFormattedText(window, '- ', rightwheelRightEuroXpos, rightText, loseColors); % euro symbol
-    [rightwheelRightTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), rightwheelRightEuroXpos, rightwheelRightTextYpos, loseColors); % euro symbol
+    [rightwheelRightTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), rightwheelRightTextXpos, rightwheelRightTextYpos, loseColors); % euro symbol
     DrawFormattedText(window, loseR, rightwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
         Screen('FrameRect', window, chooseColors, rectPos, lineWeight); % Draw the choice rect to the screen
         DrawFormattedText(window, botResultText, 'center', botTextYpos, botTextColor); % Result text
@@ -453,24 +467,30 @@ WaitSecs(2.5);
 
 %% Screen 4a - Please wait; hold on result
 
-for i = 1:16; % multiply second number by .75 to get seconds; i.e. 16 means 12 seconds
+for i = 1:16; % multiply second integer by .75 to get seconds; i.e. 16 means 12 seconds
     
     % Left wheel & arrow
     Screen('DrawTexture', window, wheelL, [0 0 550 550], locChoice); % Draw probability circle
     Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowChoice, angLeftArrow);
-    DrawFormattedText(window, winL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount
+    [leftwheelLeftTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), leftwheelLeftEuroXpos, leftwheelLeftTextYpos, winColors); % euro symbol
+    DrawFormattedText(window, winL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount 
+    [leftwheelRightTextXpos, yPos] = DrawFormattedText(window, '- ', leftwheelRightEuroXpos, rightText, loseColors); % euro symbol
+    [leftwheelRightTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), leftwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % euro symbol
     DrawFormattedText(window, loseL, leftwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
     % Right wheel & arrow
     Screen('DrawTexture', window, wheelR, [0 0 550 550], locNonChoice); % Draw probability circle
     Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowNonChoice, angRightArrow);
+    [rightwheelLeftTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), rightwheelLeftEuroXpos, rightwheelLeftTextYpos, winColors); % euro symbol
     DrawFormattedText(window, winR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount
+    [rightwheelRightTextXpos, yPos] = DrawFormattedText(window, '- ', rightwheelRightEuroXpos, rightText, loseColors); % euro symbol
+    [rightwheelRightTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), rightwheelRightTextXpos, rightwheelRightTextYpos, loseColors); % euro symbol
     DrawFormattedText(window, loseR, rightwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
     Screen('FrameRect', window, chooseColors, rectPos, lineWeight); % Draw the choice rect to the screen
     DrawFormattedText(window, botResultText, 'center', botTextYpos, botTextColor); % Result text
     
     if mod(i,2) == 0 %Even numbers: wait text on
         % Please Wait text
-        DrawFormattedTExt(window, 'Si prega di attendere un attimo ... ', 'center', waitTextYpos, instructCola);
+        DrawFormattedText(window, 'Si prega di attendere un attimo il gioco Patent Race ... ', 'center', waitTextYpos, instructCola);
         Screen('Flip', window)
         WaitSecs(1);
     else %Odd numbers: wait text off

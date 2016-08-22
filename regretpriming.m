@@ -1,23 +1,26 @@
 clear all;
+sca;
+close all;
+clearvars;
 
+%% Setup
 % addpath(matlabroot,'REGRET_task');
 % addpath(matlabroot,'patentTaskBTMP');
 % addpath(matlabroot,'ratingslider');
 % addpath(matlabroot,'games');
 % addpath(matlabroot,'games/stimoli');
-addpath('REGRET_task');
-addpath('patentTaskBTMP');
-addpath('ratingslider');
-addpath('games');
-addpath('games/stimoli');
+% addpath('REGRET_task');
+% addpath('patentTaskBTMP');
+% addpath('ratingslider');
+% addpath('games');
+% addpath('games/stimoli');
+addpath('REGRET_task', 'patentTaskBTMP', 'ratingslider', 'instructions', 'games', 'games/stimoli');
 
-addpath('REGRET_task', 'patentTaskBTMP', 'ratingslider');
-
-sca;
-close all;
-clearvars;
-DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
 KbName('UnifyKeyNames');
+
+%% VARIABLES
+player1maxbid=5;
+DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
 
 %% check what OS the software is running on
 
@@ -27,8 +30,9 @@ if ismac
     disabledKeys=[];
     skipSyncTest=[];
     screenRes=[];
-    enabledKeys = RestrictKeysForKbCheck([30, 44, 79, 80, 81,82]); % limit recognized presses to 1!, space, left, right, up, down arrows MAC
-
+%     enabledKeys = RestrictKeysForKbCheck([30, 44, 79, 80, 81,82]); % limit recognized presses to 1!, space, left, right, up, down arrows MAC
+    enabledKeys = RestrictKeysForKbCheck([]); % for debugging
+    
 elseif isunix
     % Code to run on Linux plaform
     disp('Unix');
@@ -61,6 +65,8 @@ end
 % uncomment INLAB
 % HideCursor;
 
+ListenChar(2); %disable transmission of keypresses to Matlab command window; press CTRL+C to reenable
+
 %% Psychtoolbox setup
 PsychDefaultSetup(2);
 
@@ -78,24 +84,45 @@ black = BlackIndex(screenNumber);
 % Open an on screen window
 % [window, windowRect] = PsychImaging('OpenWindow', screenNumber, white, [0 0 640 480]); % for one screen setup 
 [window, windowRect] = PsychImaging('OpenWindow', screenNumber, white); % for two-screen setup
+[xCenter, yCenter] = RectCenter(windowRect);
+
+%% Creat cfg structure to be passed into subsequent functions
+[screenXpixels, screenYpixels] = Screen('WindowSize', window);
+cfg.screenSize.x = screenXpixels; 
+cfg.screenSize.y = screenYpixels;
+cfg.fontSize = round(screenYpixels * 2/40);
+cfg.textColor = [0, 0, 0]; % black
+% cfg.bgColor = [255, 255, 255];
+cfg.bgColor = [1, 1, 1];
+cfg.screenCenter = [xCenter, yCenter]; % center coordinatesf
+
+% TEMP
+gamesdatafilename = 'sub444-2208-2048_4games2x2.dat'
 
 %% call scripts
-% [gamesdatafilename]=games(particNum, DateTime, window, windowRect, 5, enabledKeys);
-    % [gamesdatafilename]=games(subNo, anni, w, wRect, NUMROUNDS, enabledKeys)
+% [gamesdatafilename]=games(particNum, DateTime, window, windowRect, 10, enabledKeys);
+% %     [gamesdatafilename]=games(subNo, anni, w, wRect, NUMROUNDS, enabledKeys)
 % WaitSecs(2)
-% patentTaskInstructions(window, windowRect, enabledKeys);
-% regretTask(particNum, DateTime, window, windowRect, enabledKeys);
-    % [totalEarnings] = regretTask(particNum, DateTime, window, windowRect, enabledKeys)% Clear the workspace and the screen
-% [total1shotEarnings] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber);
-    % [total1shotEarnings] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber)% Clear the workspace and the screen
-[player1Earnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, 'fictive', 4, ena bledKeys);
-% [player1Earnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, 'fictive', 4);
-    % [player1Earnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, player2Strategy, player1maxbid, enabledKeys)
-% payment(gamesdatafilename)
+% patentTaskInstructions(window, windowRect, enabledKeys, cfg, player1maxbid);
+% % regretTask(particNum, DateTime, window, windowRect, enabledKeys);
+%     [totalEarnings] = regretTask(particNum, DateTime, window, windowRect, enabledKeys)% Clear the workspace and the screen
+[total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber);
+% %     [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber)% Clear the workspace and the screen
+% [player1Earnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, 'fictive', 4, enabledKeys);
+% [player1Earnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, 'fictive', player1maxbid, enabledKeys);
+%     [player1Earnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, player2Strategy, player1maxbid, enabledKeys)
+% [winningsMPL, earningsRaven] = questionnaires(particNum, DateTime, window, windowRect)
+% [rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTime, window, windowRect, enabledKeys)
+% [rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTi me,  wi n dow, windowRect, enabledKeys)
+[winnings2x2, chosenGame, opponentChoice]=games2x2winnings(gamesdatafilename, cfg, window);
+% payouts(winnings2x2, gamesdatafilename, total1shotEarnings, player1Earnings, winningsMPL, earningsRaven)
 sca;
 
-RestrictKeysForKbCheck([]); % re-recognize all key presses
+% big log file
+% rating, ratingDuration, normalizedChoice, computerSide
 
+RestrictKeysForKbCheck([]); % re-recognize all key presses
+ListenChar(0); % reenable transmission of keypresses to Matlab command window
 ShowCursor;
 
           
