@@ -90,7 +90,7 @@ arrowNonChoice = rightArrowpos;
 
 % Display text
 % topInstructText = ['Choose which wheel to play.']; % English
-topInstructText = 'Scegli quale ruota girare.' % Italian
+topInstructText = 'Scegli quale ruota girare.'; % Italian
     
 % Set some variables
 NUMROUNDS = 1;
@@ -494,6 +494,7 @@ for i = 1:16; % multiply second integer by .75 to get seconds; i.e. 16 means 12 
         Screen('Flip', window)
         WaitSecs(1);
     else %Odd numbers: wait text off
+        Screen('Flip', window)
         WaitSecs(.5);
     end
     

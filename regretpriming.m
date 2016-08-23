@@ -97,7 +97,7 @@ cfg.bgColor = [1, 1, 1];
 cfg.screenCenter = [xCenter, yCenter]; % center coordinatesf
 
 % TEMP
-gamesdatafilename = 'sub444-2208-2048_4games2x2.dat'
+gamesdatafilename = 'sub444-2208-2048_4games2x2.dat';
 
 %% call scripts
 % [gamesdatafilename]=games(particNum, DateTime, window, windowRect, 10, enabledKeys);

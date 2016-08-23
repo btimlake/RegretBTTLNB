@@ -1,17 +1,33 @@
-function payouts(gamesdatafilename)
+function payouts(winnings2x2, gamesdatafilename, total1shotEarnings, player1Earnings, winningsMPL, earningsRaven)
 
 Var2Str(gamesdatafilename);
 
 load('gamesdatafilename');
-% input the three randomly drawn numbers 1-48 for the 2x2 games
 
-% access the results of those games from this participant's results
-%   - may be easier to bring those into the workspace at the end of the 2x2
+% randomly select opponent from attendees and deliver info to each computer
+% Input the randomly chosen game 1-48 on every computer
 
-% randomly select opponent from existing data
-% compare them to the corresponding game from opponent data
-%   - have to include that correspondence matrix
+% computer returns: player's corresponding play (I or II from corresponding
+% game) and partner station number
+    % need separate dataset/table for these correspondences
 
-% calculate winnings for each
-% average
-% report results
+% Input partner's corresponding play
+
+% Return player's reward based on own play and partner's play
+winnings2x2
+
+endowment = 10; 
+winnings2x2
+winnings1shot = total1shotEarnings;
+winningsPatentRace = player1Earnings;
+winningsMPL;
+earningsRaven;
+
+totalEarnings = endowment + winnings2x2 + winnings1shot + winningsPatentRace + winningsMPL + earningsRaven;
+
+if totalEarnings <= 10
+    disp('You earned ' num2str(totalEarnings)) '. 10 euro minimum awarded');
+else
+    disp('You earned ' num2str(totalEarnings)) '.')
+    
+end

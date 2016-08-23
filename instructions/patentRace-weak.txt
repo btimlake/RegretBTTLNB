@@ -1,0 +1,19 @@
+Stai per giocare contro un un algoritmo 
+adattivo del computer per vincere quanto più 
+denaro possibile. Il computer fa la sua 
+scelta prima di tu. 
+
+Tu puoi investire da 0 a 4 carte.
+Il tuo avversario ne puo' investire da 0 a 5. 
+
+Il giocatore che investe piu' carte a ogni 
+turno vince 10 carte per turno. Se entrambi
+investono lo stesso numero di carte, non 
+vince nessun giocatore Manterrai il numero di
+carte che non investirai (e.g. se ne investi 
+3, le altre 2 rimarranno a te, sia che tu 
+vinca sia che tu perda). Usa i tasti freccia
+per scegliere quante carte investire, poi 
+clicca SPAZIO per confermare la tua scelta.
+_____________________________________________
+Clicca SPAZIO per continuare.
