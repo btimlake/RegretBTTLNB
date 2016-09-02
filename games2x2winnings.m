@@ -80,7 +80,7 @@ while aOK ~= 1
 %     end
 
     
-    [chosenGame, OK] = str2double(GetEchoStringForm(window, inputReq1, xPos1, yPos, cfg.textColor)); % displays string in PTB; allows backspace
+    chosenGame = str2double(GetEchoStringForm(window, inputReq1, xPos1, yPos, cfg.textColor)); % displays string in PTB; allows backspace
     
     % potential alternative
     % number = GetNumber([deviceIndex][, untilTime=inf][, optional KbCheck arguments...])
@@ -91,16 +91,16 @@ while aOK ~= 1
     % chosenGame = input('Tasti il gioco scelto: ') % ITALIAN
     switch isempty(chosenGame)
         case 1 %deals with both cancel and X presses
-            [chosenGame, OK] = str2double(GetEchoStringForm(window, fail1, xPos1, yPos, cfg.textColor)); % displays string in PTB; allows backspace
+            Screen('Flip', window)
+            chosenGame = str2double(GetEchoStringForm(window, fail1, xPos1, yPos, cfg.textColor)); % displays string in PTB; allows backspace
         case 0
-            if OK == 0
+            if chosenGame <= 1 || chosenGame >= 48
                 aOK = 0;
-                [chosenGame, OK] = str2double(GetEchoStringForm(window, fail1, xPos1, yPos, cfg.textColor)); % displays string in PTB; allows backspace
-            elseif chosenGame <= 1 || chosenGame >= 48
-                aOK = 0;
-                [chosenGame, OK] = str2double(GetEchoStringForm(window, fail1, xPos1, yPos, cfg.textColor)); % displays string in PTB; allows backspace
+             Screen('Flip', window)
+               chosenGame = str2double(GetEchoStringForm(window, fail1, xPos1, yPos, cfg.textColor)); % displays string in PTB; allows backspace
             else
                 aOK = 1;
+                Screen('Flip', window)
             end
     end
 end
@@ -124,8 +124,9 @@ else
 end
 
 
-    % report chosen choice
-
+%% report chosen choice
+% LAST TIME, SOMETHING BAD HAPPENED WITH CHOSENCHOICE, SO NUMBER CHOICE
+% NEVER PRODUCED
 
 % get the choice from the matched game
 % these numbers are flipped because of how the grids match up 
@@ -144,7 +145,7 @@ end
 % opponentChoice = input('Enter your selected opponent''s choice and press ''Enter'': ') % ENGLISH
 % inputReq2 = 'Tasti la scelta del tuo avversario e premi ''Enter'': '; % ITALIAN
 % fail2='Si prega tastere 1 o 2 e premi ''Enter'': '; % ITALIAN
-[opponentChoice, OK] = str2double(GetEchoStringForm(window, inputReq2, xPos2, yPos2, cfg.textColor)); % displays string in PTB; allows backspace
+opponentChoice = str2double(GetEchoStringForm(window, inputReq2, xPos2, yPos2, cfg.textColor)); % displays string in PTB; allows backspace
 
 % disp({'Enter your selected opponent''s choice.'}, {'And then tell them your reported choice.'})
 % disp({'Tasti la scelta del tuo avversario.'},{'E poi, dica al avversario il tuo scelto.'})
@@ -153,15 +154,15 @@ end
 
 switch isempty(opponentChoice)
     case 1 %deals with both cancel and X presses 
-        [opponentChoice, OK] = str2double(GetEchoStringForm(window, fail2, xPos2, yPos2, cfg.textColor)); % displays string in PTB; allows backspace
+            Screen('Flip', window)
+        opponentChoice = str2double(GetEchoStringForm(window, fail2, xPos2, yPos2, cfg.textColor)); % displays string in PTB; allows backspace
 
     case 0
-        if OK == 0
-        [opponentChoice, OK] = str2double(GetEchoStringForm(window, fail2, xPos2, yPos2, cfg.textColor)); % displays string in PTB; allows backspace            
-        elseif opponentChoice == (1 || 2)
-        opponentChoice=opponentChoice;
+        if opponentChoice == (1 || 2)
+            Screen('Flip', window)
         else
-        [opponentChoice, OK] = str2double(GetEchoStringForm(window, fail2, xPos2, yPos2, cfg.textColor)); % displays string in PTB; allows backspace
+            Screen('Flip', window)
+        opponentChoice = str2double(GetEchoStringForm(window, fail2, xPos2, yPos2, cfg.textColor)); % displays string in PTB; allows backspace
         end
         
 end

@@ -45,26 +45,26 @@ else
     disp('Platform not supported')
 end
 
-%% Screen 0: Participant number entry [delete when combined with Patent Race]
 
+%% OLD PARTICIPANT NUMBER - DELETE WHEN NEW VERSION WORKS
 %%% Enter participant number (taken from:
 %%% http://www.academia.edu/2614964/Creating_experiments_using_Matlab_and_Psychtoolbox)
-fail1='Please enter a participant number.'; %error  message
-prompt = {'Enter participant number:'};
-dlg_title ='New Participant';
-num_lines = 1;
-def = {'0'};
-answer = inputdlg(prompt,dlg_title,num_lines,def);%presents box to enterdata into
-switch isempty(answer)
-    case 1 %deals with both cancel and X presses 
-        error(fail1)
-    case 0
-        particNum=(answer{1});
-end
+% fail1='Please enter a participant number.'; %error  message
+% prompt = {'Enter participant number:'};
+% dlg_title ='New Participant';
+% num_lines = 1;
+% def = {'0'};
+% answer = inputdlg(prompt,dlg_title,num_lines,def);%presents box to enterdata into
+% switch isempty(answer)
+%     case 1 %deals with both cancel and X presses 
+%         error(fail1)
+%     case 0
+%         particNum=(answer{1});
+% end
 
+%% Hide cursor, stop input in command screen
 % uncomment INLAB
 % HideCursor;
-
 ListenChar(2); %disable transmission of keypresses to Matlab command window; press CTRL+C to reenable
 
 %% Psychtoolbox setup
@@ -97,10 +97,89 @@ cfg.bgColor = [1, 1, 1];
 cfg.screenCenter = [xCenter, yCenter]; % center coordinatesf
 
 % TEMP
-gamesdatafilename = 'sub444-2208-2048_4games2x2.dat';
+% gamesdatafilename = 'sub444-2208-2048_4games2x2.dat';
+
+
+%% Screen 0: Participant number entry 
+
+screenXpixels=cfg.screenSize.x;
+    Screen('TextFont', window, 'Courier New');
+    Screen('TextSize', window, cfg.fontSize);
+    Screen('TextStyle', window);
+    Screen('TextColor', window, cfg.textColor);
+    
+inputReq1 = 'Tasti il numero sopra il tuo computer come due cifre \n e premi ''Enter'': '; % ITALIAN
+fail1='Si prega tastere esattamente due cifre e premi ''Enter'': '; % ITALIAN
+inputReq2 = 'Tasti il dato come e'' scritto su lavagna \n e premi ''Enter'': '; % ITALIAN
+fail2='Si prega tastere quattro numeri e premi ''Enter'': '; % ITALIAN
+    
+    [nx, ny1, textRect1]=DrawFormattedText(window, inputReq1, 0, 0, cfg.bgColor); % draws a dummy version of text just to get measurements
+    [nx, ny2, textRect2]=DrawFormattedText(window, inputReq2, 0, ny1, cfg.bgColor); % draws a dummy version of text just to get measurements
+	textWidth1 = textRect1(3)-textRect1(1); % figures width of bounding rectangle of text
+	textWidth2 = textRect2(3)-textRect2(1); % figures width of bounding rectangle of text
+    xPos1 = cfg.screenCenter(1) - textWidth1/2; % sets x position half the text length back from center 
+    xPos2 = cfg.screenCenter(1) - textWidth2/2; % sets x position half the text length back from center 
+    yPos = cfg.screenCenter(2);
+    yPos2 = yPos + ny1; 
+Screen('Flip', window)
+
+aOK=0; % initial value for aOK
+
+while aOK ~= 1
+    
+    compNum = GetEchoStringForm(window, inputReq1, xPos1, yPos, cfg.textColor); % displays string in PTB; allows backspace
+    
+    % HOW TO GET THIS TO ALLOW REPEATED INPUT?
+%     TRY BREAK OR RETURN
+    % compNum = input('Enter the number of your computer and then press "Enter": ') % ENGLISH
+    % compNum = input('Tasti il numero sopra il tuo computer e poi premi "Enter": ') % ITALIAN
+    switch isempty(compNum)
+        case 1 %deals with both cancel and X presses
+            Screen('Flip', window)
+            compNum = GetEchoStringForm(window, fail1, xPos1, yPos, [0 0 0], [255 255 255]); % displays string in PTB; allows backspace
+        case 0
+            if length(compNum) ~=2 || str2num(compNum) <= 1 || str2num(compNum) >= 18
+                aOK = 0;
+                Screen('Flip', window)
+                compNum = GetEchoStringForm(window, fail1, xPos1, yPos, [0 0 0], [255 255 255]); % displays string in PTB; allows backspace
+            else
+                aOK = 1;
+                Screen('Flip', window)
+                
+            end
+    end
+end
+
+aOK=0; % initial value for aOK
+
+while aOK ~= 1
+    
+    insertDate = GetEchoStringForm(window, inputReq2, xPos2, yPos2, cfg.textColor); % displays string in PTB; allows backspace
+    
+    % HOW TO GET THIS TO ALLOW REPEATED INPUT?
+%     TRY BREAK OR RETURN
+    % compNum = input('Enter the date as written on the whiteboard and then press "Enter": ') % ENGLISH
+    % compNum = input('Tasti il dato come ? scritto su lavagna e poi premi "Enter": ') % ITALIAN
+    switch isempty(insertDate)
+        case 1 %deals with both cancel and X presses
+            Screen('Flip', window)
+            insertDate = GetEchoStringForm(window, fail2, xPos2, yPos2, [0 0 0], [255 255 255]); % displays string in PTB; allows backspace
+        case 0
+            if length(insertDate) ~= 4;
+                aOK = 0;
+            Screen('Flip', window)
+                insertDate = GetEchoStringForm(window, fail2, xPos2, yPos2, [0 0 0], [255 255 255]); % displays string in PTB; allows backspace
+            else
+                aOK = 1;
+                Screen('Flip', window)
+            end
+    end
+end
+
+particNum = [insertDate, compNum];
 
 %% call scripts
-% [gamesdatafilename]=games(particNum, DateTime, window, windowRect, 10, enabledKeys);
+[gamesdatafilename]=games(particNum, DateTime, window, windowRect, 10, enabledKeys);
 % %     [gamesdatafilename]=games(subNo, anni, w, wRect, NUMROUNDS, enabledKeys)
 % WaitSecs(2)
 % patentTaskInstructions(window, windowRect, enabledKeys, cfg, player1maxbid);

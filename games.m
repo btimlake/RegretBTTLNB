@@ -44,7 +44,7 @@ addpath(matlabroot,'games/instructions');
 
 % Define filenames of input files and result file:
 % datafilename = strcat('sub' num2str(subNo), '-', DateTime, '_4games2x2.dat'); % name of data file to write to
-datafilename = ['sub' num2str(subNo), '-', num2str(DateTime), '_4games2x2.dat']
+datafilename = ['sub' num2str(subNo), '-', num2str(DateTime), '_4games2x2.dat'];
 % datafilename = ['sub' subNo, '-', DateTime, '_4games2x2.dat']; % name of data file to write to
 %strcat corrisponde a concatena, infatti concatena le stringhe successive
 gamesdatafilename=datafilename; %different variable for exporting to umbrella script
@@ -115,35 +115,74 @@ try
     
     %% Instruction screens
     keyName=[];
-
-    for instructions=1:4;
-        while(~strcmp(keyName,'space')) % continues until current keyName is space
-            
-            %         scale_question = {'Please rate how you feel';
-            % 'by tapping the arrow keys.'; 'Press ''SPACE'' to continue.'};
-            % for line_num = 1:length(scale_question)
-            % line_width = RectWidth(Screen('TextBounds',window,scale_question{line_num}));
-            % Screen('DrawText', window, scale_question{line_num}, screenCenter(1) - line_width/2, ...
-            % screenCenter(2) - fontSize * (2 + length(scale_question)-line_num+1), ratingPenColor);
-            
-            instFilename = ['instructions/games2x2_instructions' num2str(instructions) '.png'];
-            imdata=imread(instFilename);
-            
-            tex=Screen('MakeTexture', w, imdata);
-            
-            % Draw texture image to backbuffer. It will be automatically
-            % centered in the middle of the display if you don't specify a
-            % different destination:
-            Screen('DrawTexture', w, tex);
-            
-            Screen('Flip', w);   
-            
-            [keyTime, keyCode]=KbWait([],2);
-            keyName=KbName(keyCode);
-            
+    instructions = 1;
+    
+    while (~strcmp(instructions, '5') && ~strcmp(keyName,'space'))
+        
+        [keyTime, keyCode]=KbWait([],2);
+        keyName=KbName(keyCode);
+        
+        switch keyName
+            case 'LeftArrow'
+                instructions = instructions - 1;
+                if instructions < 1
+                    instructions = 1;
+                end
+            case 'RightArrow'
+                instructions = instructions + 1;
+                if instructions > 4
+                    instructions = 5;
+                end
         end
-        keyName=[];
+        % update selection to last button press
+        
+        instFilename = ['instructions/games2x2_instructions' num2str(instructions) '.png'];
+        imdata=imread(instFilename);
+        
+        tex=Screen('MakeTexture', w, imdata);
+        
+        % Draw texture image to backbuffer. It will be automatically
+        % centered in the middle of the display if you don't specify a
+        % different destination:
+        Screen('DrawTexture', w, tex);
+        
+        Screen('Flip', w);
+        
+        
     end
+    keyName=[];
+
+
+
+% OLD PAGE MOVEMENT - DELETE WHEN ARROWS FUNCTION
+%     for instructions=1:4;
+%         while(~strcmp(keyName,'space')) % continues until current keyName is space
+%             
+%             %         scale_question = {'Please rate how you feel';
+%             % 'by tapping the arrow keys.'; 'Press ''SPACE'' to continue.'};
+%             % for line_num = 1:length(scale_question)
+%             % line_width = RectWidth(Screen('TextBounds',window,scale_question{line_num}));
+%             % Screen('DrawText', window, scale_question{line_num}, screenCenter(1) - line_width/2, ...
+%             % screenCenter(2) - fontSize * (2 + length(scale_question)-line_num+1), ratingPenColor);
+%             
+%             instFilename = ['instructions/games2x2_instructions' num2str(instructions) '.png'];
+%             imdata=imread(instFilename);
+%             
+%             tex=Screen('MakeTexture', w, imdata);
+%             
+%             % Draw texture image to backbuffer. It will be automatically
+%             % centered in the middle of the display if you don't specify a
+%             % different destination:
+%             Screen('DrawTexture', w, tex);
+%             
+%             Screen('Flip', w);   
+%             
+%             [keyTime, keyCode]=KbWait([],2);
+%             keyName=KbName(keyCode);
+%             
+%         end
+%         keyName=[];
+%     end
 
     
      %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
