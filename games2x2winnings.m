@@ -45,9 +45,6 @@ Screen('Flip', window)
 
 aOK=0; % initial value for aOK
 
-string = '';
-output = [inputReq1, ' ', string];
-
 while aOK ~= 1
     %     (~strcmp(keyName,'space'))
     
@@ -83,7 +80,7 @@ while aOK ~= 1
 %     end
 
     
-    [chosenGame, OK] = str2num(GetEchoStringForm(window, inputReq1, xPos1, yPos, cfg.textColor)); % displays string in PTB; allows backspace
+    [chosenGame, OK] = str2double(GetEchoStringForm(window, inputReq1, xPos1, yPos, cfg.textColor)); % displays string in PTB; allows backspace
     
     % potential alternative
     % number = GetNumber([deviceIndex][, untilTime=inf][, optional KbCheck arguments...])
@@ -94,14 +91,14 @@ while aOK ~= 1
     % chosenGame = input('Tasti il gioco scelto: ') % ITALIAN
     switch isempty(chosenGame)
         case 1 %deals with both cancel and X presses
-            chosenGame = GetEchoStringForm(window, fail1, xPos1, yPos, [0 0 0], [255 255 255]); % displays string in PTB; allows backspace
+            [chosenGame, OK] = str2double(GetEchoStringForm(window, fail1, xPos1, yPos, cfg.textColor)); % displays string in PTB; allows backspace
         case 0
             if OK == 0
                 aOK = 0;
-                chosenGame = GetEchoStringForm(window, fail1, xPos1, yPos, [0 0 0], [255 255 255]); % displays string in PTB; allows backspace
+                [chosenGame, OK] = str2double(GetEchoStringForm(window, fail1, xPos1, yPos, cfg.textColor)); % displays string in PTB; allows backspace
             elseif chosenGame <= 1 || chosenGame >= 48
                 aOK = 0;
-                chosenGame = GetEchoStringForm(window, fail1, xPos1, yPos, [0 0 0], [255 255 255]); % displays string in PTB; allows backspace
+                [chosenGame, OK] = str2double(GetEchoStringForm(window, fail1, xPos1, yPos, cfg.textColor)); % displays string in PTB; allows backspace
             else
                 aOK = 1;
             end
@@ -147,7 +144,7 @@ end
 % opponentChoice = input('Enter your selected opponent''s choice and press ''Enter'': ') % ENGLISH
 % inputReq2 = 'Tasti la scelta del tuo avversario e premi ''Enter'': '; % ITALIAN
 % fail2='Si prega tastere 1 o 2 e premi ''Enter'': '; % ITALIAN
-[opponentChoice, OK] = str2num(GetEchoStringForm(window, inputReq2, xPos2, yPos2, cfg.textColor)); % displays string in PTB; allows backspace
+[opponentChoice, OK] = str2double(GetEchoStringForm(window, inputReq2, xPos2, yPos2, cfg.textColor)); % displays string in PTB; allows backspace
 
 % disp({'Enter your selected opponent''s choice.'}, {'And then tell them your reported choice.'})
 % disp({'Tasti la scelta del tuo avversario.'},{'E poi, dica al avversario il tuo scelto.'})
@@ -156,15 +153,15 @@ end
 
 switch isempty(opponentChoice)
     case 1 %deals with both cancel and X presses 
-        opponentChoice = GetEchoStringForm(window, fail2, xPos2, yPos2, cfg.textColor) % displays string in PTB; allows backspace
+        [opponentChoice, OK] = str2double(GetEchoStringForm(window, fail2, xPos2, yPos2, cfg.textColor)); % displays string in PTB; allows backspace
 
     case 0
         if OK == 0
-        opponentChoice = GetEchoStringForm(window, fail2, xPos2, yPos2, cfg.textColor) % displays string in PTB; allows backspace            
+        [opponentChoice, OK] = str2double(GetEchoStringForm(window, fail2, xPos2, yPos2, cfg.textColor)); % displays string in PTB; allows backspace            
         elseif opponentChoice == (1 || 2)
         opponentChoice=opponentChoice;
         else
-        opponentChoice = GetEchoStringForm(window, fail2, xPos2, yPos2, cfg.textColor) % displays string in PTB; allows backspace
+        [opponentChoice, OK] = str2double(GetEchoStringForm(window, fail2, xPos2, yPos2, cfg.textColor)); % displays string in PTB; allows backspace
         end
         
 end
