@@ -90,7 +90,8 @@ arrowChoice = leftArrowpos;
 arrowNonChoice = rightArrowpos;
 
 % Display text
-topInstructText = ['Choose which wheel to play.'];
+% topInstructText = ['Choose which wheel to play.']; % ENGLISH
+topInstructText = 'Scegli quale ruota girare.'; % Italian
 
 % Select specific text font, style and size:
 fontSize = round(screenYpixels * 2/60);
@@ -156,89 +157,52 @@ vbl = Screen('Flip', window);
 waitframes = 1;
 
 %% Screen 0 - Instructions
-% Instruct text positions
-instruct1TextYpos = screenYpixels * 2/42; 
-instruct2TextYpos = screenYpixels * 4/42; 
-instruct3TextYpos = screenYpixels * 6/42; 
-instruct4TextYpos = screenYpixels * 8/42; 
-instruct5TextYpos = screenYpixels * 10/42; 
-instruct6TextYpos = screenYpixels * 12/42; 
-instruct7TextYpos = screenYpixels * 14/42; 
-instruct8TextYpos = screenYpixels * 16/42; 
-instruct9TextYpos = screenYpixels * 18/42; 
-instruct10TextYpos = screenYpixels * 20/42; 
-instruct11TextYpos = screenYpixels * 22/42; 
-instruct12TextYpos = screenYpixels * 24/42; 
-instruct13TextYpos = screenYpixels * 26/42; 
-instruct14TextYpos = screenYpixels * 28/42; 
-instruct15TextYpos = screenYpixels * 30/42; 
-instruct16TextYpos = screenYpixels * 32/42; 
-instruct17TextYpos = screenYpixels * 34/42; 
-instruct18TextYpos = screenYpixels * 36/42; 
-instruct19TextYpos = screenYpixels * 38/42; 
-instructbotTextYpos = screenYpixels * 40/42; 
 
-% Instruction text
-instructText0 = ['Hit the SPACE bar to continue.'];
-
-instructText11 = ['You will see two lottery wheels,'];
-instructText12 = ['each split into a winning portion '];
-instructText13 = ['and a losing portion.'];
-instructText14 = ['You must choose one by pressing the'];
-instructText15 = ['left arrow key or the right arrow key.'];
-instructText16 = ['A pointer will spin, and if it stops'];
-instructText17 = ['in the winning portion, your score'];
-instructText18 = ['increases; if it is pointing to the'];
-instructText19 = ['losing portion, your score decreases.'];
-
-instructText20 = ['You will also see the result of the'];
-instructText21 = ['wheel you did not choose, but it will'];
-instructText22 = ['not change your score.'];
-
-instructText23 = ['You will practice 10 times, but these'];
-instructText24 = ['trials do not affect your payment.'];
-instructText25 = ['The final game is the only one that'];
-instructText26 = ['matters, and you will be told when'];
-instructText27 = ['that game is about to happen.'];
-instructText28 = ['In that game, you can either add to'];
-instructText29 = ['your 50 euros or lose from it.'];
-
-% Instruction text colors
-instructCola = [0, 0.4078, 0.5451]; %DeepSkyBlue4
-instructColb = [0.8039, 0.5843, 0.0471]; %DarkGoldenRod3
-black = [0, 0 , 0];
-
-keyName=''; % empty initial value
-
-
-while(~strcmp(keyName,'space')) % continues until current keyName is space
+    keyName=''; % empty initial value
+    instructions = 1;
+    instFilename = ['instructions/WoF_instructions' num2str(instructions) '.png'];
+    imdata=imread(instFilename);    
+    tex=Screen('MakeTexture', window, imdata);
+    Screen('DrawTexture', window, tex);
+    Screen('Flip', window);
     
-    DrawFormattedText(window, instructText11, 'center', instruct1TextYpos, instructCola); % Draw betting instructions
-    DrawFormattedText(window, instructText12, 'center', instruct2TextYpos, instructCola); % Draw betting instructions
-    DrawFormattedText(window, instructText13, 'center', instruct3TextYpos, instructCola); % Draw betting instructions
-    DrawFormattedText(window, instructText14, 'center', instruct4TextYpos, instructCola); % Draw betting instructions
-    DrawFormattedText(window, instructText15, 'center', instruct5TextYpos, instructCola); % Draw betting instructions
-    DrawFormattedText(window, instructText16, 'center', instruct6TextYpos, instructCola); % Draw betting instructions
-    DrawFormattedText(window, instructText17, 'center', instruct7TextYpos, instructCola); % Draw betting instructions
-    DrawFormattedText(window, instructText18, 'center', instruct8TextYpos, instructCola); % Draw betting instructions
-    DrawFormattedText(window, instructText19, 'center', instruct9TextYpos, instructCola); % Draw betting instructions
-    DrawFormattedText(window, instructText20, 'center', instruct10TextYpos, instructColb); % Draw betting instructions
-    DrawFormattedText(window, instructText21, 'center', instruct11TextYpos, instructColb); % Draw betting instructions
-    DrawFormattedText(window, instructText22, 'center', instruct12TextYpos, instructColb); % Draw betting instructions
-    DrawFormattedText(window, instructText23, 'center', instruct13TextYpos, instructCola); % Draw betting instructions
-    DrawFormattedText(window, instructText24, 'center', instruct14TextYpos, instructCola); % Draw betting instructions
-    DrawFormattedText(window, instructText25, 'center', instruct15TextYpos, instructCola); % Draw betting instructions
-    DrawFormattedText(window, instructText26, 'center', instruct16TextYpos, instructCola); % Draw betting instructions
-    DrawFormattedText(window, instructText27, 'center', instruct17TextYpos, instructCola); % Draw betting instructions
-    DrawFormattedText(window, instructText28, 'center', instruct18TextYpos, instructCola); % Draw betting instructions
-    DrawFormattedText(window, instructText29, 'center', instruct19TextYpos, instructCola); % Draw betting instructions
-    DrawFormattedText(window, instructText0, 'center', instructbotTextYpos, black); % Draw betting instructions
-    Screen('Flip', window); % Flip to the screen
-
-    [keyTime, keyCode]=KbWait([],2);
-    keyName=KbName(keyCode);
-
+while ~strcmp(keyName,'space')
+    
+%     while ~strcmp(num2str(instructions), '5')
+        
+        [keyTime, keyCode]=KbWait([],2);
+        keyName=KbName(keyCode);
+        
+        switch keyName
+            case 'LeftArrow'
+                instructions = instructions - 1;
+                if instructions < 1
+                    instructions = 1;
+                end
+            case 'RightArrow'
+                instructions = instructions + 1;
+                if instructions > 2
+                    instructions = 2;
+                end
+        end
+        % update selection to last button press
+        
+        instFilename = ['instructions/WoF_instructions' num2str(instructions) '.png'];
+        imdata=imread(instFilename);
+        
+        tex=Screen('MakeTexture', window, imdata);
+        
+        % Draw texture image to backbuffer. It will be automatically
+        % centered in the middle of the display if you don't specify a
+        % different destination:
+        Screen('DrawTexture', window, tex);
+        
+        Screen('Flip', window);
+        
+        
+%     end
 end
+
 
 WaitSecs(.25);
 
@@ -249,7 +213,7 @@ for i=1:NUMROUNDS
 
 %% Screen 1
 
-keyName=''; % empty initial value
+keyName=[]; % empty initial value
 
 %     [keyTime, keyCode]=KbWait([],2);
 %     keyName=KbName(keyCode);
@@ -385,12 +349,14 @@ if wofChoice(i,1) == 1    % Participant chose wheel 1
     if arrowAngleL > 360*regretTasktrialWheels.wlp2(i);   % If endpoint of arrow is greater than loss zone, win
     winAmount(i) = regretTasktrialWheels.wlv1(i);
     wofEarnings(i,1) = winAmount(i);  % set earngings for log file
-    botResultText = ['You won ' num2str(winAmount(i)) '.'];  % Set feedback text to winning message
+%     botResultText = ['You won ' num2str(winAmount(i)) '.'];  % Set feedback text to winning message ENGLISH
+    botResultText = ['Hai vinto ' num2str(winAmount(i)) '.'];  % Set feedback text to winning message ITALIAN
     botTextColor = winColors;
     else   % If endpoint of arrow is less than loss zone, loss
     lossAmount(i) = regretTasktrialWheels.wlv2(i);
     wofEarnings(i,1) = lossAmount(i);  % set losses for log file
-    botResultText = ['You lost ' num2str(-lossAmount(i)) '.'];  % Set feedback text to losing message
+%     botResultText = ['You lost ' num2str(-lossAmount(i)) '.'];  % Set feedback text to losing message ENGLISH
+    botResultText = ['Hai perso ' num2str(-lossAmount(i)) '.'];  % Set feedback text to losing message ITALIAN
     botTextColor = loseColors;
     end
 
@@ -399,12 +365,14 @@ elseif wofChoice(i,1) == 2    % Participant chose wheel 2
     if arrowAngleR > 360*regretTasktrialWheels.wrp2(i);   % If endpoint of arrow is greater than loss zone, win
     winAmount(i) = regretTasktrialWheels.wrv1(i);
     wofEarnings(i,1) = winAmount(i);  % set earngings for log file
-    botResultText = ['You won ' num2str(winAmount(i)) '.'];  % Set feedback text to winning message
+%     botResultText = ['You won ' num2str(winAmount(i)) '.'];  % Set feedback text to winning message ENGLISH
+    botResultText = ['Hai vinto ' num2str(winAmount(i)) '.'];  % Set feedback text to winning message ITALIAN
     botTextColor = winColors;
     else   % If endpoint of arrow is less than loss zone, loss
     lossAmount(i) = regretTasktrialWheels.wrv2(i);
     wofEarnings(i,1) = lossAmount(i);  % set losses for log file
-    botResultText = ['You lost ' num2str(-lossAmount(i)) '.'];  % Set feedback text to losing message
+%     botResultText = ['You lost ' num2str(-lossAmount(i)) '.'];  % Set feedback text to losing message ENGLISH
+    botResultText = ['Hai perso ' num2str(-lossAmount(i)) '.'];  % Set feedback text to losing message ITALIAN
     botTextColor = loseColors;
     end
 

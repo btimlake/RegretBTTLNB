@@ -1,4 +1,4 @@
-function [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber)% Clear the workspace and the screen
+function [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg)% Clear the workspace and the screen
 
 % load('regretTasktrialWheels1shot.mat')       % Load the preset wheel probabilites and values TABLE
 load('regretTasktrialWheels1shotDataset.mat')       % Load the preset wheel probabilites and values DATASET
@@ -499,7 +499,7 @@ for i = 1:16; % multiply second integer by .75 to get seconds; i.e. 16 means 12 
     
     if mod(i,2) == 0 %Even numbers: wait text on
         % Please Wait text
-        DrawFormattedText(window, 'Si prega di attendere un attimo il gioco Patent Race ... ', 'center', waitTextYpos, instructCola);
+        DrawFormattedText(window, 'Si prega di attendere un attimo il gioco Patent Race ... ', 'center', cfg.waitTextYpos, cfg.instColA);
         Screen('Flip', window)
         WaitSecs(1);
     else %Odd numbers: wait text off
