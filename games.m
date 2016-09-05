@@ -116,8 +116,15 @@ try
     %% Instruction screens
     keyName=[];
     instructions = 1;
+    instFilename = ['instructions/games2x2_instructions' num2str(instructions) '.png'];
+    imdata=imread(instFilename);    
+    tex=Screen('MakeTexture', w, imdata);
+    Screen('DrawTexture', w, tex);
+    Screen('Flip', w);
     
-    while (~strcmp(instructions, '5') && ~strcmp(keyName,'space'))
+while ~strcmp(keyName,'space')
+    
+%     while ~strcmp(num2str(instructions), '5')
         
         [keyTime, keyCode]=KbWait([],2);
         keyName=KbName(keyCode);
@@ -131,7 +138,7 @@ try
             case 'RightArrow'
                 instructions = instructions + 1;
                 if instructions > 4
-                    instructions = 5;
+                    instructions = 4;
                 end
         end
         % update selection to last button press
@@ -149,7 +156,9 @@ try
         Screen('Flip', w);
         
         
-    end
+%     end
+end
+
     keyName=[];
 
 
