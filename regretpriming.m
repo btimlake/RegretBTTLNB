@@ -30,8 +30,8 @@ if ismac
     disabledKeys=[];
     skipSyncTest=[];
     screenRes=[];
-%     enabledKeys = RestrictKeysForKbCheck([30, 44, 79, 80, 81,82]); % limit recognized presses to 1!, space, left, right, up, down arrows MAC
-    enabledKeys = RestrictKeysForKbCheck([]); % for debugging
+    enabledKeys = RestrictKeysForKbCheck([30, 44, 79, 80, 81,82]); % limit recognized presses to 1!, space, left, right, up, down arrows MAC
+%     enabledKeys = RestrictKeysForKbCheck([]); % for debugging
     
 elseif isunix
     % Code to run on Linux plaform
@@ -45,22 +45,6 @@ else
     disp('Platform not supported')
 end
 
-
-%% OLD PARTICIPANT NUMBER - DELETE WHEN NEW VERSION WORKS
-%%% Enter participant number (taken from:
-%%% http://www.academia.edu/2614964/Creating_experiments_using_Matlab_and_Psychtoolbox)
-% fail1='Please enter a participant number.'; %error  message
-% prompt = {'Enter participant number:'};
-% dlg_title ='New Participant';
-% num_lines = 1;
-% def = {'0'};
-% answer = inputdlg(prompt,dlg_title,num_lines,def);%presents box to enterdata into
-% switch isempty(answer)
-%     case 1 %deals with both cancel and X presses 
-%         error(fail1)
-%     case 0
-%         particNum=(answer{1});
-% end
 
 %% Hide cursor, stop input in command screen
 % uncomment INLAB
@@ -91,15 +75,20 @@ black = BlackIndex(screenNumber);
 cfg.screenSize.x = screenXpixels; 
 cfg.screenSize.y = screenYpixels;
 cfg.fontSize = round(screenYpixels * 2/40);
+% Colors
 cfg.textColor = [0, 0, 0]; % black
 % cfg.bgColor = [255, 255, 255];
 cfg.bgColor = [1, 1, 1]; % white
 cfg.instColA = [0, 0.4078, 0.5451]; %DeepSkyBlue4
 cfg.instColB = [0.8039, 0.5843, 0.0471]; %DarkGoldenRod3
+cfg.p1Col = [0, 0, 0.8039]; %MediumBlue
+cfg.p2Col = [0.4314, 0.4824, 0.5451]; % LightSteelBlue4
+cfg.winCol = [.1333, .5451, .1333]; %ForestGreen
+% Positions
 cfg.screenCenter = [xCenter, yCenter]; % center coordinatesf
-
-% TEMP
-% gamesdatafilename = 'sub444-2208-2048_4games2x2.dat';
+cfg.topTextYpos = screenYpixels * 2/40; % Screen Y positions of top/instruction text
+cfg.botTextYpos = screenYpixels * 35/40; % Screen Y positions of bottom/result text
+cfg.waitTextYpos = screenYpixels * 38/40; % Y position of lowest "Please Wait" text
 
 
 %% Screen 0: Participant number entry 
@@ -186,21 +175,29 @@ end
 particNum = [insertDate, compNum];
 
 %% call scripts
-[gamesdatafilename]=games(particNum, DateTime, window, windowRect, 10, enabledKeys);
-% %     [gamesdatafilename]=games(subNo, anni, w, wRect, NUMROUNDS, enabledKeys)
-% WaitSecs(2)
+% [gamesdatafilename]=games(particNum, DateTime, window, windowRect, 48, enabledKeys, cfg);
+%    [gamesdatafilename]=games(subNo, anni, w, wRect, NUMROUNDS, enabledKeys, cfg)
 % patentTaskInstructions(window, windowRect, enabledKeys, cfg, player1maxbid);
-% % regretTask(particNum, DateTime, window, windowRect, enabledKeys);
-%     [totalEarnings] = regretTask(particNum, DateTime, window, windowRect, enabledKeys)% Clear the workspace and the screen
-[total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber);
-% %     [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber)% Clear the workspace and the screen
+% [totalEarnings] = regretTask(particNum, DateTime, window, windowRect, enabledKeys);% Clear the workspace and the screen
+%       regretTask(particNum, DateTime, window, windowRect, enabledKeys);
+[total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg);
+%     [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg)% Clear the workspace and the screen
 % [player1Earnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, 'fictive', 4, enabledKeys);
-% [player1Earnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, 'fictive', player1maxbid, enabledKeys);
+%     [player1Earnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, 'fictive', player1maxbid, enabledKeys);
 %     [player1Earnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, player2Strategy, player1maxbid, enabledKeys)
 % [winningsMPL, earningsRaven] = questionnaires(particNum, DateTime, window, windowRect)
 % [rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTime, window, windowRect, enabledKeys)
-% [rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTi me,  wi n dow, windowRect, enabledKeys)
-[winnings2x2, chosenGame, opponentChoice]=games2x2winnings(gamesdatafilename, cfg, window);
+%     [rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTi me,  wi n dow, windowRect, enabledKeys)
+% [winnings2x2, chosenGame, opponentChoice]=games2x2winnings(gamesdatafilename, cfg, window);
+
+winnings2x2 = 9;
+player1Earnings = 10;
+winningsMPL = 3.85;
+earningsRaven = 6;
+
+payouts(cfg, window, 10, 'Show-up pagamento', winnings2x2, 'Rows & Colums', total1shotEarnings, ...
+    'Ruota della fortuna', player1Earnings, 'Patent Race', winningsMPL, 'Lista dei prezzi', ...
+    earningsRaven, 'Puzzles')
 % payouts(winnings2x2, gamesdatafilename, total1shotEarnings, player1Earnings, winningsMPL, earningsRaven)
 sca;
 
