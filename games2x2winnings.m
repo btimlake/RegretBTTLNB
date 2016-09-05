@@ -2,7 +2,7 @@ function [winnings2x2, chosenGame, opponentChoice]=games2x2winnings(gamesdatafil
 
 % enable all number keys depending on platform
 if ismac
-enabledKeys = RestrictKeysForKbCheck([30:39, 44, 79, 80, 81,82]); % add all number keys and Space
+    enabledKeys = RestrictKeysForKbCheck([30:39, 44, 79, 80, 81,82]); % add all number keys and Space
 elseif isunix
     disp('Unix');
 elseif ispc
@@ -11,29 +11,31 @@ elseif ispc
 end
 
 gamedata = dataset('File', gamesdatafilename, 'ReadVarNames', false, 'Delimiter', ' ');
- % convert ASCII file of user choices to usable dataset
+% convert ASCII file of user choices to usable dataset
 load('matching_responsesDATASET');
 
 % Select specific text font, style and size:
 screenXpixels=cfg.screenSize.x;
-    Screen('TextFont', window, 'Courier New');
-    Screen('TextSize', window, cfg.fontSize);
-    Screen('TextStyle', window);
-    Screen('TextColor', window, cfg.textColor);
-    
+Screen('TextFont', window, 'Courier New');
+Screen('TextSize', window, cfg.fontSize);
+Screen('TextStyle', window);
+Screen('TextColor', window, cfg.textColor);
+
 inputReq1 = 'Tasti il gioco scelto e premi ''Enter'': '; % ITALIAN
 fail1='Si prega tastere un numero di gioco e premi ''Enter'': '; % ITALIAN
 inputReq2 = 'Tasti la scelta del tuo avversario e premi ''Enter'': '; % ITALIAN
 fail2='Si prega tastere 1 o 2 e premi ''Enter'': '; % ITALIAN
-    
-    [nx, ny1, textRect1]=DrawFormattedText(window, inputReq1, 0, 0, cfg.bgColor); % draws a dummy version of text just to get measurements
-    [nx, ny2, textRect2]=DrawFormattedText(window, inputReq2, 0, ny1, cfg.bgColor); % draws a dummy version of text just to get measurements
-	textWidth1 = textRect1(3)-textRect1(1); % figures width of bounding rectangle of text
-	textWidth2 = textRect2(3)-textRect2(1); % figures width of bounding rectangle of text
-    xPos1 = cfg.screenCenter(1) - textWidth1/2; % sets x position half the text length back from center 
-    xPos2 = cfg.screenCenter(1) - textWidth2/2; % sets x position half the text length back from center 
-    yPos = cfg.screenCenter(2);
-    yPos2 = yPos + ny1; 
+
+[nx, ny1, textRect1]=DrawFormattedText(window, inputReq1, 0, 0, cfg.bgColor); % draws a dummy version of text just to get measurements
+[nx, ny2, textRect2]=DrawFormattedText(window, inputReq2, 0, ny1, cfg.bgColor); % draws a dummy version of text just to get measurements
+textWidth1 = textRect1(3)-textRect1(1); % figures width of bounding rectangle of text
+textWidth2 = textRect2(3)-textRect2(1); % figures width of bounding rectangle of text
+textHeight = textRect1(4)-textRect1(2); % for positioning top text
+yPos0 = textHeight * 2; % position for reporting text
+xPos1 = cfg.screenCenter(1) - textWidth1/2; % sets x position half the text length back from center
+xPos2 = cfg.screenCenter(1) - textWidth2/2; % sets x position half the text length back from center
+yPos = cfg.screenCenter(2);
+yPos2 = yPos + ny1;
 Screen('Flip', window)
 
 %% Input chosen game in PTB
@@ -48,45 +50,44 @@ aOK=0; % initial value for aOK
 while aOK ~= 1
     %     (~strcmp(keyName,'space'))
     
-%     Screen('DrawFormattedText', window, inputReq1, xPos1, yPos, cfg.textColor);
-%     Screen('Flip', window, 0, 1);
-%     while true
-%         char = GetChar;
-%         
-%         if isempty(char)
-%             string = '';
-%             break;
-%         end
-%         
-%         switch (abs(char))
-%             case 8
-%                 % backspace
-%                 if ~isempty(string)
-%                     % Redraw text string, but with textColor == bgColor, so
-%                     % that the old string gets completely erased:
-%                     oldTextColor = Screen('TextColor', window);
-%                     Screen('DrawFormattedText', window, output, xPos1, yPos, cfg.bgColor);
-%                     Screen('TextColor', window, oldTextColor);
-%                     
-%                     % Remove last character from string:
-%                     string = string(1:length(string)-1);
-%                 end
-%             otherwise
-%                 string = [string, char]; %#ok<AGROW>
-%         end
-%         output = [msg, ' ', string];
-%         Screen('DrawFormattedText', window, output, xPos1, yPos, cfg.textColor);
-%         Screen('Flip', window, 0, 1);
-%     end
-
+    %     Screen('DrawFormattedText', window, inputReq1, xPos1, yPos, cfg.textColor);
+    %     Screen('Flip', window, 0, 1);
+    %     while true
+    %         char = GetChar;
+    %
+    %         if isempty(char)
+    %             string = '';
+    %             break;
+    %         end
+    %
+    %         switch (abs(char))
+    %             case 8
+    %                 % backspace
+    %                 if ~isempty(string)
+    %                     % Redraw text string, but with textColor == bgColor, so
+    %                     % that the old string gets completely erased:
+    %                     oldTextColor = Screen('TextColor', window);
+    %                     Screen('DrawFormattedText', window, output, xPos1, yPos, cfg.bgColor);
+    %                     Screen('TextColor', window, oldTextColor);
+    %
+    %                     % Remove last character from string:
+    %                     string = string(1:length(string)-1);
+    %                 end
+    %             otherwise
+    %                 string = [string, char]; %#ok<AGROW>
+    %         end
+    %         output = [msg, ' ', string];
+    %         Screen('DrawFormattedText', window, output, xPos1, yPos, cfg.textColor);
+    %         Screen('Flip', window, 0, 1);
+    %     end
+    
     
     chosenGame = str2double(GetEchoStringForm(window, inputReq1, xPos1, yPos, cfg.textColor)); % displays string in PTB; allows backspace
     
     % potential alternative
     % number = GetNumber([deviceIndex][, untilTime=inf][, optional KbCheck arguments...])
+    % Should repeat as long as while condition satisfied
     
-    % HOW TO GET THIS TO ALLOW REPEATED INPUT?
-%     TRY BREAK OR RETURN
     % chosenGame = input('Enter the randomly selected game: ') % ENGLISH
     % chosenGame = input('Tasti il gioco scelto: ') % ITALIAN
     switch isempty(chosenGame)
@@ -96,13 +97,15 @@ while aOK ~= 1
         case 0
             if chosenGame <= 1 || chosenGame >= 48
                 aOK = 0;
-             Screen('Flip', window)
-               chosenGame = str2double(GetEchoStringForm(window, fail1, xPos1, yPos, cfg.textColor)); % displays string in PTB; allows backspace
+                Screen('Flip', window)
+                chosenGame = str2double(GetEchoStringForm(window, fail1, xPos1, yPos, cfg.textColor)); % displays string in PTB; allows backspace
             else
                 aOK = 1;
                 Screen('Flip', window)
             end
     end
+    Screen('Flip', window)
+    
 end
 
 
@@ -117,7 +120,7 @@ matchedChoice = gamedata.Var5(matchedTrial);
 
 if strcmp(chosenChoice, 'UpArrow') == 1
     numberChoice = 1;
-elseif strcmp(chosenChoice, 'DownArrow') == 1 
+elseif strcmp(chosenChoice, 'DownArrow') == 1
     numberChoice = 2;
 else
     disp('Something bad happened with chosenChoice')
@@ -129,10 +132,10 @@ end
 % NEVER PRODUCED
 
 % get the choice from the matched game
-% these numbers are flipped because of how the grids match up 
+% these numbers are flipped because of how the grids match up
 if strcmp(matchedChoice, 'UpArrow') == 1
-    numberMatch = 2; % 
-elseif strcmp(matchedChoice, 'DownArrow') == 1 
+    numberMatch = 2; %
+elseif strcmp(matchedChoice, 'DownArrow') == 1
     numberMatch = 1;
 else
     disp('Something bad happened with matchedChoice')
@@ -141,30 +144,46 @@ end
 % report matched choice
 % disp(numberMatch)
 
+thisChoiceTex = 'Dice al avversario indicato che la tua scelta e ' numberMatch '.';
+
+thisChoice = DrawFormattedText(window, thisChoiceTex, 'center', yPos0, cfg.instColA); % Draw betting instructions
+
 %% Input opponent choice
 % opponentChoice = input('Enter your selected opponent''s choice and press ''Enter'': ') % ENGLISH
 % inputReq2 = 'Tasti la scelta del tuo avversario e premi ''Enter'': '; % ITALIAN
 % fail2='Si prega tastere 1 o 2 e premi ''Enter'': '; % ITALIAN
-opponentChoice = str2double(GetEchoStringForm(window, inputReq2, xPos2, yPos2, cfg.textColor)); % displays string in PTB; allows backspace
 
-% disp({'Enter your selected opponent''s choice.'}, {'And then tell them your reported choice.'})
-% disp({'Tasti la scelta del tuo avversario.'},{'E poi, dica al avversario il tuo scelto.'})
-% % enter opponent's choice for chosen game
-% opponentChoice = user_input;
+aOK=0; % initial value for aOK
 
-switch isempty(opponentChoice)
-    case 1 %deals with both cancel and X presses 
+while aOK ~= 1
+    opponentChoice = str2double(GetEchoStringForm(window, inputReq2, xPos2, yPos2, cfg.textColor)); % displays string in PTB; allows backspace
+    
+    % disp({'Enter your selected opponent''s choice.'}, {'And then tell them your reported choice.'})
+    % disp({'Tasti la scelta del tuo avversario.'},{'E poi, dica al avversario il tuo scelto.'})
+    % % enter opponent's choice for chosen game
+    % opponentChoice = user_input;
+    
+    switch isempty(opponentChoice)
+        case 1 %deals with both cancel and X presses
             Screen('Flip', window)
-        opponentChoice = str2double(GetEchoStringForm(window, fail2, xPos2, yPos2, cfg.textColor)); % displays string in PTB; allows backspace
-
-    case 0
-        if opponentChoice == (1 || 2)
-            Screen('Flip', window)
-        else
-            Screen('Flip', window)
-        opponentChoice = str2double(GetEchoStringForm(window, fail2, xPos2, yPos2, cfg.textColor)); % displays string in PTB; allows backspace
-        end
-        
+            thisChoice;
+            opponentChoice = str2double(GetEchoStringForm(window, fail2, xPos2, yPos2, cfg.textColor)); % displays string in PTB; allows backspace
+            
+        case 0
+            if opponentChoice == (1 || 2)
+                aOK = 0;
+                Screen('Flip', window)
+            else
+                aOK = 1;
+                Screen('Flip', window)
+                thisChoice;
+                opponentChoice = str2double(GetEchoStringForm(window, fail2, xPos2, yPos2, cfg.textColor)); % displays string in PTB; allows backspace
+            end
+            
+    end
+    
+    Screen('Flip', window)
+    
 end
 
 % pairedOutcome = ['r_c' num2str(numberChoice) num2str(opponentChoice)];
@@ -175,13 +194,13 @@ switch numberChoice
     case 1
         if opponentChoice == 1
             winnings2x2 = matchingresponsesDATASET.r_c11(chosenGame);
-        else 
+        else
             winnings2x2 = matchingresponsesDATASET.r_c12(chosenGame);
         end
-    case 2 
+    case 2
         if opponentChoice == 1
             winnings2x2 = matchingresponsesDATASET.r_c21(chosenGame);
-        else 
+        else
             winnings2x2 = matchingresponsesDATASET.r_c22(chosenGame);
         end
 end
@@ -191,19 +210,19 @@ end
 % payout2x2 = ['You won ' num2str(winnings2x2) '.']; %ENGLISH
 payout2x2 = ['Hai vinto ' num2str(winnings2x2) '.']; %ITALIAN
 
-    DrawFormattedText(window, payout2x2, 'center', 'center'); % Result text
+DrawFormattedText(window, payout2x2, 'center', 'center'); % Result text
 
-    Screen('Flip', window)
-    
-    WaitSecs(4); 
+Screen('Flip', window)
+
+WaitSecs(4);
 
 % gamedata.3(chosenGame) = my_choiceVar6
-% 
+%
 % disp(my_choice)
-% 
+%
 % game.4(chosenGame) = matchedGame
-% 
-% game.matchedGame(chosenGame) = winnings2x2 
+%
+% game.matchedGame(chosenGame) = winnings2x2
 
 
 
