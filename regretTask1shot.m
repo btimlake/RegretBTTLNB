@@ -465,6 +465,15 @@ end
 
 WaitSecs(2.5); 
 
+%% Screen 5 - Emotional rating
+
+currentRound = i;
+
+[currRatingSelection, wof1shotRatingDuration] = likert_slider(window, windowRect, enabledKeys);
+ 
+wof1shotemotionalRating = currRatingSelection;
+
+end
 %% Screen 4a - Please wait; hold on result
 
 for i = 1:16; % multiply second integer by .75 to get seconds; i.e. 16 means 12 seconds
@@ -501,15 +510,7 @@ for i = 1:16; % multiply second integer by .75 to get seconds; i.e. 16 means 12 
 end
  
 
-%% Screen 5 - Emotional rating
 
-currentRound = i;
-
-[currRatingSelection, wof1shotRatingDuration] = likert_slider(window, windowRect, enabledKeys);
- 
-wof1shotemotionalRating = currRatingSelection;
-
-end
 %% End-of-block calculations and create log file
 for i=1:NUMROUNDS
         wof1shotChoiceDuration(i) = wofTrialEndTime(i)-wofTrialStartTime(i);
