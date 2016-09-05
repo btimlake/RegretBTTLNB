@@ -93,7 +93,9 @@ cfg.screenSize.y = screenYpixels;
 cfg.fontSize = round(screenYpixels * 2/40);
 cfg.textColor = [0, 0, 0]; % black
 % cfg.bgColor = [255, 255, 255];
-cfg.bgColor = [1, 1, 1];
+cfg.bgColor = [1, 1, 1]; % white
+cfg.instColA = [0, 0.4078, 0.5451]; %DeepSkyBlue4
+cfg.instColB = [0.8039, 0.5843, 0.0471]; %DarkGoldenRod3
 cfg.screenCenter = [xCenter, yCenter]; % center coordinatesf
 
 % TEMP
@@ -109,9 +111,9 @@ screenXpixels=cfg.screenSize.x;
     Screen('TextColor', window, cfg.textColor);
     
 inputReq1 = 'Tasti il numero sopra il tuo computer come due cifre \n e premi ''Enter'': '; % ITALIAN
-fail1='Si prega tastere esattamente due cifre e premi ''Enter'': '; % ITALIAN
+fail1='Si prega tastere esattamente due cifre \n e premi ''Enter'': '; % ITALIAN
 inputReq2 = 'Tasti il dato come e'' scritto su lavagna \n e premi ''Enter'': '; % ITALIAN
-fail2='Si prega tastere quattro numeri e premi ''Enter'': '; % ITALIAN
+fail2='Si prega tastere quattro numeri \n e premi ''Enter'': '; % ITALIAN
     
     [nx, ny1, textRect1]=DrawFormattedText(window, inputReq1, 0, 0, cfg.bgColor); % draws a dummy version of text just to get measurements
     [nx, ny2, textRect2]=DrawFormattedText(window, inputReq2, 0, ny1, cfg.bgColor); % draws a dummy version of text just to get measurements
@@ -131,23 +133,26 @@ while aOK ~= 1
     
     % HOW TO GET THIS TO ALLOW REPEATED INPUT?
 %     TRY BREAK OR RETURN
+% TRY CATCH INSTEAD - step back in a while loop
     % compNum = input('Enter the number of your computer and then press "Enter": ') % ENGLISH
     % compNum = input('Tasti il numero sopra il tuo computer e poi premi "Enter": ') % ITALIAN
     switch isempty(compNum)
         case 1 %deals with both cancel and X presses
             Screen('Flip', window)
-            compNum = GetEchoStringForm(window, fail1, xPos1, yPos, [0 0 0], [255 255 255]); % displays string in PTB; allows backspace
+            compNum = GetEchoStringForm(window, fail1, xPos1, yPos, cfg.textColor); % displays string in PTB; allows backspace
         case 0
             if length(compNum) ~=2 || str2num(compNum) <= 1 || str2num(compNum) >= 18
                 aOK = 0;
                 Screen('Flip', window)
-                compNum = GetEchoStringForm(window, fail1, xPos1, yPos, [0 0 0], [255 255 255]); % displays string in PTB; allows backspace
+                compNum = GetEchoStringForm(window, fail1, xPos1, yPos, cfg.textColor); % displays string in PTB; allows backspace
             else
                 aOK = 1;
                 Screen('Flip', window)
                 
             end
     end
+                Screen('Flip', window)
+
 end
 
 aOK=0; % initial value for aOK
@@ -163,17 +168,19 @@ while aOK ~= 1
     switch isempty(insertDate)
         case 1 %deals with both cancel and X presses
             Screen('Flip', window)
-            insertDate = GetEchoStringForm(window, fail2, xPos2, yPos2, [0 0 0], [255 255 255]); % displays string in PTB; allows backspace
+            insertDate = GetEchoStringForm(window, fail2, xPos2, yPos2, cfg.textColor); % displays string in PTB; allows backspace
         case 0
             if length(insertDate) ~= 4;
                 aOK = 0;
             Screen('Flip', window)
-                insertDate = GetEchoStringForm(window, fail2, xPos2, yPos2, [0 0 0], [255 255 255]); % displays string in PTB; allows backspace
+                insertDate = GetEchoStringForm(window, fail2, xPos2, yPos2, cfg.textColor); % displays string in PTB; allows backspace
             else
                 aOK = 1;
                 Screen('Flip', window)
             end
     end
+                Screen('Flip', window)
+
 end
 
 particNum = [insertDate, compNum];
