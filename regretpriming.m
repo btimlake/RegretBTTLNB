@@ -130,10 +130,12 @@ while aOK ~= 1
             Screen('Flip', window)
             compNum = GetEchoStringForm(window, fail1, xPos1, yPos, cfg.textColor); % displays string in PTB; allows backspace
         case 0
-            if length(compNum) ~=2 || str2num(compNum) <= 1 || str2num(compNum) >= 18
-                aOK = 0;
+            if length(compNum) ~= 2 || str2num(compNum) <= 0 || str2num(compNum) >= 25
+%                 aOK = 0;
                 Screen('Flip', window)
-                compNum = GetEchoStringForm(window, fail1, xPos1, yPos, cfg.textColor); % displays string in PTB; allows backspace
+%                 compNum = GetEchoStringForm(window, fail1, xPos1, yPos, cfg.textColor); % displays string in PTB; allows backspace
+%                 break
+
             else
                 aOK = 1;
                 Screen('Flip', window)
@@ -180,7 +182,7 @@ particNum = [insertDate, compNum];
 % patentTaskInstructions(window, windowRect, enabledKeys, cfg, player1maxbid);
 % [totalEarnings] = regretTask(particNum, DateTime, window, windowRect, enabledKeys);% Clear the workspace and the screen
 %       regretTask(particNum, DateTime, window, windowRect, enabledKeys);
-[total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg);
+% [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg);
 %     [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg)% Clear the workspace and the screen
 % [player1Earnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, 'fictive', 4, enabledKeys);
 %     [player1Earnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, 'fictive', player1maxbid, enabledKeys);
@@ -188,8 +190,10 @@ particNum = [insertDate, compNum];
 % [winningsMPL, earningsRaven] = questionnaires(particNum, DateTime, window, windowRect)
 % [rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTime, window, windowRect, enabledKeys)
 %     [rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTi me,  wi n dow, windowRect, enabledKeys)
-% [winnings2x2, chosenGame, opponentChoice]=games2x2winnings(gamesdatafilename, cfg, window);
+gamesdatafilename = 'sub444-2208-2048_4games2x2.dat';
+[winnings2x2, chosenGame, opponentChoice]=games2x2winnings(gamesdatafilename, cfg, window);
 
+total1shotEarnings = -6;
 winnings2x2 = 9;
 player1Earnings = 10;
 winningsMPL = 3.85;

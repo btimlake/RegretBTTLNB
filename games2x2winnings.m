@@ -94,14 +94,19 @@ while aOK ~= 1
         case 1 %deals with both cancel and X presses
             Screen('Flip', window)
             chosenGame = str2double(GetEchoStringForm(window, fail1, xPos1, yPos, cfg.textColor)); % displays string in PTB; allows backspace
+            aOK = 0;
         case 0
             if chosenGame <= 1 || chosenGame >= 48
-                aOK = 0;
                 Screen('Flip', window)
                 chosenGame = str2double(GetEchoStringForm(window, fail1, xPos1, yPos, cfg.textColor)); % displays string in PTB; allows backspace
+                aOK = 0;
+            elseif chosenGame == NaN
+                 Screen('Flip', window)
+                 chosenGame = str2double(GetEchoStringForm(window, fail1, xPos1, yPos, cfg.textColor)); % displays string in PTB; allows backspace
+                 aOK = 0;
             else
-                aOK = 1;
                 Screen('Flip', window)
+                aOK = 1;
             end
     end
     Screen('Flip', window)
@@ -144,7 +149,7 @@ end
 % report matched choice
 % disp(numberMatch)
 
-thisChoiceTex = 'Dice al avversario indicato che la tua scelta e ' numberMatch '.';
+thisChoiceTex = ['Dice al avversario indicato che la tua scelta e'' ', num2str(numberMatch), '.'];
 
 thisChoice = DrawFormattedText(window, thisChoiceTex, 'center', yPos0, cfg.instColA); % Draw betting instructions
 
@@ -166,19 +171,30 @@ while aOK ~= 1
     switch isempty(opponentChoice)
         case 1 %deals with both cancel and X presses
             Screen('Flip', window)
-            thisChoice;
+            thisChoice; % does it repeat the display? If not, paste that Tex command here
             opponentChoice = str2double(GetEchoStringForm(window, fail2, xPos2, yPos2, cfg.textColor)); % displays string in PTB; allows backspace
-            
+            aOK = 0;
         case 0
-            if opponentChoice == (1 || 2)
-                aOK = 0;
+            if (opponentChoice == 1 || opponentChoice == 2)
                 Screen('Flip', window)
-            else
+                thisChoice; % does it repeat the display? If not, paste that Tex command here
                 aOK = 1;
+%             if opponentChoice ~= (1 || 2)
+%                 aOK = 0;
+%                 Screen('Flip', window)
+%                 thisChoice; % does it repeat the display? If not, paste that Tex command here
+%                 opponentChoice = str2double(GetEchoStringForm(window, fail2, xPos2, yPos2, cfg.textColor)); % displays string in PTB; allows backspace
+%             elseif isnan(opponentChoice)
+%                 aOK = 0;
+%                 Screen('Flip', window)
+%                 thisChoice; % does it repeat the display? If not, paste that Tex command here
+%                 opponentChoice = str2double(GetEchoStringForm(window, fail2, xPos2, yPos2, cfg.textColor)); % displays string in PTB; allows backspace
+            else
                 Screen('Flip', window)
-                thisChoice;
+                thisChoice; % does it repeat the display? If not, paste that Tex command here
                 opponentChoice = str2double(GetEchoStringForm(window, fail2, xPos2, yPos2, cfg.textColor)); % displays string in PTB; allows backspace
-            end
+                aOK = 0;
+           end
             
     end
     
