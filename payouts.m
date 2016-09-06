@@ -1,21 +1,111 @@
-function payouts(cfg, window, amount1, description1, amount2, description2, amount3, description3, amount4, description4, amount5, description5, ...
-    amount6, description6, amount7, description7, varargin)
+function payouts(cfg, window, varargin)
+
+% jsut varargin
+% 
+% then can do sanity checks for str v num
+
+% amount1, description1, amount2, description2, amount3, description3, amount4, description4, amount5, description5, ...
+%     amount6, description6, amount7, description7, 
 
 % Eliminate variables not input
-if nargin < 13
-    amount6 = [];
-    description6 = [];
-    amount7 = [];
-    description7 = [];
+% if nargin < 13
+%     amount6 = [];
+%     description6 = [];
+%     amount7 = [];
+%     description7 = [];
+% end
+% 
+% if nargin < 15
+%     amount7 = [];
+%     description7 = [];
+% end
+
+% inputs = length(nargin);
+% fields = (nargin-2)/2;
+
+fields = length(varargin);
+% fields = 12
+
+% dummy struct
+    earnings.amount = NaN(fields/2, 1);
+%     earnings.label = NaN(fields/2, 1);
+    earnings.runtot = NaN(fields/2, 1); % dummy struct with starting value 0
+%     earningsLabel = {'Show-up pagamento';  'Rows & Colums';  'Ruota della fortuna';  'Patent Race';  'Lista dei prezzi';  'Puzzles'};
+
+%     varargin = {10, 'Show-up pagamento', winnings2x2, 'Rows & Colums', total1shotEarnings, ...
+%     'Ruota della fortuna', player1Earnings, 'Patent Race', winningsMPL, 'Lista dei prezzi', ...
+%     earningsRaven, 'Puzzles'}
+% earnings.amount = {[10]  [9]  [-6]  [10]  [3.8500]  [6]}'
+% earnings.label = {'Show-up pagamento'  'Rows & Colums'  'Ruota della fortuna'  'Patent Race'  'Lista dei prezzi'  'Puzzles'}'
+
+% earnings.amount = cell2struct(varargin)
+
+% Make the earnings structure with amounts and labels
+for i = 1:2:fields
+earnings.amount(ceil(i/2), 1) = cell2mat(varargin(i));
+% earnAmountsMatrix(ceil(i/2)) = varargin(i); %no longer needed
+% runningTotal(i) = runningTotal(i-1) + earnings.amount(i); % creates a running total for each level
 end
 
-if nargin < 15
-    amount7 = [];
-    description7 = [];
+% Just use this for label names. Can't get the names into the structure unfortunately
+for i = 2:2:fields
+% earnings.label(ceil(i/2)) = char(varargin(i));
+earningsLabel(ceil(i/2)) = varargin(i);
 end
 
-inputs = length(nargin);
-fields = inputs/2 - 2;
+earningsLabel(end+1) = {'Totale'}; % make 'Total' the label for final element
+earnings.label(end+1) = {'Totale'}; % make 'Total' the label for final element
+earningsRunTot = cumsum(earnings.amount); % create running total matrix
+
+% convert running total matrix to struct
+for i = 1:length(earningsRunTot)
+earnings.runtot(i) = earningsRunTot(i);
+end
+
+% for i = 1:length(earningsLabel)
+% earnings.label(i) = char(earningsLabel(:,i))
+% %     earnings.label(i,1) = cellstr(earningsLabel(1,i))
+% end
+
+
+% Add elements for total
+earnings.amount(end+1) = earningsRunTot(end); % adds total to final field
+% earnAmountsMatrix(end+1) = struct2mat(earnings.amount(end); % make
+% cumulative sum (total) the last amount %no longer needed %no longer needed
+totalEarnings = earnings.amount(end);
+
+% for i=length(earnings.amount)
+% earnings.amount(i) = earnAmountsMatrix(i);
+% earnings.label(i) = earningsLabel(i);
+% end
+% earnings.label(ceil(i/2), 1) = varargin(i);
+% earnings.label(ceil(i/2)+1, 1) = {'Totale'}; % make final element label 
+% 
+% earnAmountsMatrix = cell2mat(earnings.amount); % convert cells to matrix
+
+% Sanity checks
+for k = 1:length(earnings.amount)
+numTrue(k) = isnumeric(earnings.amount(k));
+end
+
+% for k = 1:length(earningsLabel)
+% charTrue(k) = ischar(earningsLabel{k});
+% end
+for k = 1:length(earnings.label)
+charTrue(k) = ischar(earnings.label{k});
+end
+
+if unique(numTrue) ~= 1 
+    disp('There is a problem with the input amounts.')
+elseif find(unique(numTrue)) > 1
+    disp('There is a problem with the input amounts.')
+elseif unique(charTrue) ~= 1
+    disp('There is a problem with the input labels.')    
+elseif find(unique(charTrue)) > 1
+    disp('There is a problem with the input labels.')
+else
+    disp('Everything''s cool, baby.')
+end
 
 % Bring in the screen elements
 screenXpixels=cfg.screenSize.x;
@@ -24,43 +114,37 @@ screenXpixels=cfg.screenSize.x;
     Screen('TextStyle', window);
     Screen('TextColor', window, cfg.textColor);
     
-% Make the earnings structure
-    for i = 1:fields
-        earnings.amount(i) = amount(i)
-        earnings.label(i) = description(i); 
-    end
     
-% earnings.a1 = 'Show-up pagamento: '; % ITALIAN
-% earnings.a2 = 'Rows & Colums: '; % ITALIAN
-% earnings.a3 = 'Ruota della fortuna: '; % ITALIAN
-% earnings.a4 = 'Patent Race: '; % ITALIAN
-% earnings.a5 = 'Lista dei prezzi: '; % ITALIAN
-% earnings.a6 = 'Puzzles: '; % ITALIAN
+
 % earnings.a7 = 'Totale: '; % ITALIAN
 
 % Get layout positions for each text field
-    for i=1:length(fieldnames(earnings))
-        
-% % % % % % % % % %         Undefined function or variable 'earnings'.
-% % % % % % % % % % 
-% % % % % % % % % % Error in payouts (line 42)
-% % % % % % % % % %     for i=1:length(fieldnames(earnings))
-        [nx, ny(i), textRect] = DrawFormattedText(window, earnings.label(i), 0, ny(i)-1, cfg.bgColor); % draws a dummy version of text just to get measurements
+for i=1:length(earnings.label)
+    
+    % % % % % % % % % %         Undefined function or variable 'earnings'.
+    % % % % % % % % % %
+    % % % % % % % % % % Error in payouts (line 42)
+    % % % % % % % % % %     for i=1:length(fieldnames(earnings))
+    if i == 1
+        [nx, ny(i), textRect] = DrawFormattedText(window, earnings.label(i), 0, 0, cfg.bgColor); % draws a dummy version of text just to get measurements
+    else
+        [nx, ny(i), textRect] = DrawFormattedText(window, earnings.label(i), 0, ny(i-1), cfg.bgColor); % draws a dummy version of text just to get measurements
         Screen('Flip', window)
         textWidth(i) = textRec(3) - textRect(1); % gets width of each label title
         xPosField(i) = cfg.screenCenter(1) - textWidth; % sets the position so text ends at the center of the screen
         textHeight = textRect(4)-textRect(2); % for positioning top text
         lineSize = 1.5*textHeight % sets baseline shift to half the height of text
         yPos(i) = cfg.screenCenter(2) - (cfg.screenSize.y/2) + 3*lineSize + i*lineSize; % sets Y position of each line of text
-
-        runningTotal(i) = runningTotal(i-1) + earnings.amount(i); % creates a running total for each level
     end
+    
+    
+end
     
     xPosAmounts = cfg.screenCenter(1) + textHeight;
     
-    for i=1:length(fieldnames(earnings))
-        runningTotal(i) = runningTotal(i-1) + earnings.amount(i);
-    end
+%     for i=1:length(fieldnames(earnings))
+%         runningTotal(i) = runningTotal(i-1) + earnings.amount(i);
+%     end
     
     
 %     [nx, ny1, textRect1]=DrawFormattedText(window, earnings1, 0, 0, cfg.bgColor); % draws a dummy version of text just to get measurements
@@ -100,38 +184,51 @@ screenXpixels=cfg.screenSize.x;
 % earningsRaven;  % Puzzles
 
 % runningTotal = runningTotal + 
-
-totalEarnings = sum(earnings.amount);
+% totalEarnings = sum(earnings.amount);
 
 if totalEarnings <= 10
-    disp('You earned ', num2str(totalEarnings), '. 10 euro minimum awarded');
-    DrawFormattedText(window, 'Minimum award: ')
+%     disp('You earned ', num2str(totalEarnings) '. 10 euro minimum awarded');
+    paymentNotice = 'Pagamento minimo: 10 euros';
     
 else
-    disp('You earned ', num2str(totalEarnings), '.')
-    
+%     disp('You earned ', num2str(totalEarnings), '.')
+    paymentNotice = strcat('Pagamento: ', ' ', num2str(totalEarnings), ' euros');
 end
 
-
-for i=1:length(fieldnames(earnings))
-    DrawFormattedText(window, earnings.label(i), xPosField(i), yPos(i), cfg.textColor); % draws field name text    
+for i=1:length(earnings.label)
+    DrawFormattedText(window, earnings.label(i), xPosField(i), yPos(i), cfg.textColor); % draws all the labels with empty amounts    
 end
     Screen('Flip', window)
 
-for j=1:length(fieldnames(earnings))
-    DrawFormattedText(window, earnings.amount(j), xPosAmounts, yPos(j), cfg.textColor); % draws field name text
-    for i=1:length(fieldnames(earnings))
-        DrawFormattedText(window, earnings.label(i), xPosField(i), yPos(i), cfg.textColor); % draws field name text
+for j=1:length(earnings.amount) % draws amount text one by one
+    DrawFormattedText(window, earnings.amount(j), xPosAmounts, yPos(j), cfg.textColor); % draws newest amount text 
+    if j > 1
+        for k = 1:j % redraws all previously displayed amounts
+            DrawFormattedText(window, earnings.amount(k), xPosAmounts, yPos(k), cfg.textColor);
+        end
+    end
+    for i=1:length(earnings.label)
+        DrawFormattedText(window, earnings.label(i), xPosField(i), yPos(i), cfg.textColor); % keeps all labels visible
     end
     Screen('Flip', window)
-    if i < length(fieldnames(earnings))
+    if i < length(earnings.label)
         waitSecs(.25)
     else
         waitSecs(.5)
     end
     
 end
+waitSecs(.5)
+
+    for j=1:length(earnings.amount)
+        DrawFormattedText(window, earnings.amount(j), xPosAmounts, yPos(j), cfg.textColor);
+    end
+    for i=1:length(earnings.label)
+        DrawFormattedText(window, earnings.label(i), xPosField(i), yPos(i), cfg.textColor); % keeps all labels visible
+    end
+    DrawFormattedText(window, paymentNotice, 'center', cfg.botTextYpos, cfg.winColor);
     
+    Screen('Flip', window)
 end
 
 
