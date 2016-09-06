@@ -22,8 +22,8 @@ Screen('TextStyle', window);
 Screen('TextColor', window, cfg.textColor);
 
 inputReq1 = 'Tasti il gioco scelto e premi ''Enter'': '; % ITALIAN
-fail1='Si prega tastere un numero di gioco e premi ''Enter'': '; % ITALIAN
-inputReq2 = 'Tasti la scelta del tuo avversario e premi ''Enter'': '; % ITALIAN
+fail1='Si prega tastere un numero di gioco \n e premi ''Enter'': '; % ITALIAN
+inputReq2 = 'Tasti la scelta del tuo avversario \n e premi ''Enter'': '; % ITALIAN
 fail2='Si prega tastere 1 o 2 e premi ''Enter'': '; % ITALIAN
 
 [nx, ny1, textRect1]=DrawFormattedText(window, inputReq1, 0, 0, cfg.bgColor); % draws a dummy version of text just to get measurements
@@ -96,7 +96,7 @@ while aOK ~= 1
             chosenGame = str2double(GetEchoStringForm(window, fail1, xPos1, yPos, cfg.textColor)); % displays string in PTB; allows backspace
             aOK = 0;
         case 0
-            if chosenGame <= 1 || chosenGame >= 48
+            if chosenGame < 1 || chosenGame > 48
                 Screen('Flip', window)
                 chosenGame = str2double(GetEchoStringForm(window, fail1, xPos1, yPos, cfg.textColor)); % displays string in PTB; allows backspace
                 aOK = 0;

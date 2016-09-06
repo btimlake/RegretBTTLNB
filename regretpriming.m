@@ -18,6 +18,8 @@ addpath('REGRET_task', 'patentTaskBTMP', 'ratingslider', 'instructions', 'games'
 
 KbName('UnifyKeyNames');
 
+showUp = 10; % fee for coming to the experiment; base payment amount
+
 %% VARIABLES
 player1maxbid=5;
 DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
@@ -74,6 +76,7 @@ black = BlackIndex(screenNumber);
 [screenXpixels, screenYpixels] = Screen('WindowSize', window);
 cfg.screenSize.x = screenXpixels; 
 cfg.screenSize.y = screenYpixels;
+cfg.font = 'Courier New';
 cfg.fontSize = round(screenYpixels * 2/40);
 % Colors
 cfg.textColor = [0, 0, 0]; % black
@@ -94,7 +97,7 @@ cfg.waitTextYpos = screenYpixels * 38/40; % Y position of lowest "Please Wait" t
 %% Screen 0: Participant number entry 
 
 screenXpixels=cfg.screenSize.x;
-    Screen('TextFont', window, 'Courier New');
+    Screen('TextFont', window, cfg.font);
     Screen('TextSize', window, cfg.fontSize);
     Screen('TextStyle', window);
     Screen('TextColor', window, cfg.textColor);
@@ -193,13 +196,13 @@ particNum = [insertDate, compNum];
 gamesdatafilename = 'sub444-2208-2048_4games2x2.dat';
 [winnings2x2, chosenGame, opponentChoice]=games2x2winnings(gamesdatafilename, cfg, window);
 
-total1shotEarnings = -6;
-winnings2x2 = 9;
-player1Earnings = 10;
-winningsMPL = 3.85;
-earningsRaven = 6;
+total1shotEarnings = -16;
+% winnings2x2 = 1;
+player1Earnings = 5;
+winningsMPL = .10;
+earningsRaven = 0;
 
-payouts(cfg, window, 10, 'Show-up pagamento', winnings2x2, 'Rows & Colums', total1shotEarnings, ...
+payouts(cfg, window, showUp, 'Show-up pagamento', winnings2x2, 'Rows & Colums', total1shotEarnings, ...
     'Ruota della fortuna', player1Earnings, 'Patent Race', winningsMPL, 'Lista dei prezzi', ...
     earningsRaven, 'Puzzles')
 % payouts(winnings2x2, gamesdatafilename, total1shotEarnings, player1Earnings, winningsMPL, earningsRaven)

@@ -28,15 +28,24 @@ fields = length(varargin);
 
 % dummy struct
     earnings.amount = NaN(fields/2, 1);
-%     earnings.label = NaN(fields/2, 1);
+    earnings.label = NaN(fields/2, 1);
+%     earningsLabel = NaN(7,1)
     earnings.runtot = NaN(fields/2, 1); % dummy struct with starting value 0
 %     earningsLabel = {'Show-up pagamento';  'Rows & Colums';  'Ruota della fortuna';  'Patent Race';  'Lista dei prezzi';  'Puzzles'};
+% earningsLabel(1) = 'Show-up pagamento';  
+% earningsLabel(2) = 'Rows & Colums';
+% earnings.label(3) = 'Ruota della fortuna';
+% earnings.label(4) = 'Patent Race';
+% earnings.label(5) = 'Lista dei prezzi';
+% earnings.label(6) = 'Puzzles';
+% earnings.label(7) = 'Totale';
 
 %     varargin = {10, 'Show-up pagamento', winnings2x2, 'Rows & Colums', total1shotEarnings, ...
 %     'Ruota della fortuna', player1Earnings, 'Patent Race', winningsMPL, 'Lista dei prezzi', ...
 %     earningsRaven, 'Puzzles'}
 % earnings.amount = {[10]  [9]  [-6]  [10]  [3.8500]  [6]}'
-% earnings.label = {'Show-up pagamento'  'Rows & Colums'  'Ruota della fortuna'  'Patent Race'  'Lista dei prezzi'  'Puzzles'}'
+earnings.label = {'Show-up pagamento',  'Rows & Colums',  'Ruota della fortuna',  'Patent Race',  'Lista dei prezzi',  'Puzzles'}';
+
 
 % earnings.amount = cell2struct(varargin)
 
@@ -117,7 +126,9 @@ screenXpixels=cfg.screenSize.x;
     
 
 % earnings.a7 = 'Totale: '; % ITALIAN
-
+% pre-allocations
+textWidth = NaN(length(earnings.label), 1);
+xPosField = NaN(length(earnings.label), 1);
 % Get layout positions for each text field
 for i=1:length(earnings.label)
     
@@ -126,21 +137,21 @@ for i=1:length(earnings.label)
     % % % % % % % % % % Error in payouts (line 42)
     % % % % % % % % % %     for i=1:length(fieldnames(earnings))
     if i == 1
-        [nx, ny(i), textRect] = DrawFormattedText(window, earnings.label(i), 0, 0, cfg.bgColor); % draws a dummy version of text just to get measurements
+        [nx, ny(i), textRect] = DrawFormattedText(window, earnings.label{i}, 0, 0, cfg.bgColor); % draws a dummy version of text just to get measurements
+        textHeight = textRect(4)-textRect(2); % for positioning top text (based on first string)
+        lineSize = 1.5*textHeight; % sets baseline shift to half the height of text (based on first string)
     else
-        [nx, ny(i), textRect] = DrawFormattedText(window, earnings.label(i), 0, ny(i-1), cfg.bgColor); % draws a dummy version of text just to get measurements
-        Screen('Flip', window)
-        textWidth(i) = textRec(3) - textRect(1); % gets width of each label title
-        xPosField(i) = cfg.screenCenter(1) - textWidth; % sets the position so text ends at the center of the screen
-        textHeight = textRect(4)-textRect(2); % for positioning top text
-        lineSize = 1.5*textHeight % sets baseline shift to half the height of text
-        yPos(i) = cfg.screenCenter(2) - (cfg.screenSize.y/2) + 3*lineSize + i*lineSize; % sets Y position of each line of text
+        [nx, ny(i), textRect] = DrawFormattedText(window, earnings.label{i}, 0, ny(i-1), cfg.bgColor); % draws a dummy version of text just to get measurements
     end
+        Screen('Flip', window)
+        textWidth(i) = textRect(3) - textRect(1); % gets width of each label title
+        xPosField(i) = cfg.screenCenter(1) - textWidth(i); % sets the position so text ends at the center of the screen
+        yPos(i) = cfg.screenCenter(2) - (cfg.screenSize.y/2) + 3*lineSize + i*lineSize; % sets Y position of each line of text
+
     
     
 end
-    
-    xPosAmounts = cfg.screenCenter(1) + textHeight;
+    xPosAmounts = cfg.screenCenter(1) + textHeight; % sets starting point for numbers with arbitrary tab
     
 %     for i=1:length(fieldnames(earnings))
 %         runningTotal(i) = runningTotal(i-1) + earnings.amount(i);
@@ -188,47 +199,48 @@ end
 
 if totalEarnings <= 10
 %     disp('You earned ', num2str(totalEarnings) '. 10 euro minimum awarded');
-    paymentNotice = 'Pagamento minimo: 10 euros';
-    
+    paymentNotice = ['Hai guadagnato ', num2str(totalEarnings), '\n Pagamento minimo: 10 euros'];
+
 else
 %     disp('You earned ', num2str(totalEarnings), '.')
     paymentNotice = strcat('Pagamento: ', ' ', num2str(totalEarnings), ' euros');
 end
 
 for i=1:length(earnings.label)
-    DrawFormattedText(window, earnings.label(i), xPosField(i), yPos(i), cfg.textColor); % draws all the labels with empty amounts    
+    DrawFormattedText(window, earnings.label{i}, xPosField(i), yPos(i), cfg.textColor); % draws all the labels with empty amounts    
 end
     Screen('Flip', window)
 
 for j=1:length(earnings.amount) % draws amount text one by one
-    DrawFormattedText(window, earnings.amount(j), xPosAmounts, yPos(j), cfg.textColor); % draws newest amount text 
+    DrawFormattedText(window, num2str(earnings.amount(j)), xPosAmounts, yPos(j), cfg.textColor); % draws newest amount text 
+    if j < length(earnings.amount)
+        WaitSecs(.75);
+    else
+        WaitSecs(1.5);
+    end
     if j > 1
         for k = 1:j % redraws all previously displayed amounts
-            DrawFormattedText(window, earnings.amount(k), xPosAmounts, yPos(k), cfg.textColor);
+            DrawFormattedText(window, num2str(earnings.amount(k)), xPosAmounts, yPos(k), cfg.textColor);
         end
     end
     for i=1:length(earnings.label)
-        DrawFormattedText(window, earnings.label(i), xPosField(i), yPos(i), cfg.textColor); % keeps all labels visible
+        DrawFormattedText(window, earnings.label{i}, xPosField(i), yPos(i), cfg.textColor); % keeps all labels visible
     end
     Screen('Flip', window)
-    if i < length(earnings.label)
-        waitSecs(.25)
-    else
-        waitSecs(.5)
-    end
     
 end
-waitSecs(.5)
+WaitSecs(1);
 
     for j=1:length(earnings.amount)
-        DrawFormattedText(window, earnings.amount(j), xPosAmounts, yPos(j), cfg.textColor);
+        DrawFormattedText(window, num2str(earnings.amount(j)), xPosAmounts, yPos(j), cfg.textColor);
     end
     for i=1:length(earnings.label)
-        DrawFormattedText(window, earnings.label(i), xPosField(i), yPos(i), cfg.textColor); % keeps all labels visible
+        DrawFormattedText(window, earnings.label{i}, xPosField(i), yPos(i), cfg.textColor); % keeps all labels visible
     end
-    DrawFormattedText(window, paymentNotice, 'center', cfg.botTextYpos, cfg.winColor);
+    DrawFormattedText(window, paymentNotice, 'center', cfg.botTextYpos, cfg.winCol);
     
     Screen('Flip', window)
+    WaitSecs(10)
 end
 
 
