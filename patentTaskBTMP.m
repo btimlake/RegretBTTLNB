@@ -6,13 +6,13 @@
 % modified and amended Ben Timberlake, Feburary 2016
 
 
-function [p1GameEarnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, player2Strategy, player1maxbid, trials)
+function [player1Earnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, player2Strategy, player1maxbid, enabledKeys)
 
 % clearvars -except particNum DateTime window windowRect;  
 
 % DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
 PRIZE=10;                               % Winnings aside from bidding endowment, currently a fixed value
-NUMROUNDS=trials;                           % Number of rounds played against this opponent
+NUMROUNDS=20;                           % Number of rounds played against this opponent
 PLAYER1MAXBID=player1maxbid;                        % Endowment for player1
 PLAYER2MAXBID=9-PLAYER1MAXBID;                        % Endowment for player2
 TAU=2;                                  % Softmax temperature
@@ -376,8 +376,8 @@ end
 %% Screen 4: Earnings
 
 % calculate total earnings this round for each player 
-p1GameEarnings=sum(player1Earnings)/100; 
-p2GameEarnings=sum(player2Earnings)/100;
+p1GameEarnings=sum(player1Earnings); 
+p2GameEarnings=sum(player2Earnings);
 
 % Earnings text
 earningsText11 = ['Hai guadagnato in totale in questo gioco: ' num2str(p1GameEarnings)];
