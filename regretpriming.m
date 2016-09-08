@@ -21,10 +21,13 @@ KbName('UnifyKeyNames');
 showUp = 10; % fee for coming to the experiment; base payment amount
 
 %% VARIABLES
-player1maxbid=5;
+player1maxbid=5; % Patent Race Role
+gamestrials = 12; % Trials for 2x2 games
+prtrials = 10; % Trials for Patent Race
+
 DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
 
-%% check what OS the software is running on
+%% check what OS the software is running on; limit keyboard/mouse input
 
 if ismac
     % Code to run on Mac plaform 
@@ -48,9 +51,9 @@ else
 end
 
 
-%% Hide cursor, stop input in command screen
+% Hide cursor, stop input in command screen
 % uncomment INLAB
-% HideCursor;
+HideCursor;
 ListenChar(2); %disable transmission of keypresses to Matlab command window; press CTRL+C to reenable
 
 %% Psychtoolbox setup
@@ -95,8 +98,6 @@ cfg.waitTextYpos = screenYpixels * 38/40; % Y position of lowest "Please Wait" t
 
 
 %% Screen 0: Participant number entry 
-
-screenXpixels=cfg.screenSize.x;
     Screen('TextFont', window, cfg.font);
     Screen('TextSize', window, cfg.fontSize);
     Screen('TextStyle', window);
@@ -180,31 +181,34 @@ end
 particNum = [insertDate, compNum];
 
 %% call scripts
-% [gamesdatafilename]=games(particNum, DateTime, window, windowRect, 48, enabledKeys, cfg);
+% TEMP VARIABLES FOR TESTING
+% total1shotEarnings = 8;
+% winnings2x2 = 1;
+% p1GameEarnings = 8.85;
+% gamesdatafilename = 'sub123422-0809-1426_4games2x2.dat';
+winningsMPL = 3.85;
+earningsRaven = 6;
+
+% [gamesdatafilename]=games(particNum, DateTime, window, windowRect, gamestrials, enabledKeys, cfg);
 %    [gamesdatafilename]=games(subNo, anni, w, wRect, NUMROUNDS, enabledKeys, cfg)
 % patentTaskInstructions(window, windowRect, enabledKeys, cfg, player1maxbid);
-% [totalEarnings] = regretTask(particNum, DateTime, window, windowRect, enabledKeys);% Clear the workspace and the screen
-%       regretTask(particNum, DateTime, window, windowRect, enabledKeys);
+% [totalEarnings] = regretTask(particNum, DateTime, window, windowRect, enabledKeys, 10);% Clear the workspace and the screen
+%       regretTask(particNum, DateTime, window, windowRect, enabledKeys,
+%       trials); % trials should be no more than 10
 % [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg);
 %     [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg)% Clear the workspace and the screen
-% [player1Earnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, 'fictive', 4, enabledKeys);
-%     [player1Earnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, 'fictive', player1maxbid, enabledKeys);
+% [p1GameEarnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, 'fictive', player1maxbid, prtrials);
+%     [p1GameEarnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, player2Strategy, player1maxbid, trials);
 %     [player1Earnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, player2Strategy, player1maxbid, enabledKeys)
-% [winningsMPL, earningsRaven] = questionnaires(particNum, DateTime, window, windowRect)
 % [rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTime, window, windowRect, enabledKeys)
 %     [rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTi me,  wi n dow, windowRect, enabledKeys)
-gamesdatafilename = 'sub444-2208-2048_4games2x2.dat';
+% [cit] = CITquestionnaire(cfg, particNum, DateTime, window, windowRect, enabledKeys);
+% [winningsMPL, earningsRaven] = questionnaires(particNum, DateTime, window, windowRect)
 [winnings2x2, chosenGame, opponentChoice]=games2x2winnings(gamesdatafilename, cfg, window);
 
-total1shotEarnings = -16;
-% winnings2x2 = 1;
-player1Earnings = 5;
-winningsMPL = .10;
-earningsRaven = 0;
-
-payouts(cfg, window, showUp, 'Show-up pagamento', winnings2x2, 'Rows & Colums', total1shotEarnings, ...
-    'Ruota della fortuna', player1Earnings, 'Patent Race', winningsMPL, 'Lista dei prezzi', ...
-    earningsRaven, 'Puzzles')
+[totalEarnings]=payouts(cfg, window, showUp, 'Show-up pagamento', winnings2x2, 'Righe e Colonne', total1shotEarnings, ...
+    'Ruota della fortuna', p1GameEarnings, 'Patent Race', winningsMPL, 'Lista dei Prezzi', ...
+    earningsRaven, 'Puzzles');
 % payouts(winnings2x2, gamesdatafilename, total1shotEarnings, player1Earnings, winningsMPL, earningsRaven)
 sca;
 
