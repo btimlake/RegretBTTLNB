@@ -1,4 +1,4 @@
-function [totalEarnings] = regretTask(particNum, DateTime, window, windowRect, enabledKeys)% Clear the workspace and the screen
+function [totalEarnings] = regretTask(particNum, DateTime, window, windowRect, enabledKeys, trials)% Clear the workspace and the screen
 
 enabledKeys;
 
@@ -7,6 +7,19 @@ load('regretTasktrialWheelsDataset.mat')       % Load the preset wheel probabili
 regretTasktrialWheels = regretTasktrialWheelsDataset; % Needed to equate variable to different filename
 % DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
 
+% Set some variables
+NUMROUNDS = trials;
+lotteryOutcome = 0 + (1-0).*rand(NUMROUNDS,2); % Creates array of random outcome probabilities for both wheels in each round
+% outcome values from earlier iterations
+% OUTCOME1 = 50;
+% OUTCOME2 = -50;
+% OUTCOME3 = 200;
+% OUTCOME4 = -50;
+% % outcome strings
+% winL = num2str(OUTCOME1);
+% loseL = num2str(OUTCOME2); 
+% winR = num2str(OUTCOME3);
+% loseR = num2str(OUTCOME4);
 
 %% Here we call some default settings for setting up Psychtoolbox
 % PsychDefaultSetup(2);
@@ -14,16 +27,16 @@ regretTasktrialWheels = regretTasktrialWheelsDataset; % Needed to equate variabl
 % Screen('Preference', 'SkipSyncTests', 1);
 % KbName('UnifyKeyNames');
 % 
-% % Get the screen numbers
-% screens = Screen('Screens');
-% 
-% % Draw to the external screen if avaliable
-% % screenNumber = max(screens);
+% Get the screen numbers
+screens = Screen('Screens');
+
+% Draw to the external screen if avaliable
+screenNumber = max(screens);
 % screenNumber = 0;
 
 % Define black and white and other colors
-% white = WhiteIndex(screenNumber);
-% black = BlackIndex(screenNumber);
+white = WhiteIndex(screenNumber);
+black = BlackIndex(screenNumber);
 BG=[1 1 1]; % set background color of PNG imports
 % NOTE that colors now have to be in the set [0,1], so to get values, just 
 % divide old RGB amounts by 255
@@ -100,19 +113,6 @@ fontSize = round(screenYpixels * 2/60);
     Screen('TextStyle', window);
     Screen('TextColor', window, [0, 0, 0]);
     
-% Set some variables
-NUMROUNDS = 3;
-lotteryOutcome = 0 + (1-0).*rand(NUMROUNDS,2); % Creates array of random outcome probabilities for both wheels in each round
-% outcome values from earlier iterations
-% OUTCOME1 = 50;
-% OUTCOME2 = -50;
-% OUTCOME3 = 200;
-% OUTCOME4 = -50;
-% % outcome strings
-% winL = num2str(OUTCOME1);
-% loseL = num2str(OUTCOME2); 
-% winR = num2str(OUTCOME3);
-% loseR = num2str(OUTCOME4);
 
 %% back to original
 % Maximum priority level
