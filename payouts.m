@@ -1,4 +1,4 @@
-function payouts(cfg, window, varargin)
+function [totalEarnings] = payouts(cfg, window, varargin)
 
 % jsut varargin
 % 
@@ -197,9 +197,9 @@ end
 % runningTotal = runningTotal + 
 % totalEarnings = sum(earnings.amount);
 
-if totalEarnings <= 10
+if totalEarnings <= earnings.amount(k)
 %     disp('You earned ', num2str(totalEarnings) '. 10 euro minimum awarded');
-    paymentNotice = ['Hai guadagnato ', num2str(totalEarnings), '\n Pagamento minimo: 10 euros'];
+    paymentNotice = ['Hai guadagnato ', num2str(totalEarnings), '\n Pagamento minimo: ' num2str(earnings.amount(k)) ' euros'];
 
 else
 %     disp('You earned ', num2str(totalEarnings), '.')
@@ -231,6 +231,13 @@ for j=1:length(earnings.amount) % draws amount text one by one
 end
 WaitSecs(1);
 
+keyName=''; % empty initial value
+
+while(~strcmp(keyName,'5%')) % leaves last screen up until typing 5
+
+[~, keyCode]=KbWait([],2);
+keyName=KbName(keyCode);
+
     for j=1:length(earnings.amount)
         DrawFormattedText(window, num2str(earnings.amount(j)), xPosAmounts, yPos(j), cfg.textColor);
     end
@@ -241,6 +248,9 @@ WaitSecs(1);
     
     Screen('Flip', window)
     WaitSecs(10)
+    
+end
+
 end
 
 
