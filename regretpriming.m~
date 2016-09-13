@@ -53,7 +53,7 @@ end
 
 % Hide cursor, stop input in command screen
 % uncomment INLAB
-% HideCursor;
+HideCursor;
 ListenChar(2); %disable transmission of keypresses to Matlab command window; press CTRL+C to reenable
 
 %% Psychtoolbox setup
@@ -93,7 +93,6 @@ cfg.winCol = [.1333, .5451, .1333]; %ForestGreen
 % Positions
 cfg.screenCenter = [xCenter, yCenter]; % center coordinatesf
 cfg.topTextYpos = screenYpixels * 2/40; % Screen Y positions of top/instruction text
-cfg.uppTextYpos = screenYpixels * 6/40;
 cfg.botTextYpos = screenYpixels * 35/40; % Screen Y positions of bottom/result text
 cfg.waitTextYpos = screenYpixels * 38/40; % Y position of lowest "Please Wait" text
 
@@ -187,16 +186,16 @@ particNum = [insertDate, compNum];
 % winnings2x2 = 1;
 % p1GameEarnings = 8.85;
 % gamesdatafilename = 'sub123422-0809-1426_4games2x2.dat';
-% winningsMPL = 3.85;
+winningsMPL = 3.85;
 earningsRaven = 6;
 
-% [gamesdatafilename]=games(particNum, DateTime, window, windowRect, gamestrials, enabledKeys, cfg);
+[gamesdatafilename]=games(particNum, DateTime, window, windowRect, gamestrials, enabledKeys, cfg);
 %    [gamesdatafilename]=games(subNo, anni, w, wRect, NUMROUNDS, enabledKeys, cfg)
 % patentTaskInstructions(window, windowRect, enabledKeys, cfg, player1maxbid);
-% [totalEarnings] = regretTask(particNum, DateTime, window, windowRect, enabledKeys, 10);% Clear the workspace and the screen
+[totalEarnings] = regretTask(particNum, DateTime, window, windowRect, enabledKeys, 10);% Clear the workspace and the screen
 %       regretTask(particNum, DateTime, window, windowRect, enabledKeys,
 %       trials); % trials should be no more than 10
-% [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg);
+[total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg);
 %     [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg)% Clear the workspace and the screen
 % [p1GameEarnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, 'fictive', player1maxbid, prtrials);
 %     [p1GameEarnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, player2Strategy, player1maxbid, trials);
@@ -205,7 +204,6 @@ earningsRaven = 6;
 %     [rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTi me,  wi n dow, windowRect, enabledKeys)
 % [cit] = CITquestionnaire(cfg, particNum, DateTime, window, windowRect, enabledKeys);
 % [winningsMPL, earningsRaven] = questionnaires(particNum, DateTime, window, windowRect)
-[choice, winningsMPL] = MPL(cfg, particNum, DateTime, window, windowRect, enabledKeys);
 [winnings2x2, chosenGame, opponentChoice]=games2x2winnings(gamesdatafilename, cfg, window);
 
 [totalEarnings]=payouts(cfg, window, showUp, 'Show-up pagamento', winnings2x2, 'Righe e Colonne', total1shotEarnings, ...

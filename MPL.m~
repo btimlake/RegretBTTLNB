@@ -280,7 +280,7 @@ WaitSecs(.25)
         % additional loop to prevent space from being pressed before all
         % rows have choices
         while unique(isnan(choice)) ~= 0 
-            unique(choice) ~= [1 3]'
+            
             % First two move selection up and down; second two move selector
             % left and right
             switch keyName

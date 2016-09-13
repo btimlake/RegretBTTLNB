@@ -80,7 +80,7 @@ storedRect = NaN(numIteration, numPrompts, 4);
 storedXRectCenter = NaN(numIteration, numPrompts);
 rectHeight = NaN(numIteration, numPrompts);
 rectWidth = NaN(numIteration, numPrompts);
-storedSelRects = NaN(numIteration, numPrompts, 4);
+storedSelRects = NaN(numIteration, 4, numPrompts);
 
 % dummy drawing of all text elements to get surrounding rect sizes and
 % lengths
