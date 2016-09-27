@@ -104,7 +104,7 @@ arrowNonChoice = rightArrowpos;
 
 % Display text
 % topInstructText = ['Choose which wheel to play.']; % ENGLISH
-topInstructText = 'Scegli quale ruota girare.'; % Italian
+topInstructText = 'Scegli quale ruota fare girare.'; % Italian
 
 % Select specific text font, style and size:
 fontSize = round(screenYpixels * 2/60);

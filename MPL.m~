@@ -7,22 +7,25 @@ function [choice, winningsMPL] = MPL(cfg, particNum, DateTime, window, windowRec
 % RESPONSE: move rectangles, click 'space'
 % Randomly select line
 % Randomly select side
-% output all selections, random selections, winnigs
+% output all selections, random selections, winnings
+% cfg = [];
+% enabledKeys = [];
+% MPL(cfg, 22, 1234, 10, [0 0 1280 800], [enabledKeys]) 
 
 % screen 1: first instruction screen
 % screen 2: real choices
-% - change instructs to say using l/r arrows, 
+  % - change instructs to say using l/r arrows, 
 % - up/down arrows to change rows
 % - space to confirm all choices
-% - change instructs to say choice becomes yellow
+%  - change instructs to say choice becomes yellow
 % screen 3: game gets played
 % - random selection of game 1-10 (have it run through like in WoF?)
 % - random choice 1-10 (0-first prob (70 = 1-7) gets top row prize. Second prob-1 (30 = 8-10) gets lower row prize) 
-%        - have it run through like WoF?
-% - show result
+%         - have it run through like WoF?
+% - show  result
 
 addpath('questionnaires');
-load('citpromptARRAY.mat')       % Load CIT prompts and responses DATASET - PC Lab
+% load('citpromptARRAY.mat')       % Load CIT prompts and responses DATASET - PC Lab
 [screenXpixels, screenYpixels] = Screen('WindowSize', window);
 [xCenter, yCenter] = RectCenter(windowRect);
 
@@ -66,7 +69,7 @@ load('citpromptARRAY.mat')       % Load CIT prompts and responses DATASET - PC L
 %% Setup
 % Font
 Screen('TextFont', window, cfg.font);
-Screen('TextSize', window, cfg.fontSize/2);
+Screen('TextSize', window, cfg.fontSizeSmall);
 Screen('TextColor', window, cfg.textColor);
 
 % BaseRect based on screen and text size
@@ -76,32 +79,61 @@ baseRect = [0 0 rectWidth rectHeight]; % like this (not numbers manually) becaus
 
 % Text
 instructions = repmat({''},3, 2);
-instructions(1,1) = {'Descrizione Generale dell''Esperimento'};
+instructions(1,1) = {'Questionario 1/6: Lotteria dei Prezzi'};
 instructions(1,2) = {'Descrizione della Procedura di Scelta e di Pagamento'};
 instructions(2,1) = {'In questa parte dell''esperimento ti verranno presentate 10 coppie di lotterie. Ogni lotteria ti garantisce di ottenere, con una certa probabilita'', una tra due possibili vincite. Per ogni coppia di lotterie, il tuo compito sara'' quello di scegliere la lotteria che preferisci giocare. \n\nDi seguito ti verra'' presentata una descrizione dettagliata del compito.'};
-instructions(2,2) = {'Nella parte destra dello schermo sono riportate le 10 coppie di lotterie. Ci sono 10 righe che corrispondono alle 10 scelte che dovrai effettuare. Ogni riga rappresenta una scelta tra due lotterie. \n\nPer effettuare le tue scelte in ogni riga, tasti le frecce sinistra o destra. Per cambiare la riga, usa le frecce su o giu''. Quando sei finito, premi ''spazio''. Una volta che avrai scelto una lotteria, essa diventera'' di colore verde. \n\nDopo che avrai effettuato le tue 10 scelte, il computer selezionera'' in modo casuale una delle 10 righe. Infine, la lotteria da te scelta verra'' giocata dal computer e tu riceverai la vincita corrispondente all''esito della lotteria. La tua vincita ti verra'' mostrata a schermo dopo che avrai completato e validato le tue scelte. \n\nRicorda, l''ammontare di denaro rappresentato nelle diverse lotterie e'' reale, percio'' sarai pagato/a in base alle scelte che effettuerai e secondo le regole appena descritte. \n\nSe hai qualche dubbio sulla procedura ed il metodo di pagamento sentiti libero/a di chiedere chiarimenti allo sperimentatore.'};
-instructions(3,1) = {'Clicca ''spazio'' per continuare.'};
-instructions(3,2) = {'Clicca la freccia sinistra per tornare o premi ''spazio'' per comminciare.'};
+instructions(2,2) = {'Nella parte destra dello schermo sono riportate le 10 coppie di lotterie. Ci sono 10 righe che corrispondono alle 10 scelte che dovrai effettuare. Ogni riga rappresenta una scelta tra due lotterie. \n\nPer effettuare le tue scelte in ogni riga, usa le frecce sinistra o destra. Per cambiare la riga, usa le frecce su o giu''. Quando hai finito, premi "spazio". Una volta che avrai scelto una lotteria, essa diventera'' di colore verde. \n\nDopo che avrai effettuato le tue 10 scelte, il computer selezionera'' in modo casuale una delle 10 righe. Dopo di che'' la lotteria da te scelta verra'' giocata dal computer e tu riceverai la vincita corrispondente all''esito della lotteria. La vincita ti verra'' mostrata a schermo dopo che avrai completato e validato le tue scelte. \n\nRicorda, l''ammontare di denaro rappresentato nelle diverse lotterie e'' reale, percio'' sarai pagato/a in base alle scelte che effettuerai e secondo le regole appena descritte. \n\nSe hai qualche dubbio sulla procedura e/o il metodo di pagamento sentiti libero/a di chiedere chiarimenti allo sperimentatore.'};
+instructions(3,1) = {'Premi la freccia destra per continuare.'};
+instructions(3,2) = {'Premi la freccia sinistra per tornare o premi "spazio" per cominciare.'};
 
 % Define values
 prob(:,1) = (10:10:100)';
 prob2values = (0:10:90)';
 prob(:,2) = sort(prob2values,'descend');
+% these values are hard-coded for now: 
+win(1,1) = 2; % left side top value
+win(2,1) = 1.60; % left side lower value
+win(1,2) = 3.85; % right side top value
+win(2,2) = 0.10; % right side lower value
 
 % empty matrices to fill up
-choice = NaN(10,1);
+choice = zeros(10,1);
 numChoice=length(choice);
-leftChoice = repmat({''},10, 1);
-rightChoice = repmat({''},10, 1);
+leftChoice = repmat({''},10, 3);
+rightChoice = repmat({''},10, 3);
 
 euro = hex2dec('20ac');
+% notes from WoF1shot to get euro symbol to work
+% [leftwheelLeftTextXpos, yPos, textRect] = DrawFormattedText(window, hex2dec('20ac'), leftwheelLeftEuroXpos, leftwheelRightTextYpos, white); % euro symbol
+% [leftwheelRightTextXpos, yPos] = DrawFormattedText(window, '-', leftwheelRightEuroXpos, leftwheelLeftTextYpos, white); % euro symbol
+% [rightwheelLeftTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), rightwheelLeftEuroXpos, rightwheelRightTextYpos, white); % euro symbol
+% [rightwheelRightTextXpos, yPos] = DrawFormattedText(window, '-', rightwheelRightEuroXpos, rightwheelLeftTextYpos, white); % euro symbol
+%     Screen('DrawTexture', window, wheelR, [0 0 550 550], locNonChoice); % Draw probability circle
+%     Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowNonChoice, angNonChoice);
+%     [euroi2Xpos, ~] = DrawFormattedText(window, hex2dec('20ac'), rightwheelLeftEuroXpos, rightwheelLeftTextYpos, winColors); % euro symbol
+%     DrawFormattedText(window, winR, rightwheelLeftTextXpos, rightwheelLeftTextYpos, winColors); % win amount
+%     [rightwheelRightTextXpos, yPos] = DrawFormattedText(window, '- ', rightwheelRightEuroXpos, rightText, loseColors); % euro symbol
+%     [rightwheelRightTextXpos, yPos] = DrawFormattedText(window, hex2dec('20ac'), rightwheelRightTextXpos,rightwheelRightTextYpos, loseColors); % euro symbol
+%     DrawFormattedText(window, loseR, rightwheelRightTextXpos, rightwheelRightTextYpos, loseColors); % loss amount
 
 for i = 1:numChoice
-leftChoice(i,1) = cellstr([num2str(prob(i,1)), '% prob. vincere ', euro, '2 \n', num2str(prob(i,2)), '% prob. vincere ', euro, '1,60']);
-rightChoice(i,1) = cellstr([num2str(prob(i,1)), '% prob. vincere ', euro, '3,85 \n', num2str(prob(i,2)), '% prob. vincere ', euro, '0,10']);
+leftChoice(i,1) = cellstr([num2str(prob(i,1)), '% prob. vincere ', hex2dec('20ac'), num2str(win(1,1)), '\n', num2str(prob(i,2)), '% prob. vincere ', euro, num2str(win(2,1), '%0.2f')]);
+rightChoice(i,1) = cellstr([num2str(prob(i,1)), '% prob. vincere ', hex2dec('20ac'), num2str(win(1,2)), '\n', num2str(prob(i,2)), '% prob. vincere ', euro, num2str(win(2,2), '%0.2f')]);
 end
 
-selInstructions = 'Usa i tasti frecce per navigare. La freccia giu'' fa la selezionata. \nQuando hai scelto tutte le righe, puoi cliccare ''spazio'' per finire.';
+% to make three separate text draws to stick Euros in the midst of them;
+% would have to work with x positions to make it work. Too much for now.
+% for i = 1:numChoice   
+% leftChoice(i,1) = cellstr([num2str(prob(i,1)), '% prob. vincere ']);
+% leftChoice(i,2) = cellstr([num2str(win(1,1)), '\n', num2str(prob(i,2)), '% prob. vincere ']);
+% leftChoice(i,3) = num2str(win(2,1));
+% 
+% rightChoice(i,1) = cellstr([num2str(prob(i,1)), '% prob. vincere ']);
+% rightChoice(i,2) = cellstr([num2str(win(1,2)), '\n', num2str(prob(i,2)), '% prob. vincere ']);
+% rightChoice(i,3) = num2str(win(2,2));
+% end
+
+selInstructions = 'Quando hai fatto una scelta per tutte le righe, puoi premere "spazio" per confermare.';
 
 % currSelection = NaN(10,1);
 
@@ -112,8 +144,10 @@ selInstructions = 'Usa i tasti frecce per navigare. La freccia giu'' fa la selez
     [~, ny1] = DrawFormattedText(window, char(instructions(1,1)), 'center', cfg.topTextYpos);
 
     Screen('TextStyle', window,0); % back to plain
-    Screen('TextSize', window, cfg.fontSize/2); % smaller fontsize
+    Screen('TextSize', window, cfg.fontSizeSmall); % smaller fontsize
     DrawFormattedText(window,char(instructions(2,1)), 'center', ny1*2, 0, 70);
+    DrawFormattedText(window,char(instructions(3,1)), 'center', cfg.botTextYpos, cfg.p1Col, 70);
+    Screen('TextColor', window, cfg.textColor);
     
     Screen('Flip', window);
     
@@ -136,26 +170,58 @@ while ~strcmp(keyName,'space')
             if instructPage > 2
                 instructPage = 2;
             end
+        case 'UpArrow'
+            instructPage = instructPage + 1;
+            if instructPage > 2
+                instructPage = 2;
+            end            
+        case 'DownArrow'
+            instructPage = instructPage - 1;
+            if instructPage < 1
+                instructPage = 1;
+            end            
     end
+  
     % heading
     Screen('TextStyle', window,1); % bold
+    if instructPage == 1
     Screen('TextSize', window, cfg.fontSize);
+    else
+    Screen('TextSize', window, cfg.fontSizeSmall);
+        
+    % Draw sample choice with dummy amounts
+    rowColor = cfg.p2Col; % light blue for odd rows
+    leftChoiceDummy = '60% prob. vincere .50 \n 40% prob. vincere .80';
+    rightChoiceDummy = '20% prob. vincere 2.40 \n 80% prob. vincere .40';
+
+    DrawFormattedText(window, char(leftChoice(game,1)), storedXPos(1), yPos(game), rowColor);
+    %     DrawFormattedText(window, 'OPPURE', 'center', yPos(i), cfg.textColor);
+    Screen('TextStyle', window,1); % bold
+    DrawFormattedText(window, 'OPPURE',  storedXPos(2), yPos(game)+spacer/2, rowColor); % should do the same thing as 'center'
+    Screen('TextStyle', window,0); % plaintext
+    DrawFormattedText(window, char(rightChoice(game,1)), storedXPos(3), yPos(game), rowColor);
+    for k=1:2:3
+        Screen('FrameRect', window, cfg.textColor, storedSelRects(game,:,k)); % Draws a frame rectangle around all choices
+    end
+
+    end
+    
     [~, ny(instructPage)] = DrawFormattedText(window,char(instructions(1,instructPage)), 'center', cfg.topTextYpos);
     % content
     Screen('TextStyle', window,0); % back to plain
-    Screen('TextSize', window, cfg.fontSize/2); % smaller fontsize
+    Screen('TextSize', window, cfg.fontSizeSmall); % smaller fontsize
     DrawFormattedText(window,char(instructions(2,instructPage)), 'center', ny(instructPage)*2, 0, 70);
     % navigation
     Screen('TextStyle', window,0); % back to plain
-    Screen('TextSize', window, cfg.fontSize); % smaller fontsize
     DrawFormattedText(window,char(instructions(3,instructPage)), 'center', cfg.botTextYpos, cfg.p1Col, 70);
+    Screen('TextColor', window, cfg.textColor);
    
     Screen('Flip', window);
         
 end
 
 %% Positioning and rectangles loops
-Screen('TextSize', window, cfg.fontSize/2);
+Screen('TextSize', window, cfg.fontSizeSmall);
 
 % Empty arrays to save time
 numIteration = length(citprompt(:,1));
@@ -269,183 +335,273 @@ end
 Screen('Flip', window)
 WaitSecs(.25)
     
-    currRow = 1;
-    currSelection = 1; % initial value - numbers reflect responses (since value 1 is associated with prompt)
-    keyName='';
-    while ~strcmp(keyName,'space')
+currRow = 1;
+currSelection = 1; % initial value - numbers reflect responses (since value 1 is associated with prompt)
+keyName='';
+while ~strcmp(keyName,'space')
+    
+    [~, keyCode]=KbWait([],2);
+    keyName=KbName(keyCode);
+    
+    %     % additional loop to prevent space from being pressed before all
+    %     % rows have choices
+    %     while length(nonzeros(choice)) < 10
+    %         botInstructCol = cfg.p1Col;
+    % First two move selection up and down; second two move selector
+    % left and right
+    switch keyName
+        case 'UpArrow'
+            currRow = currRow - 1;
+            if currRow < 1
+                currRow = 1; % does not loop around
+            end
+        case 'DownArrow'
+            choice(currRow) = currSelection;
+            currRow = currRow + 1;
+            if currRow > 10
+                currRow = 10; % does not loop around
+            end
+            
+        case 'LeftArrow'
+            currSelection = currSelection - 2;
+            if currSelection < 1
+                currSelection = 3; % Loops around
+            end
+        case 'RightArrow'
+            currSelection = currSelection + 2;
+            if currSelection > 3
+                currSelection = 1; % Loops around
+            end
+    end
+    %         update selection to last button press
+    
+    % Apply latest info right away
+    % should be a way to do this (restrict space button press and change colors) with a while loop instead, but no time
+    % right now
+    if length(nonzeros(choice)) < 10
+        enabledKeys = RestrictKeysForKbCheck([37,38,39,40, 79, 80, 81,82]); % no space
+        botInstructCol = cfg.p1Col;
+    else
+        enabledKeys = RestrictKeysForKbCheck([30, 44, 79, 80, 81,82,37,38,39,40,32,49]); % allows space
+        botInstructCol = cfg.instColB;
+    end
+    
+    
+    % redraw all choices
+    for i = 1:length(choice)
+        if mod(i,2) == 0
+            rowColor = cfg.p1Col; % medium blue for even rows
+        else
+            rowColor = cfg.p2Col; % light blue for odd rows
+        end
+        DrawFormattedText(window, char(leftChoice(i,1)), storedXPos(1), yPos(i), rowColor);
+        %     DrawFormattedText(window, 'OPPURE', 'center', yPos(i), cfg.textColor);
+        Screen('TextStyle', window,1); % bold
+        DrawFormattedText(window, 'OPPURE',  storedXPos(2), yPos(i)+spacer/2, rowColor); % should do the same thing as 'center'
+        Screen('TextStyle', window,0); % plaintext
+        DrawFormattedText(window, char(rightChoice(i,1)), storedXPos(3), yPos(i), rowColor);
+        DrawFormattedText(window, selInstructions, 'center', cfg.botTextYpos, botInstructCol, 70);
+        for k=1:2:3
+            Screen('FrameRect', window, cfg.textColor, storedSelRects(i,:,k)); % Draws a frame rectangle around all choices
+        end
         
-        [~, keyCode]=KbWait([],2);
-        keyName=KbName(keyCode);
-        
-        % additional loop to prevent space from being pressed before all
-        % rows have choices
-        while unique(isnan(choice)) ~= 0 
-            
-            % First two move selection up and down; second two move selector
-            % left and right
-            switch keyName
-                case 'UpArrow'
-                    currRow = currRow - 1;
-                    if currRow < 1
-                        currRow = 1; % does not loop around
-                    end
-                case 'DownArrow'
-                    choice(currRow) = currSelection;
-                    currRow = currRow + 1;
-                    if currRow > 10
-                        currRow = 10; % does not loop around
-                    end
-                    
-                case 'LeftArrow'
-                    currSelection = currSelection - 2;
-                    if currSelection < 1
-                        currSelection = 3; % Loops around
-                    end
-                case 'RightArrow'
-                    currSelection = currSelection + 2;
-                    if currSelection > 3
-                        currSelection = 1; % Loops around
-                    end
-            end
-            %         update selection to last button press
-            
-            % redraw all choices
-            for i = 1:length(choice)
-                if mod(i,2) == 0
-                    rowColor = cfg.p1Col; % medium blue for even rows
-                else
-                    rowColor = cfg.p2Col; % light blue for odd rows
-                end
-                DrawFormattedText(window, char(leftChoice(i,1)), storedXPos(1), yPos(i), rowColor);
-                %     DrawFormattedText(window, 'OPPURE', 'center', yPos(i), cfg.textColor);
-                Screen('TextStyle', window,1); % bold
-                DrawFormattedText(window, 'OPPURE',  storedXPos(2), yPos(i)+spacer/2, rowColor); % should do the same thing as 'center'
-                Screen('TextStyle', window,0); % plaintext
-                DrawFormattedText(window, char(rightChoice(i,1)), storedXPos(3), yPos(i), rowColor);
-                DrawFormattedText(window, selInstructions, 'center', cfg.botTextYpos, cfg.p1Col, 70);
-                for k=1:2:3
-                    Screen('FrameRect', window, cfg.textColor, storedSelRects(i,:,k)); % Draws a frame rectangle around all choices
-                end
-                
-            end
-            % draw all previously selected frames
-            for i = 1:length(choice)
-                if ~isnan(choice(i))
-                    Screen('FrameRect', window, cfg.winCol, storedSelRects(i,:,choice(i)), selectedWidth); % Draws a frame rectangle around current selection k
-                else
-                end
-            end
-            % draw currently selecting frame
-            Screen('FrameRect', window, cfg.instColB, storedSelRects(currRow,:,currSelection), selectingWidth); % Draws a frame rectangle around current selection k
-            
-            Screen('Flip', window)
-            
+    end
+    % draw all previously selected frames
+    for i = 1:length(choice)
+        if choice(i) ~= 0
+            Screen('FrameRect', window, cfg.winCol, storedSelRects(i,:,choice(i)), selectedWidth); % Draws a frame rectangle around current selection k
+        else
         end
     end
+    % draw currently selecting frame
+    Screen('FrameRect', window, cfg.instColB, storedSelRects(currRow,:,currSelection), selectingWidth); % Draws a frame rectangle around current selection k
+    Screen('Flip', window)
+    
+    %     end
+    
+end
 %         choice(:,1) = currSelection(:,1); 
 %         cit.resp(i) = currSelection-1; % reflects response 1, 2, or 3
 %         cit.respInd(i) = currSelection; % reflects position of response: 2, 3, 4
 %% Random selection of which row to play
 
 game = randi(10); 
-loop = 0; 
-        % redraw all choices and chosen rectangles
-while loop <= 30+game;
-    for l = 1:length(choice)
-        for i = 1:length(choice)
-            if mod(i,2) == 0
-                rowColor = cfg.p1Col; % medium blue for even rows
-            else
-                rowColor = cfg.p2Col; % light blue for odd rows
-            end
-            DrawFormattedText(window, char(leftChoice(i,1)), storedXPos(1), yPos(i), rowColor);
-            %     DrawFormattedText(window, 'OPPURE', 'center', yPos(i), cfg.textColor);
-            Screen('TextStyle', window,1); % bold
-            DrawFormattedText(window, 'OPPURE',  storedXPos(2), yPos(i)+spacer/2, rowColor); % should do the same thing as 'center'
-            Screen('TextStyle', window,0); % plaintext
-            DrawFormattedText(window, char(rightChoice(i,1)), storedXPos(3), yPos(i), rowColor);
-            for k=1:2:3
-                Screen('FrameRect', window, cfg.textColor, storedSelRects(i,:,k)); % Draws a frame rectangle around all choices
-            end
-            % draw green rects on all chosen
-            Screen('FrameRect', window, cfg.winCol, storedSelRects(i,:,choice(i)), selectedWidth); % Draws a frame rectangle around current selection k
-            
-        end
-        Screen('FrameRect', window, cfg.instColB, storedSelRects(l,:,choice(l)), selectedWidth); % Draws a frame rectangle around current selection k
-        Screen('Flip', window)
-        WaitSecs(.1)
-        loop = loop+1;
-        if loop == 30+game
-            WaitSecs(2)            
-            return
-        end
-    end
-end
+% loop = 0; 
+        
+% while loop <= 30+game; % no longer used
 
-%% Roll the dice for the number
+% cycle through the selection rectangle, ending on the random selection
+for l = 1:30+game;
+    % redraw all choices and chosen rectangles
+    for i = 1:length(choice)
+        if mod(i,2) == 0
+            rowColor = cfg.p1Col; % medium blue for even rows
+        else
+            rowColor = cfg.p2Col; % light blue for odd rows
+        end
+        DrawFormattedText(window, char(leftChoice(i,1)), storedXPos(1), yPos(i), rowColor);
+        %     DrawFormattedText(window, 'OPPURE', 'center', yPos(i), cfg.textColor);
+        Screen('TextStyle', window,1); % bold
+        DrawFormattedText(window, 'OPPURE',  storedXPos(2), yPos(i)+spacer/2, rowColor); % should do the same thing as 'center'
+        Screen('TextStyle', window,0); % plaintext
+        DrawFormattedText(window, char(rightChoice(i,1)), storedXPos(3), yPos(i), rowColor);
+        for k=1:2:3
+            Screen('FrameRect', window, cfg.textColor, storedSelRects(i,:,k)); % Draws a frame rectangle around all choices
+        end
+        % draw green rects on all chosen
+        Screen('FrameRect', window, cfg.winCol, storedSelRects(i,:,choice(i)), selectedWidth); % Draws a frame rectangle around current selection k
+        
+    end
+    m = mod(l, 10); % gets just last digit of l to represent i
+    if m == 0
+        m = 10;
+    end
+    Screen('FrameRect', window, cfg.instColB, storedSelRects(m,:,choice(m)), selectedWidth); % Draws a frame rectangle around current selection k
+    Screen('Flip', window)
+    WaitSecs(.05)
+    %         loop = loop+1; % no longer necessary
+    %         if loop == 30+game
+    %             break
+    %         end
+    %     end
+end
+WaitSecs(2)
+    
+% for l = 1:(length(choice)+game);
+%     % redraw all choices and chosen rectangles
+%     i = mod(l, 10); % gets just last digit of l to represent i
+%     if i == 0
+%         i = 10;
+%     end
+%     if mod(i,2) == 0
+%         rowColor = cfg.p1Col; % medium blue for even rows
+%     else
+%         rowColor = cfg.p2Col; % light blue for odd rows
+%     end
+%     DrawFormattedText(window, char(leftChoice(i,1)), storedXPos(1), yPos(i), rowColor);
+%     %     DrawFormattedText(window, 'OPPURE', 'center', yPos(i), cfg.textColor);
+%     Screen('TextStyle', window,1); % bold
+%     DrawFormattedText(window, 'OPPURE',  storedXPos(2), yPos(i)+spacer/2, rowColor); % should do the same thing as 'center'
+%     Screen('TextStyle', window,0); % plaintext
+%     DrawFormattedText(window, char(rightChoice(i,1)), storedXPos(3), yPos(i), rowColor);
+%     for k=1:2:3
+%         Screen('FrameRect', window, cfg.textColor, storedSelRects(i,:,k)); % Draws a frame rectangle around all choices
+%     end
+%     % draw green rects on all chosen
+%     Screen('FrameRect', window, cfg.winCol, storedSelRects(i,:,choice(i)), selectedWidth); % Draws a frame rectangle around current selection k
+%     
+%     Screen('FrameRect', window, cfg.instColB, storedSelRects(l,:,choice(l)), selectedWidth); % Draws a frame rectangle around current selection k
+%     Screen('Flip', window)
+%     WaitSecs(.1)
+% end
+% WaitSecs(2);
+
+%% Show just the selected game and figure winnings
 dice = randi(10);
 
 % redraw only chosen row
-i = game;
-if mod(i,2) == 0
+% i = game;
+if mod(game,2) == 0
     rowColor = cfg.p1Col; % medium blue for even rows
 else
     rowColor = cfg.p2Col; % light blue for odd rows
 end
-DrawFormattedText(window, char(leftChoice(i,1)), storedXPos(1), yPos(i), rowColor);
+DrawFormattedText(window, char(leftChoice(game,1)), storedXPos(1), yPos(game), rowColor);
 %     DrawFormattedText(window, 'OPPURE', 'center', yPos(i), cfg.textColor);
 Screen('TextStyle', window,1); % bold
-DrawFormattedText(window, 'OPPURE',  storedXPos(2), yPos(i)+spacer/2, rowColor); % should do the same thing as 'center'
+DrawFormattedText(window, 'OPPURE',  storedXPos(2), yPos(game)+spacer/2, rowColor); % should do the same thing as 'center'
 Screen('TextStyle', window,0); % plaintext
-DrawFormattedText(window, char(rightChoice(i,1)), storedXPos(3), yPos(i), rowColor);
+DrawFormattedText(window, char(rightChoice(game,1)), storedXPos(3), yPos(game), rowColor);
 for k=1:2:3
-    Screen('FrameRect', window, cfg.textColor, storedSelRects(i,:,k)); % Draws a frame rectangle around all choices
+    Screen('FrameRect', window, cfg.textColor, storedSelRects(game,:,k)); % Draws a frame rectangle around all choices
 end
 % draw green rects on all chosen
-Screen('FrameRect', window, cfg.instColB, storedSelRects(i,:,choice(i)), selectedWidth); % Draws a frame rectangle around chosen choice
+Screen('FrameRect', window, cfg.instColB, storedSelRects(game,:,choice(game)), selectedWidth); % Draws a frame rectangle around chosen choice
 Screen('Flip', window)
 
 % Display possible results, depending on game choice and stored
 % probabilities and determine winnings
-if i == 10 % game 10 has 100 percent certain result
-    if choice(i) == 1
-        gameText = ['Hai vinto ', euro, '2.'];
-        winningsMPL = 2;
-    elseif choice(i) == 3
-        gameText = ['Hai vinto ', euro, '3,85.'];
-        winningsMPL = 3.85;
-    end
-    return
-    
-else
-    if choice(i) == 1
-        gameText = ['Se appara 1-', num2str(prob(i,1)/10), ', vinci ', euro, '2.\nSe invece appara ', num2str(prob(i,2)/10), '-10, vinci ', euro, '1,60.'];
-        if dice <= prob(i,1)/10
-            winningsMPL = 2;
-        elseif dice > prob(i,1)/10
-            winningsMPL = 1.6;
-        else
-            disp = 'Something went wrong with the dice roll'
-        end
-    elseif choice(i) == 3
-        gameText = ['Se appara 1-', num2str(prob(i,1)/10), ', vinci ', euro, '3,85.\nSe invece appara ', num2str(prob(i,2)/10), '-10, vinci ', euro, '0,10.'];
-        if dice <= prob(i,1)/10
-            winningsMPL = 3.85;
-        elseif dice > prob(i,1)/10
-            winningsMPL = .1;
-        else
-            disp = 'Something went wrong with the dice roll'
-        end
-    end
-end
 
-% 
-if dice <= prob(i,1)/10
-    winningsMPL = 2;
-elseif dice > prob(i,1)/10
-    winningsMPL = 1.6;    
+% this portion skips the dice roll for game 10, since probability is 100%,
+% but for now, let's leave the dice roll in for simplicity's sake
+% if game == 10 % game 10 has 100 percent certain result
+%     if choice(game) == 1
+%         gameText = ['Hai vinto ', euro, num2str(win(1,1)), '.'];
+%         winningsMPL = win(1,1);
+%     elseif choice(game) == 3
+%         gameText = ['Hai vinto ', euro, num2str(win(1,2)), '.'];
+%         winningsMPL = win(2,1);
+%     end
+%     
+% else
+if game == 1
+    if choice(game) == 1
+        gameText = ['Se appare 1, vinci ', euro, num2str(win(1,1)), '.\nSe invece appare 2-10, vinci ', euro, num2str(win(2,1)), '.'];
+        if dice <= prob(game,1)/10
+            winningsMPL = win(1,1);
+        elseif dice > prob(game,1)/10
+            winningsMPL = win(2,1);
+        else
+            disp('Something went wrong with the dice roll')
+        end
+    elseif choice(game) == 3
+        gameText = ['Se appare 1, vinci ', euro, num2str(win(1,2)), '.\nSe invece appare 2-10, vinci ', euro, num2str(win(2,2)), '.'];
+        if dice <= prob(game,1)/10
+            winningsMPL = win(1,2);
+        elseif dice > prob(game,1)/10
+            winningsMPL = win(2,2);
+        else
+            disp('Something went wrong with the dice roll')
+        end
+    end
+elseif game == 9
+    if choice(game) == 1
+        gameText = ['Se appare 1-9, vinci ', euro, num2str(win(1,1)), '.\nSe invece appare 10, vinci ', euro, num2str(win(2,1)), '.'];
+        if dice <= prob(game,1)/10
+            winningsMPL = win(1,1);
+        elseif dice > prob(game,1)/10
+            winningsMPL = win(2,1);
+        else
+            disp('Something went wrong with the dice roll')
+        end
+    elseif choice(game) == 3
+        gameText = ['Se appare 1-9, vinci ', euro, num2str(win(1,2)), '.\nSe invece appare 10, vinci ', euro, num2str(win(2,2)), '.'];
+        if dice <= prob(game,1)/10
+            winningsMPL = win(1,2);
+        elseif dice > prob(game,1)/10
+            winningsMPL = win(2,2);
+        else
+            disp('Something went wrong with the dice roll')
+        end
+    end    
+elseif game == 10
+    if choice(game) == 1
+        gameText = ['Vinci ', euro, num2str(win(1,1)), ' in ogni caso.'];
+        winningsMPL = win(1,1);
+    elseif choice(game) == 3
+        gameText = ['Vinci ', euro, num2str(win(1,2)), ' in ogni caso.'];
+        winningsMPL = win(1,2);
+    end
 else
-    disp = 'Something went wrong with the dice roll'
+    if choice(game) == 1
+        gameText = ['Se appare 1-', num2str(prob(game,1)/10), ', vinci ', euro, num2str(win(1,1)), '.\nSe invece appare ', num2str(prob(game,1)/10+1), '-10, vinci ', euro, num2str(win(2,1)), '.'];
+        if dice <= prob(game,1)/10
+            winningsMPL = win(1,1);
+        elseif dice > prob(game,1)/10
+            winningsMPL = win(2,1);
+        else
+            disp('Something went wrong with the dice roll')
+        end
+    elseif choice(game) == 3
+        gameText = ['Se appare 1-', num2str(prob(game,1)/10), ', vinci ', euro, num2str(win(1,2)), '.\nSe invece appare ', num2str(prob(game,1)/10+1), '-10, vinci ', euro, num2str(win(2,2)), '.'];
+        if dice <= prob(game,1)/10
+            winningsMPL = win(1,2);
+        elseif dice > prob(game,1)/10
+            winningsMPL = win(2,2);
+        else
+            disp('Something went wrong with the dice roll')
+        end
+    end
 end
 
 winText = ['Hai vinto ', euro, num2str(winningsMPL)];
@@ -461,89 +617,94 @@ end
 
 WaitSecs(1);
 % redraw chosen row
-i = game;
-if mod(i,2) == 0
+% i = game;
+if mod(game,2) == 0
     rowColor = cfg.p1Col; % medium blue for even rows
 else
     rowColor = cfg.p2Col; % light blue for odd rows
 end
-DrawFormattedText(window, char(leftChoice(i,1)), storedXPos(1), yPos(i), rowColor);
+DrawFormattedText(window, char(leftChoice(game,1)), storedXPos(1), yPos(game), rowColor);
 %     DrawFormattedText(window, 'OPPURE', 'center', yPos(i), cfg.textColor);
 Screen('TextStyle', window,1); % bold
-DrawFormattedText(window, 'OPPURE',  storedXPos(2), yPos(i)+spacer/2, rowColor); % should do the same thing as 'center'
+DrawFormattedText(window, 'OPPURE',  storedXPos(2), yPos(game)+spacer/2, rowColor); % should do the same thing as 'center'
 Screen('TextStyle', window,0); % plaintext
-DrawFormattedText(window, char(rightChoice(i,1)), storedXPos(3), yPos(i), rowColor);
+DrawFormattedText(window, char(rightChoice(game,1)), storedXPos(3), yPos(game), rowColor);
 for k=1:2:3
-    Screen('FrameRect', window, cfg.textColor, storedSelRects(i,:,k)); % Draws a frame rectangle around all choices
+    Screen('FrameRect', window, cfg.textColor, storedSelRects(game,:,k)); % Draws a frame rectangle around all choices
 end
 % draw green rects on chosen
-Screen('FrameRect', window, cfg.instColB, storedSelRects(i,:,choice(i)), selectedWidth); % Draws a frame rectangle around chosen choice
+Screen('FrameRect', window, cfg.instColB, storedSelRects(game,:,choice(game)), selectedWidth); % Draws a frame rectangle around chosen choice
 % draw game explanation
 Screen('TextSize', window, cfg.fontSize); % back to original
 DrawFormattedText(window, gameText, 'center', gameYPos, cfg.instColB);
 Screen('Flip', window)
-Screen('TextSize', window, cfg.fontSize/2); % back to small
+Screen('TextSize', window, cfg.fontSizeSmall); % back to small
 
-WaitSecs(1);
+WaitSecs(3);
 
 %% Show the dice roll
-loop = 0; 
-        % redraw all choices and chosen rectangles
-        while loop <= 30+dice;
-            for d = 1:10
-                % redraw chosen row
-                i = game;
-                if mod(i,2) == 0
-                    rowColor = cfg.p1Col; % medium blue for even rows
-                else
-                    rowColor = cfg.p2Col; % light blue for odd rows
-                end
-                DrawFormattedText(window, char(leftChoice(i,1)), storedXPos(1), yPos(i), rowColor);
-                %     DrawFormattedText(window, 'OPPURE', 'center', yPos(i), cfg.textColor);
-                Screen('TextStyle', window,1); % bold
-                DrawFormattedText(window, 'OPPURE',  storedXPos(2), yPos(i)+spacer/2, rowColor); % should do the same thing as 'center'
-                Screen('TextStyle', window,0); % plaintext
-                DrawFormattedText(window, char(rightChoice(i,1)), storedXPos(3), yPos(i), rowColor);
-                for k=1:2:3
-                    Screen('FrameRect', window, cfg.textColor, storedSelRects(i,:,k)); % Draws a frame rectangle around all choices
-                end
-                % draw green rects on chosen
-                Screen('FrameRect', window, cfg.instColB, storedSelRects(i,:,choice(i)), selectedWidth); % Draws a frame rectangle around chosen choice
-                % draw game explanation
-                Screen('TextSize', window, cfg.fontSize); % back to original
-                DrawFormattedText(window, gameText, 'center', gameYPos, cfg.instColB);
-                % Display dice number
-                DrawFormattedText(window, num2str(d), 'center', numYPos, cfg.instColB);
-                Screen('Flip', window)
-                WaitSecs(.1)
-                Screen('TextSize', window, cfg.fontSize/2); % back to small
-                loop = loop+1;
-                if loop == 30+dice
-                    WaitSecs(2)
-                    return
-                end
-            end
-        end
-
-%% show prize
-        % redraw chosen row
-        i = game;
-        if mod(i,2) == 0
+loop = 0;
+% redraw all choices and chosen rectangles
+        if mod(game,2) == 0
             rowColor = cfg.p1Col; % medium blue for even rows
         else
             rowColor = cfg.p2Col; % light blue for odd rows
         end
-        DrawFormattedText(window, char(leftChoice(i,1)), storedXPos(1), yPos(i), rowColor);
-        %     DrawFormattedText(window, 'OPPURE', 'center', yPos(i), cfg.textColor);
+
+for loop = 1:30+dice;
+    d = mod(loop, 10); % gets just last digit of loop to represent d
+    if d == 0
+        d = 10;
+    end
+
+        % redraw chosen row
+        Screen('TextSize', window, cfg.fontSizeSmall); % small text
         Screen('TextStyle', window,1); % bold
-        DrawFormattedText(window, 'OPPURE',  storedXPos(2), yPos(i)+spacer/2, rowColor); % should do the same thing as 'center'
+        DrawFormattedText(window, 'OPPURE',  storedXPos(2), yPos(game)+spacer/2, rowColor); % should do the same thing as 'center'
         Screen('TextStyle', window,0); % plaintext
-        DrawFormattedText(window, char(rightChoice(i,1)), storedXPos(3), yPos(i), rowColor);
+        DrawFormattedText(window, char(leftChoice(game,1)), storedXPos(1), yPos(game), rowColor);
+        DrawFormattedText(window, char(rightChoice(game,1)), storedXPos(3), yPos(game), rowColor);
         for k=1:2:3
-            Screen('FrameRect', window, cfg.textColor, storedSelRects(i,:,k)); % Draws a frame rectangle around all choices
+            Screen('FrameRect', window, cfg.textColor, storedSelRects(game,:,k)); % Draws a frame rectangle around all choices
         end
         % draw green rects on chosen
-        Screen('FrameRect', window, cfg.instColB, storedSelRects(i,:,choice(i)), selectedWidth); % Draws a frame rectangle around chosen choice
+        Screen('FrameRect', window, cfg.instColB, storedSelRects(game,:,choice(game)), selectedWidth); % Draws a frame rectangle around chosen choice
+        % draw game explanation
+        Screen('TextSize', window, cfg.fontSize); % back to original
+        DrawFormattedText(window, gameText, 'center', gameYPos, cfg.instColB);
+        % Display dice number
+        DrawFormattedText(window, num2str(d), 'center', numYPos, cfg.instColB);
+        Screen('Flip', window)
+        WaitSecs(.1)
+%         loop = loop+1;
+%         if loop >= 30+dice
+%             break
+%         end
+%     end
+end
+WaitSecs(2)
+
+%% show prize
+        % redraw chosen row
+%         i = game;
+        if mod(game,2) == 0
+            rowColor = cfg.p1Col; % medium blue for even rows
+        else
+            rowColor = cfg.p2Col; % light blue for odd rows
+        end
+        
+        Screen('TextSize', window, cfg.fontSizeSmall); % small text
+        DrawFormattedText(window, char(leftChoice(game,1)), storedXPos(1), yPos(game), rowColor);
+        %     DrawFormattedText(window, 'OPPURE', 'center', yPos(game), cfg.textColor);
+        Screen('TextStyle', window,1); % bold
+        DrawFormattedText(window, 'OPPURE',  storedXPos(2), yPos(game)+spacer/2, rowColor); % should do the same thing as 'center'
+        Screen('TextStyle', window,0); % plaintext
+        DrawFormattedText(window, char(rightChoice(game,1)), storedXPos(3), yPos(game), rowColor);
+        for k=1:2:3
+            Screen('FrameRect', window, cfg.textColor, storedSelRects(game,:,k)); % Draws a frame rectangle around all choices
+        end
+        % draw green rects on chosen
+        Screen('FrameRect', window, cfg.instColB, storedSelRects(game,:,choice(game)), selectedWidth); % Draws a frame rectangle around chosen choice
         % draw game explanation
         Screen('TextSize', window, cfg.fontSize); % back to original
         DrawFormattedText(window, winText, 'center', gameYPos, cfg.instColB);
@@ -552,6 +713,18 @@ loop = 0;
         Screen('Flip', window)
         WaitSecs(5)
         Screen('TextSize', window, cfg.fontSize); % back to original
+ 
+% some checks on functionality        
+% prob
+% win
+% choice
+% game
+% dice
+% winningsMPL
+
+% Save data just in case
+save(['sub' num2str(particNum) '-' num2str(DateTime) '_q1MPL'], 'choice', 'game', 'dice', 'winningsMPL', 'prob', 'win');
+
 end
 
  

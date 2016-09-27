@@ -40,11 +40,11 @@ scale_middle = mean([1:length(scale_range)]); % gets half the scale range
 % scale_low_label = 'negative';
 
 % ITALIAN
-scale_question = {'Si prega si valuta le tue emozione corrente';
-'usando i tasti freccia.'; 'Clicca SPAZIO per confermare la tua scelta.'};
-scale_hi_label = 'positive';
+scale_question = {'Valuta come ti senti dopo questa lotteria';
+'usando i tasti freccia.'; 'Premi "spazio" per confermare la tua scelta.'};
+scale_hi_label = 'male';
 scale_middle_label = 'neutrale';
-scale_low_label = 'negative';
+scale_low_label = 'bene';
 
 % [window, windowRect] = Screen('OpenWindow', 0, [255, 255, 255], [0 0 640 480]); %white background
 [screenXpixels, screenYpixels] = Screen('WindowSize', window);

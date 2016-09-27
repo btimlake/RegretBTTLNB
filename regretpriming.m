@@ -21,9 +21,10 @@ KbName('UnifyKeyNames');
 showUp = 5; % fee for coming to the experiment; base payment amount
 
 %% VARIABLES
-player1maxbid=5; % Patent Race Role
-gamestrials = 12; % Trials for 2x2 games
-prtrials = 10; % Trials for Patent Race
+player1maxbid1=5; % Patent Race first Role
+player1maxbid2=4; % Patent Race second Role
+gamestrials = 48; % Trials for 2x2 games
+prtrials = 50; % Trials for each role in Patent Race
 
 DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
 
@@ -37,7 +38,7 @@ if ismac
     screenRes=[];
     enabledKeys = RestrictKeysForKbCheck([30, 44, 79, 80, 81,82]); % limit recognized presses to 1!, space, left, right, up, down arrows MAC
 %     enabledKeys = RestrictKeysForKbCheck([]); % for debugging
-    
+
 elseif isunix
     % Code to run on Linux plaform
     disp('Unix');
@@ -80,7 +81,9 @@ black = BlackIndex(screenNumber);
 cfg.screenSize.x = screenXpixels; 
 cfg.screenSize.y = screenYpixels;
 cfg.font = 'Courier New';
-cfg.fontSize = round(screenYpixels * 2/40);
+cfg.fontSize = round(screenYpixels * 2/80);
+% cfg.fontSize = round(screenYpixels * 2/60);
+cfg.fontSizeSmall = round(screenYpixels * 2/100);
 % Colors
 cfg.textColor = [0, 0, 0]; % black
 % cfg.bgColor = [255, 255, 255];
@@ -96,34 +99,35 @@ cfg.topTextYpos = screenYpixels * 2/40; % Screen Y positions of top/instruction 
 cfg.uppTextYpos = screenYpixels * 6/40;
 cfg.botTextYpos = screenYpixels * 35/40; % Screen Y positions of bottom/result text
 cfg.waitTextYpos = screenYpixels * 38/40; % Y position of lowest "Please Wait" text
-
+% cfg.leftTextXpos = screenXpixels * .035; % X position for Raven prompt
+% cfg.LeftTextXpos = screenXpixels*.035; % position for Raven prompts
 
 %% Screen 0: Participant number entry 
     Screen('TextFont', window, cfg.font);
-    Screen('TextSize', window, cfg.fontSize);
+    Screen('TextSize', window, cfg.fontSizeSmall);
     Screen('TextStyle', window);
     Screen('TextColor', window, cfg.textColor);
     
-inputReq1 = 'Tasti il numero sopra il tuo computer come due cifre \n e premi ''Enter'': '; % ITALIAN
-fail1='Si prega tastere esattamente due cifre \n e premi ''Enter'': '; % ITALIAN
-inputReq2 = 'Tasti il dato come e'' scritto su lavagna \n e premi ''Enter'': '; % ITALIAN
-fail2='Si prega tastere quattro numeri \n e premi ''Enter'': '; % ITALIAN
+inputReq1 = 'Inserisci le due cifre sopra \n il tuo computer e premi "Invio": '; % ITALIAN
+fail1='Si prega inserisci esattamente due cifre \n e premi "Invio": '; % ITALIAN
+inputReq2 = 'Inserisci la data come e'' scritta \n sulla lavagna e premi "Invio": '; % ITALIAN
+fail2='Si prega inserisci quattro numeri \n e premi "Invio": '; % ITALIAN
     
     [nx, ny1, textRect1]=DrawFormattedText(window, inputReq1, 0, 0, cfg.bgColor); % draws a dummy version of text just to get measurements
     [nx, ny2, textRect2]=DrawFormattedText(window, inputReq2, 0, ny1, cfg.bgColor); % draws a dummy version of text just to get measurements
 	textWidth1 = textRect1(3)-textRect1(1); % figures width of bounding rectangle of text
 	textWidth2 = textRect2(3)-textRect2(1); % figures width of bounding rectangle of text
-    xPos1 = cfg.screenCenter(1) - textWidth1/2; % sets x position half the text length back from center 
-    xPos2 = cfg.screenCenter(1) - textWidth2/2; % sets x position half the text length back from center 
-    yPos = cfg.screenCenter(2);
-    yPos2 = yPos + ny1; 
+    cfg.xPos1 = cfg.screenCenter(1) - textWidth1/2; % sets x position half the text length back from center 
+    cfg.xPos2 = cfg.screenCenter(1) - textWidth2/2; % sets x position half the text length back from center 
+    cfg.yPos = cfg.screenCenter(2);
+    cfg.yPos2 = cfg.yPos + ny1; 
 Screen('Flip', window)
 
 aOK=0; % initial value for aOK
 
 while aOK ~= 1
     
-    compNum = GetEchoStringForm(window, inputReq1, xPos1, yPos, cfg.textColor); % displays string in PTB; allows backspace
+    compNum = GetEchoStringForm(window, inputReq1, cfg.xPos1, cfg.yPos, cfg.textColor); % displays string in PTB; allows backspace
     
     % HOW TO GET THIS TO ALLOW REPEATED INPUT?
 %     TRY BREAK OR RETURN
@@ -133,12 +137,12 @@ while aOK ~= 1
     switch isempty(compNum)
         case 1 %deals with both cancel and X presses
             Screen('Flip', window)
-            compNum = GetEchoStringForm(window, fail1, xPos1, yPos, cfg.textColor); % displays string in PTB; allows backspace
+            compNum = GetEchoStringForm(window, fail1, cfg.xPos1, cfg.yPos, cfg.textColor); % displays string in PTB; allows backspace
         case 0
             if length(compNum) ~= 2 || str2num(compNum) <= 0 || str2num(compNum) >= 25
 %                 aOK = 0;
                 Screen('Flip', window)
-%                 compNum = GetEchoStringForm(window, fail1, xPos1, yPos, cfg.textColor); % displays string in PTB; allows backspace
+%                 compNum = GetEchoStringForm(window, fail1, cfg.xPos1, cfg.yPos, cfg.textColor); % displays string in PTB; allows backspace
 %                 break
 
             else
@@ -155,7 +159,7 @@ aOK=0; % initial value for aOK
 
 while aOK ~= 1
     
-    insertDate = GetEchoStringForm(window, inputReq2, xPos2, yPos2, cfg.textColor); % displays string in PTB; allows backspace
+    insertDate = GetEchoStringForm(window, inputReq2, cfg.xPos2, cfg.yPos2, cfg.textColor); % displays string in PTB; allows backspace
     
     % HOW TO GET THIS TO ALLOW REPEATED INPUT?
 %     TRY BREAK OR RETURN
@@ -164,12 +168,12 @@ while aOK ~= 1
     switch isempty(insertDate)
         case 1 %deals with both cancel and X presses
             Screen('Flip', window)
-            insertDate = GetEchoStringForm(window, fail2, xPos2, yPos2, cfg.textColor); % displays string in PTB; allows backspace
+            insertDate = GetEchoStringForm(window, fail2, cfg.xPos2, cfg.yPos2, cfg.textColor); % displays string in PTB; allows backspace
         case 0
             if length(insertDate) ~= 4;
                 aOK = 0;
             Screen('Flip', window)
-                insertDate = GetEchoStringForm(window, fail2, xPos2, yPos2, cfg.textColor); % displays string in PTB; allows backspace
+                insertDate = GetEchoStringForm(window, fail2, cfg.xPos2, cfg.yPos2, cfg.textColor); % displays string in PTB; allows backspace
             else
                 aOK = 1;
                 Screen('Flip', window)
@@ -183,35 +187,46 @@ particNum = [insertDate, compNum];
 
 %% call scripts
 % TEMP VARIABLES FOR TESTING
-% total1shotEarnings = 8;
-% winnings2x2 = 1;
-% p1GameEarnings = 8.85;
-% gamesdatafilename = 'sub123422-0809-1426_4games2x2.dat';
-% winningsMPL = 3.85;
+total1shotEarnings = 8;
+winnings2x2 = 1;
+p1GameEarnings = 8.85;
+gamesdatafilename = 'sub123422-0809-1426_4games2x2.dat';
+winningsMPL = 3.85;
 earningsRaven = 6;
 
-% [gamesdatafilename]=games(particNum, DateTime, window, windowRect, gamestrials, enabledKeys, cfg);
+[gamesdatafilename]=games(particNum, DateTime, window, windowRect, gamestrials, enabledKeys, cfg);
 %    [gamesdatafilename]=games(subNo, anni, w, wRect, NUMROUNDS, enabledKeys, cfg)
-% patentTaskInstructions(window, windowRect, enabledKeys, cfg, player1maxbid);
-% [totalEarnings] = regretTask(particNum, DateTime, window, windowRect, enabledKeys, 10);% Clear the workspace and the screen
-%       regretTask(particNum, DateTime, window, windowRect, enabledKeys,
-%       trials); % trials should be no more than 10
-% [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg);
-%     [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg)% Clear the workspace and the screen
-% [p1GameEarnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, 'fictive', player1maxbid, prtrials);
+
+patentTaskInstructions(window, windowRect, enabledKeys, cfg, player1maxbid1);
+
+[wofPracticeEarnings] = regretTask(particNum, DateTime, window, windowRect, enabledKeys, 10);
+% %       regretTask(particNum, DateTime, window, windowRect, enabledKeys,
+% %       trials); % trials should be no more than 10
+[total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg);
+% %     [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg)% Clear the workspace and the screen
+
+[p1GameEarnings1] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, 'fictive', player1maxbid1, prtrials);
+[p1GameEarnings2] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, 'fictive', player1maxbid2, prtrials);
+p1GameEarnings = p1GameEarnings1+p1GameEarnings2; % total of the two
 %     [p1GameEarnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, player2Strategy, player1maxbid, trials);
 %     [player1Earnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, player2Strategy, player1maxbid, enabledKeys)
-% [rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTime, window, windowRect, enabledKeys)
+
+[rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTime, window, windowRect, enabledKeys);
 %     [rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTi me,  wi n dow, windowRect, enabledKeys)
-% [cit] = CITquestionnaire(cfg, particNum, DateTime, window, windowRect, enabledKeys);
-% [winningsMPL, earningsRaven] = questionnaires(particNum, DateTime, window, windowRect)
+
 [choice, winningsMPL] = MPL(cfg, particNum, DateTime, window, windowRect, enabledKeys);
+
+[ravenChoice, ravenWinnings] = Raven(cfg, particNum, DateTime, window, windowRect);
+
+[cit] = CITquestionnaire(cfg, particNum, DateTime, window, windowRect, enabledKeys);
+%   [winningsMPL, earningsRaven] = questionnaires(particNum, DateTime, window, windowRect)
+
 [winnings2x2, chosenGame, opponentChoice]=games2x2winnings(gamesdatafilename, cfg, window);
 
 [totalEarnings]=payouts(cfg, window, showUp, 'Show-up pagamento', winnings2x2, 'Righe e Colonne', total1shotEarnings, ...
     'Ruota della fortuna', p1GameEarnings, 'Patent Race', winningsMPL, 'Lista dei Prezzi', ...
-    earningsRaven, 'Puzzles');
-% payouts(cfg, window, varargin) % must follow pattern of (amount1, label1, amount2, label2, ? amountn, labeln)
+    ravenWinnings, 'Puzzles');
+%   [totalEarnings] = payouts(cfg, window, va rargin) % must follow pattern of (amount1, label1, amount2, label2, ? amountn, labeln)
 
 % big log file
 % rating, ratingDuration, normalizedChoice, computerSide

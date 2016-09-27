@@ -21,10 +21,10 @@ Screen('TextSize', window, cfg.fontSize);
 Screen('TextStyle', window);
 Screen('TextColor', window, cfg.textColor);
 
-inputReq1 = 'Tasti il gioco scelto e premi ''Enter'': '; % ITALIAN
-fail1='Si prega tastere un numero di gioco \n e premi ''Enter'': '; % ITALIAN
-inputReq2 = 'Tasti la scelta del tuo avversario \n e premi ''Enter'': '; % ITALIAN
-fail2='Si prega tastere 1 o 2 e premi ''Enter'': '; % ITALIAN
+inputReq1 = 'Tasti il gioco scelto e premi ''Invio'': '; % ITALIAN
+fail1='Si prega tastere un numero di gioco \n e premi ''Invio'': '; % ITALIAN
+inputReq2 = 'Tasti la scelta del tuo avversario \n e premi ''Invio'': '; % ITALIAN
+fail2='Si prega tastere 1 o 2 e premi ''Invio'': '; % ITALIAN
 
 [nx, ny1, textRect1]=DrawFormattedText(window, inputReq1, 0, 0, cfg.bgColor); % draws a dummy version of text just to get measurements
 [nx, ny2, textRect2]=DrawFormattedText(window, inputReq2, 0, ny1, cfg.bgColor); % draws a dummy version of text just to get measurements

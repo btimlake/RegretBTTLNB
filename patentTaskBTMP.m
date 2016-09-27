@@ -150,7 +150,7 @@ for i = 1:numbotRect
 end
 
 % Instruction text strings
-topInstructText = ['Scegli il tuo investimento (0 - ' num2str(PLAYER1MAXBID) ').'];
+topInstructText = ['Scegli il tuo investimento (0 - ' num2str(PLAYER1MAXBID) ') e poi premi "spazio".'];
 uppInstructText = ['Il tuo avversario puo'' investire fino a ' num2str(PLAYER2MAXBID) '.'];
 lowInstructText = 'Puoi vincere 10, piu'' la quantita'' che non investi';
 % botInstructText = 'the amount you don''t invest.';
@@ -282,7 +282,7 @@ unselectedRects = topRects(:,unSelected:PLAYER1MAXBID);
 % Win Result text strings
 topWinText = topSelectText;
 uppWinText = ['Il tuo avversario ha investito ' num2str(player2Choice(i)) '.'];
-botWinText = ['Hai guadagnato ' num2str(player1Earnings(i)) ' in questa prova.']; 
+botWinText = ['In questo round hai guadagnato ' num2str(player1Earnings(i)) '.']; 
 % lowWinText = ['Your opponent earned ' num2str(player2Earnings(i)) ' in this round.']; 
 
 % Draw choice explanation
@@ -382,6 +382,7 @@ p2GameEarnings=sum(player2Earnings)/100;
 % Earnings text
 earningsText11 = ['Hai guadagnato in totale in questo gioco: ' num2str(p1GameEarnings)];
 earningsText12 = ['L''avversario ha guadagnato in totale in questo gioco: ' num2str(p2GameEarnings)];
+earningsText13 = 'Attendi il prossimo gioco.';
 instruct1TextYpos = screenYpixels * 2/40; 
 instruct3TextYpos = screenYpixels * 8/40; 
 
@@ -417,7 +418,7 @@ for i=1:NUMROUNDS
 end
 
 % save(['/Users/bentimberlake/Documents/MATLAB/patentTaskBTMP/logfiles/patent_race-subj_' num2str(particNum) '-' DateTime], 'player1Choice', 'player2Choice', 'player1Earnings', 'player2Earnings', 'trialLength');
-save(['sub' num2str(particNum) '-' num2str(DateTime) '_3patent_race'], 'player1Choice', 'player2Choice', 'player1Earnings', 'player2Earnings', 'trialLength');
+save(['sub' num2str(particNum) '-' num2str(DateTime) '_3patent_race' num2str(player1maxbid)], 'player1Choice', 'player2Choice', 'player1Earnings', 'player2Earnings', 'trialLength');
 
 end
 

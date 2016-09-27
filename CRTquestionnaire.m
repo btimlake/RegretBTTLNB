@@ -1,14 +1,8 @@
 function [crt] = CRTquestionnaire(cfg, particNum, DateTime, window, windowRect, enabledKeys)
 
-addpath('questionnaires');
-load('crtpromptARRAY.mat')       % Load CRT prompts and responses DATASET - PC Lab
-% load('crtpromptTABLE.mat')       % Load CRT prompts and responses TABLE - when available
-
-% TURN THESE INTO STRINGS
-
-% (row, col) row represents question; columns are 1=q, 2=a1, 3=a2, 4=a3
-
 %% Developing/debugging material
+addpath('REGRET_task', 'patentTaskBTMP', 'ratingslider', 'instructions', 'games', 'games/stimoli');
+
 PsychDefaultSetup(2);
 screens = Screen('Screens');
 screenNumber = 0;
@@ -19,10 +13,12 @@ black = BlackIndex(screenNumber);
 [xCenter, yCenter] = RectCenter(windowRect);
  
 particNum = '1212'; 
-DateTime = '0101-1234'; 
+DateTime = '0101-1235'; 
 enabledKeys = RestrictKeysForKbCheck([30, 44, 79, 80, 81,82]);
-
+addpath('questionnaires');
+load('citpromptARRAY.mat')       % Load CIT prompts and responses DATASET - PC Lab
 [screenXpixels, screenYpixels] = Screen('WindowSize', window);
+
 cfg.screenSize.x = screenXpixels; 
 cfg.screenSize.y = screenYpixels;
 cfg.font = 'Courier New';
@@ -30,7 +26,7 @@ cfg.fontSize = round(screenYpixels * 2/40);
 % Colors
 cfg.textColor = [0, 0, 0]; % black
 % cfg.bgColor = [255, 255, 255];
-cfg.bgColor = [1, 1, 1]; % white
+cfg.bgColor = [1 1 1]; % white
 cfg.instColA = [0, 0.4078, 0.5451]; %DeepSkyBlue4
 cfg.instColB = [0.8039, 0.5843, 0.0471]; %DarkGoldenRod3
 cfg.p1Col = [0, 0, 0.8039]; %MediumBlue
@@ -39,36 +35,20 @@ cfg.winCol = [.1333, .5451, .1333]; %ForestGreen
 % Positions
 cfg.screenCenter = [xCenter, yCenter]; % center coordinatesf
 cfg.topTextYpos = screenYpixels * 2/40; % Screen Y positions of top/instruction text
+cfg.uppTextYpos = screenYpixels * 6/40;
 cfg.botTextYpos = screenYpixels * 35/40; % Screen Y positions of bottom/result text
 cfg.waitTextYpos = screenYpixels * 38/40; % Y position of lowest "Please Wait" text
+cfg.LeftTextXpos = screenXpixels*.035;
 
+cfg.fontSizeSmall = round(cfg.fontSize/2);
 
-%% Overview
-
-% CIT - done
-
-% MPL
-% SCREENS: 1
-% QUESTIONS/SCREEN: 10
-% CHOICES: 2
-% PROMPTS: image
-% RESPONSE: move rectangles, click 'space'
-% Randomly select line
-% Randomly select side
-% output all selections, random selections, winnigs
-
-% RAVEN
-% SCREENS: 30
-% QUESTIONS/SCREEN: 1
-% CHOICES: 8/screen
-% PROMPTS: images
-% RESPONSE: move rectangle, click 'space'
-% Make responses a separate image
-%     - make consistent size; measure each as a proportion of size
-%     - calculate rects and positions based on that proportion
-% output answers
-% compare to answer file
-% output correct & score/winnings
+    Screen('TextFont', window, cfg.font);
+    Screen('TextSize', window, cfg.fontSize);
+    Screen('TextStyle', window);
+    Screen('TextColor', window, cfg.textColor);
+    Screen('Preference', 'TextAlphaBlending', 1);
+	oldTextBackgroundColor=Screen('TextBackgroundColor', window, [255 255 255]); 
+    
 
 % CRT
 % SCREENS: 4
@@ -80,15 +60,15 @@ cfg.waitTextYpos = screenYpixels * 38/40; % Y position of lowest "Please Wait" t
 % compare to answer file
 % output correct, score/winnings, free response
 
-% HPS
-% SCREENS: 4
-% QUESTIONS/SCREEN: 12
-% CHOICES: 2
-% PROMPTS: images
-% RESPONSE: move rectangle, click 'space'
-% output answers
-% compare to answer file
-% output assessment
+%% load data
+addpath('questionnaires');
+% load('crtpromptARRAY.mat')       % Load CRT prompts and responses DATASET - PC Lab
+load('crtpromptTABLE.mat')       % Load CRT prompts and responses TABLE - when available
+
+% TURN THESE INTO STRINGS
+
+% (row, col) row represents question; columns are 1=q, 2=a1, 3=a2, 4=a3
+
 
 %% CONSTANTS
 
@@ -422,7 +402,7 @@ keyName=KbName(keyCode);
     KbReleaseWait; 
 
 end
-end
+
 
 %% QUESTION 2
  

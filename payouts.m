@@ -1,4 +1,4 @@
-function [totalEarnings] = payouts(cfg, window, varargin)
+function [totalEarnings] = payouts(cfg, window, particNum, DateTime, varargin)
 
 % jsut varargin
 % 
@@ -42,9 +42,9 @@ fields = length(varargin);
 
 %     varargin = {10, 'Show-up pagamento', winnings2x2, 'Rows & Colums', total1shotEarnings, ...
 %     'Ruota della fortuna', player1Earnings, 'Patent Race', winningsMPL, 'Lista dei prezzi', ...
-%     earningsRaven, 'Puzzles'}
+%     ravenWinnings, 'Puzzles'}
 % earnings.amount = {[10]  [9]  [-6]  [10]  [3.8500]  [6]}'
-earnings.label = {'Show-up pagamento',  'Rows & Colums',  'Ruota della fortuna',  'Patent Race',  'Lista dei prezzi',  'Puzzles'}';
+earnings.label = {'Gettone di participazione',  'Matrici',  'Ruota della fortuna',  'Gioco delle carte',  'Lotteria dei prezzi',  'Puzzles'}';
 
 
 % earnings.amount = cell2struct(varargin)
@@ -192,7 +192,7 @@ end
 % winnings1shot = total1shotEarnings; % Ruota della fortuna
 % winningsPatentRace = player1Earnings; % Patent Race
 % winningsMPL;    % Lista dei prezzi
-% earningsRaven;  % Puzzles
+% ravenWinnings;  % Puzzles
 
 % runningTotal = runningTotal + 
 % totalEarnings = sum(earnings.amount);

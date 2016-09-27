@@ -90,7 +90,7 @@ arrowNonChoice = rightArrowpos;
 
 % Display text
 % topInstructText = ['Choose which wheel to play.']; % English
-topInstructText = 'Scegli quale ruota girare.'; % Italian
+topInstructText = 'Scegli quale ruota fare girare.'; % Italian
     
 % Set some variables
 NUMROUNDS = 1;
@@ -162,25 +162,25 @@ waitframes = 1;
 %% Screen 0 - Instructions
 % Instruct text positions
 instruct1TextYpos = screenYpixels * 2/42; 
-instruct2TextYpos = screenYpixels * 4/42; 
+% instruct2TextYpos = screenYpixels * 4/42; 
 instruct3TextYpos = screenYpixels * 6/42; 
-instruct4TextYpos = screenYpixels * 8/42; 
-instruct5TextYpos = screenYpixels * 10/42; 
-instruct6TextYpos = screenYpixels * 12/42; 
-instruct7TextYpos = screenYpixels * 14/42; 
-instruct8TextYpos = screenYpixels * 16/42; 
-instruct9TextYpos = screenYpixels * 18/42; 
-instruct10TextYpos = screenYpixels * 20/42; 
-instruct11TextYpos = screenYpixels * 22/42; 
-instruct12TextYpos = screenYpixels * 24/42; 
-instruct13TextYpos = screenYpixels * 26/42; 
-instruct14TextYpos = screenYpixels * 28/42; 
-instruct15TextYpos = screenYpixels * 30/42; 
-instruct16TextYpos = screenYpixels * 32/42; 
-instruct17TextYpos = screenYpixels * 34/42; 
-instruct18TextYpos = screenYpixels * 36/42; 
-instruct19TextYpos = screenYpixels * 38/42; 
-instructbotTextYpos = screenYpixels * 40/42; 
+% instruct4TextYpos = screenYpixels * 8/42; 
+% instruct5TextYpos = screenYpixels * 10/42; 
+% instruct6TextYpos = screenYpixels * 12/42; 
+% instruct7TextYpos = screenYpixels * 14/42; 
+% instruct8TextYpos = screenYpixels * 16/42; 
+% instruct9TextYpos = screenYpixels * 18/42; 
+% instruct10TextYpos = screenYpixels * 20/42; 
+% instruct11TextYpos = screenYpixels * 22/42; 
+% instruct12TextYpos = screenYpixels * 24/42; 
+% instruct13TextYpos = screenYpixels * 26/42; 
+% instruct14TextYpos = screenYpixels * 28/42; 
+% instruct15TextYpos = screenYpixels * 30/42; 
+% instruct16TextYpos = screenYpixels * 32/42; 
+% instruct17TextYpos = screenYpixels * 34/42; 
+% instruct18TextYpos = screenYpixels * 36/42; 
+% instruct19TextYpos = screenYpixels * 38/42; 
+% instructbotTextYpos = screenYpixels * 40/42; 
 
 % % Instruction text ENGLISH
 % instructText0 = ['Please wait to be told to continue.'];
@@ -195,41 +195,43 @@ instructbotTextYpos = screenYpixels * 40/42;
 % instructText18 = ['right arrow key.'];
 % % instructText19 = [''];
 
-% Instruction text ITALIAN
-instructText0 = ['Per favore, aspetta nostre istruzioni prima di iniziare.'];
+%% Setup
+% BaseRect based on screen and text size
+rectWidth = screenXpixels * 5 / 40;
+rectHeight = screenYpixels * 0.125 / 56; % rectangles slimmer!
+baseRect = [0 0 rectWidth rectHeight]; % like this (not numbers manually) because it *should* keeps the same proportions on all screensizes 
 
-instructText11 = ['Ora giocherai il turno decisivo.'];
-instructText12 = ['Farai girare una ruota della fortuna come prima,'];
-instructText13 = ['ma in questo caso il risultato'];
-instructText14 = ['della giocata puo'' cambiare il tuo punteggio.'];
-% instructText15 = [''];
-instructText16 = ['Come prima, scegli quale ruota giocare'];
-instructText17 = ['cliccando il tasto freccia sinistro o destro.'];
-% instructText18 = ['right arrow key.'];
-% instructText19 = [''];
+% Text ITALIAN
+instructions = repmat({''},3, 2);
+instructions(1,1) = {'Compito 2/3: La Ruota della Fortuna'};
+% instructions(1,2) = {'Descrizione della Procedura di Scelta e di Pagamento'};
+instructions(2,1) = {'Ora giocherai il turno decisivo. \n\n ma in questo caso il risultato sara contatto \nnel tuo guadagne finale. \n Il guadagno o la perdito in questa giocata rappresenta \nil guadagno massimio o la perdita massima di tutto l''esperimento. \n\n Come prima, scegli quale ruota fare giocare \n premendo il tasto freccia sinistro o destro.'};
+% instructions(2,2) = {'Nella parte destra dello schermo sono riportate le 10 coppie di lotterie. Ci sono 10 righe che corrispondono alle 10 scelte che dovrai effettuare. Ogni riga rappresenta una scelta tra due lotterie. \n\nPer effettuare le tue scelte in ogni riga, tasti le frecce sinistra o destra. Per cambiare la riga, usa le frecce su o giu''. Quando sei finito, premi ''spazio''. Una volta che avrai scelto una lotteria, essa diventera'' di colore verde. \n\nDopo che avrai effettuato le tue 10 scelte, il computer selezionera'' in modo casuale una delle 10 righe. Infine, la lotteria da te scelta verra'' giocata dal computer e tu riceverai la vincita corrispondente all''esito della lotteria. La tua vincita ti verra'' mostrata a schermo dopo che avrai completato e validato le tue scelte. \n\nRicorda, l''ammontare di denaro rappresentato nelle diverse lotterie e'' reale, percio'' sarai pagato/a in base alle scelte che effettuerai e secondo le regole appena descritte. \n\nSe hai qualche dubbio sulla procedura ed il metodo di pagamento sentiti libero/a di chiedere chiarimenti allo sperimentatore.'};
+instructions(3,1) = {'Per favore, attendi il via dello sperimentatore.'};
+% instructions(3,2) = {'Clicca la freccia sinistra per tornare o premi ''spazio'' per comminciare.'};
 
 % Instruction text colors
 instructCola = [0, 0.4078, 0.5451]; %DeepSkyBlue4
 instructColb = [0.8039, 0.5843, 0.0471]; %DarkGoldenRod3
-
-keyName=''; % empty initial value
+    
+    keyName=''; % empty initial value
 
 % RestrictKeysForKbCheck([37,39,32,49]); % limit recognized presses to left and right arrows PC
 % RestrictKeysForKbCheck([30, 44, 79, 80]); % limit recognized presses to 1!, space, left and right arrows MAC
 
 while(~strcmp(keyName,'1!')) % continues until the 1 button is pressed
     
-    DrawFormattedText(window, instructText11, 'center', instruct2TextYpos, instructCola); % Draw betting instructions
-    DrawFormattedText(window, instructText12, 'center', instruct3TextYpos, instructCola); % Draw betting instructions
-    DrawFormattedText(window, instructText13, 'center', instruct4TextYpos, instructCola); % Draw betting instructions
-    DrawFormattedText(window, instructText14, 'center', instruct5TextYpos, instructCola); % Draw betting instructions
-%     DrawFormattedText(window, instructText15, 'center', instruct5TextYpos, instructCola); % Draw betting instructions
-    DrawFormattedText(window, instructText16, 'center', instruct8TextYpos, instructColb); % Draw betting instructions
-    DrawFormattedText(window, instructText17, 'center', instruct9TextYpos, instructColb); % Draw betting instructions
-%     DrawFormattedText(window, instructText18, 'center', instruct10TextYpos, instructColb); % Draw betting instructions
-%     DrawFormattedText(window, instructText29, 'center', instruct19TextYpos, instructCola); % Draw betting instructions
-    DrawFormattedText(window, instructText0, 'center', instruct19TextYpos, black); % Draw betting instructions
-    Screen('Flip', window); % Flip to the screen
+    Screen('TextStyle', window,1); % bold
+    Screen('TextSize', window, cfg.fontSize);
+    [~, ny1] = DrawFormattedText(window, char(instructions(1,1)), 'center', cfg.topTextYpos);
+
+    Screen('TextStyle', window,0); % back to plain
+    Screen('TextSize', window, cfg.fontSize/2); % smaller fontsize
+    DrawFormattedText(window,char(instructions(2,1)), 'center', ny1*2, 0, 70);
+    DrawFormattedText(window,char(instructions(3,1)), 'center', cfg.botTextYpos, cfg.p1Col, 70);
+    Screen('TextColor', window, cfg.textColor);
+    
+    Screen('Flip', window);
 
     [keyTime, keyCode]=KbWait([],2);
     keyName=KbName(keyCode);
@@ -499,7 +501,7 @@ for i = 1:16; % multiply second integer by .75 to get seconds; i.e. 16 means 12 
     
     if mod(i,2) == 0 %Even numbers: wait text on
         % Please Wait text
-        DrawFormattedText(window, 'Si prega di attendere un attimo il gioco Patent Race ... ', 'center', cfg.waitTextYpos, cfg.instColA);
+        DrawFormattedText(window, 'Ora avrai inizio il gioco delle carte ... ', 'center', cfg.waitTextYpos, cfg.instColA);
         Screen('Flip', window)
         WaitSecs(1);
     else %Odd numbers: wait text off
