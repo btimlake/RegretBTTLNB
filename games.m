@@ -23,7 +23,7 @@ rand('state',sum(100*clock));
 % Make sure keyboard mapping is the same on all supported operating systems
 % Apple MacOS/X, MS-Windows and GNU/Linux:
 % KbName('UnifyKeyNames');
-enabledKeys;
+
 % <<<<<<< HEAD
 % RestrictKeysForKbCheck([38, 40 ,32]); % limit recognized presses to up and down arrows PC
 % RestrictKeysForKbCheck([81,82,44]); % limit recognized presses to space and up and down arrows MAC
@@ -44,7 +44,7 @@ addpath(matlabroot,'games/instructions');
 
 % Define filenames of input files and result file:
 % datafilename = strcat('sub' num2str(subNo), '-', DateTime, '_4games2x2.dat'); % name of data file to write to
-datafilename = ['sub' num2str(subNo), '-', num2str(DateTime), '_4games2x2.dat'];
+datafilename = ['sub' num2str(subNo), '-', num2str(DateTime), '_1games2x2.dat'];
 % datafilename = ['sub' subNo, '-', DateTime, '_4games2x2.dat']; % name of data file to write to
 %strcat corrisponde a concatena, infatti concatena le stringhe successive
 gamesdatafilename=datafilename; %different variable for exporting to umbrella script

@@ -54,17 +54,24 @@ Screen('TextColor', window, cfg.textColor);
 
 %% EXPLANATION SCREEN
 
+keyName = '';
+while(~strcmp(keyName,'space')) % leaves questionnaire explanation up until 'space' is hit
+
 Screen('TextStyle', window,1); % bold
 
-DrawFormattedText(window,'QUESTIONARIO', 'center', screenYpixels * 0.25, [255 0 0]);
+DrawFormattedText(window,'Questionario 3/6: situazione', 'center', cfg.topTextYpos, [255 0 0]);
 
 DrawFormattedText(window,'\n\nLeggete i seguenti scenari e indicate la vostra risposta selezionando il riquadro corrispondente coi tasti freccia.\n\nNon ci sono risposte giuste o sbagliate:\n\nprovate a riportare la vostra prima impressione.',...
-    'center', 'center', 0, 50);
-
+    'center', cfg.uppTextYpos, 0, 50);
+    DrawFormattedText(window, 'Premi "spazio" per continuare.', 'center', cfg.botTextYpos, cfg.p1Col, 70);
 Screen('Flip', window);
-WaitSecs(4) 
 Screen('TextStyle', window,0); % back to plain
 
+    
+[~, keyCode]=KbWait([],2);
+keyName=KbName(keyCode);
+
+end
 %% Positioning and rectangles loops
 
 % Empty arrays to save time
@@ -194,5 +201,7 @@ for i = 1:length(citprompt(:,1))
         cit.respInd(i) = currSelection; % reflects position of response: 2, 3, 4
 
 end
+
+save(['sub' num2str(particNum) '-' num2str(DateTime) '_q3cit'], 'cit');
 
 end

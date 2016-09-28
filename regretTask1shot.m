@@ -521,7 +521,7 @@ end
 total1shotEarnings = sum(wof1shotEarnings);
 
 % Write logfile
-save(['sub' num2str(particNum) '-' DateTime '_2oneshot'], 'regretTasktrialWheels1shotDataset', 'wof1shotChoice', 'wof1shotEarnings', 'wof1shotChoiceDuration', 'wof1shotemotionalRating', 'wof1shotRatingDuration');
+save(['sub' num2str(particNum) '-' DateTime '_2b-oneshot'], 'regretTasktrialWheels1shotDataset', 'wof1shotChoice', 'wof1shotEarnings', 'wof1shotChoiceDuration', 'wof1shotemotionalRating', 'wof1shotRatingDuration');
 
 %% Screen 6 - Wait screen
 % message = 'Si prega di attendere un attimo.';

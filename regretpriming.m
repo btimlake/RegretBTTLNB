@@ -194,32 +194,34 @@ gamesdatafilename = 'sub123422-0809-1426_4games2x2.dat';
 winningsMPL = 3.85;
 earningsRaven = 6;
 
-[gamesdatafilename]=games(particNum, DateTime, window, windowRect, gamestrials, enabledKeys, cfg);
-%    [gamesdatafilename]=games(subNo, anni, w, wRect, NUMROUNDS, enabledKeys, cfg)
+% [gamesdatafilename]=games(particNum, DateTime, window, windowRect, gamestrials, enabledKeys, cfg);
+% %    [gamesdatafilename]=games(subNo, anni, w, wRect, NUMROUNDS, enabledKeys, cfg)
+% 
+% patentTaskInstructions(window, windowRect, enabledKeys, cfg, player1maxbid1);
+% 
+% [wofPracticeEarnings] = regretTask(particNum, DateTime, window, windowRect, enabledKeys, 10);
+% % %       regretTask(particNum, DateTime, window, windowRect, enabledKeys,
+% % %       trials); % trials should be no more than 10
+% [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg);
+% % %     [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg)% Clear the workspace and the screen
+% 
+% [p1GameEarnings1] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, 'fictive', player1maxbid1, prtrials);
+% [p1GameEarnings2] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, 'fictive', player1maxbid2, prtrials);
+% p1GameEarnings = p1GameEarnings1+p1GameEarnings2; % total of the two
+% %     [p1GameEarnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, player2Strategy, player1maxbid, trials);
+% %     [player1Earnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, player2Strategy, player1maxbid, enabledKeys)
+% 
+% [rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTime, window, windowRect, enabledKeys);
+% %     [rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTi me,  wi n dow, windowRect, enabledKeys)
+% 
+% [choice, winningsMPL] = MPL(cfg, particNum, DateTime, window, windowRect, enabledKeys);
+% 
+% [ravenChoice, ravenWinnings] = Raven(cfg, particNum, DateTime, window, windowRect);
+% 
+% [cit] = CITquestionnaire(cfg, particNum, DateTime, window, windowRect, enabledKeys);
+% %   [winningsMPL, earningsRaven] = questionnaires(particNum, DateTime, window, windowRect)
 
-patentTaskInstructions(window, windowRect, enabledKeys, cfg, player1maxbid1);
-
-[wofPracticeEarnings] = regretTask(particNum, DateTime, window, windowRect, enabledKeys, 10);
-% %       regretTask(particNum, DateTime, window, windowRect, enabledKeys,
-% %       trials); % trials should be no more than 10
-[total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg);
-% %     [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg)% Clear the workspace and the screen
-
-[p1GameEarnings1] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, 'fictive', player1maxbid1, prtrials);
-[p1GameEarnings2] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, 'fictive', player1maxbid2, prtrials);
-p1GameEarnings = p1GameEarnings1+p1GameEarnings2; % total of the two
-%     [p1GameEarnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, player2Strategy, player1maxbid, trials);
-%     [player1Earnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, player2Strategy, player1maxbid, enabledKeys)
-
-[rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTime, window, windowRect, enabledKeys);
-%     [rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTi me,  wi n dow, windowRect, enabledKeys)
-
-[choice, winningsMPL] = MPL(cfg, particNum, DateTime, window, windowRect, enabledKeys);
-
-[ravenChoice, ravenWinnings] = Raven(cfg, particNum, DateTime, window, windowRect);
-
-[cit] = CITquestionnaire(cfg, particNum, DateTime, window, windowRect, enabledKeys);
-%   [winningsMPL, earningsRaven] = questionnaires(particNum, DateTime, window, windowRect)
+[sex, sexNum, age, eduLevel, field] = agesex(cfg, particNum, DateTime, window);
 
 [winnings2x2, chosenGame, opponentChoice]=games2x2winnings(gamesdatafilename, cfg, window);
 
@@ -230,6 +232,29 @@ p1GameEarnings = p1GameEarnings1+p1GameEarnings2; % total of the two
 
 % big log file
 % rating, ratingDuration, normalizedChoice, computerSide
+
+filepointer = ['sub' num2str(particNum) '-' num2str(DateTime) '_9all'];
+save(['sub' num2str(particNum) '-' num2str(DateTime) '_9all'], 'age', 'sex', 'field', 'eduLevel', 'xxxxx');
+
+% fprintf(filepointer,'%i %i %i %i %i %s %s %s // %s %i %s %i %i %i %i %i %i %i %i %i\n', ...
+%                 particNum, ...
+%                 compNum, ... 
+%                 DateTime, ...
+%                 insertDate, ...               
+%                 age, ...
+%                 sex, ...
+%                 field, ...
+%                 eduLevel, ...
+%                 //
+%                 field, ...
+%                 field, ...
+%                 field, ...
+%                 field, ...
+%                 field, ...
+%                 field, ...
+%                 field, ...
+%                 field, ...
+%                 field, 
 
 sca; % clear all, clear screen
 RestrictKeysForKbCheck([]); % re-recognize all key presses

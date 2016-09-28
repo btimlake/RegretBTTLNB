@@ -446,7 +446,7 @@ totalEarnings = sum(wofEarnings);
 % wofTrialLength = wofTrialLength';
 
 % Write logfile
-save(['sub' num2str(particNum) '-' DateTime '_1wofPractice'], 'regretTasktrialWheelsDataset', 'wofChoice', 'lotteryOutcome', 'wofEarnings', 'wofChoiceDuration', 'emotionalRating', 'ratingDuration');
+save(['sub' num2str(particNum) '-' DateTime '_2a-wofPractice'], 'regretTasktrialWheelsDataset', 'wofChoice', 'lotteryOutcome', 'wofEarnings', 'wofChoiceDuration', 'emotionalRating', 'ratingDuration');
 
 % RestrictKeysForKbCheck([]); % re-recognize all key presses
 

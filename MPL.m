@@ -723,7 +723,7 @@ WaitSecs(2)
 % winningsMPL
 
 % Save data just in case
-save(['sub' num2str(particNum) '-' num2str(DateTime) '_q1MPL'], 'choice', 'game', 'dice', 'winningsMPL', 'prob', 'win');
+save(['sub' num2str(particNum) '-' num2str(DateTime) '_q2MPL'], 'choice', 'game', 'dice', 'winningsMPL', 'prob', 'win');
 
 end
 
