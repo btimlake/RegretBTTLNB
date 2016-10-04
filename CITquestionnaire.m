@@ -59,7 +59,7 @@ while(~strcmp(keyName,'space')) % leaves questionnaire explanation up until 'spa
 
 Screen('TextStyle', window,1); % bold
 
-DrawFormattedText(window,'Questionario 3/6: situazione', 'center', cfg.topTextYpos, [255 0 0]);
+DrawFormattedText(window,'Questionario 3/6: scenari', 'center', cfg.topTextYpos, [255 0 0]);
 
 DrawFormattedText(window,'\n\nLeggete i seguenti scenari e indicate la vostra risposta selezionando il riquadro corrispondente coi tasti freccia.\n\nNon ci sono risposte giuste o sbagliate:\n\nprovate a riportare la vostra prima impressione.',...
     'center', cfg.uppTextYpos, 0, 50);
@@ -100,7 +100,7 @@ for i = 1:1:numIteration
         %     length(response(i,k))
         
 %         [xPos(i,k), yPos(i,k), rect(i,k)]=DrawFormattedText(window, 'Sara', 0, 0, cfg.bgColor);
-        [~, ~, rect]=DrawFormattedText(window, char(citprompt(i,k)), 0, 0, cfg.bgColor);
+        [~, ~, rect]=DrawFormattedText(window, char(citprompt(i,k)), 0, 0, cfg.bgColor, 11);
         if i == 1 && k == 2 % does spacer calculation just once
             spacer = rect(4)-rect(2); % sets the spacing for all selection rectangles; don't have to repeat this for each question
                 % Get y positions here because need spacer calculation
@@ -154,7 +154,7 @@ for i = 1:length(citprompt(:,1))
             DrawFormattedText(window, char(citprompt(i,k)), 'center', cfg.topTextYpos, cfg.textColor, 50); % wrap at 50 characters
         else
             Screen('TextStyle', window,0); %  plain text  resp onses
-            DrawFormattedText(window, char(citprompt(i,k)), storedXPos(i,k), yPos(k), cfg.textColor);
+            DrawFormattedText(window, char(citprompt(i,k)), storedXPos(i,k), yPos(k), cfg.textColor, 11);
         end
     end
     Screen('FrameRect', window, cfg.instColB, storedSelRects(i,:,currSelection)); % Draws a frame rectangle around current selection k
@@ -189,7 +189,7 @@ for i = 1:length(citprompt(:,1))
                 DrawFormattedText(window, char(citprompt(i,k)), 'center', cfg.topTextYpos, cfg.textColor, 50); % wrap at 50 characters
             else
                 Screen('TextStyle', window,0); % plaintext responses
-                DrawFormattedText(window, char(citprompt(i,k)), storedXPos(i,k), yPos(k), cfg.textColor);
+                DrawFormattedText(window, char(citprompt(i,k)), storedXPos(i,k), yPos(k), cfg.textColor, 11);
             end
         end
         

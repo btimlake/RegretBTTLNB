@@ -197,13 +197,13 @@ end
 % runningTotal = runningTotal + 
 % totalEarnings = sum(earnings.amount);
 
-if totalEarnings <= earnings.amount(k)
+if totalEarnings <= earnings.amount(1)
 %     disp('You earned ', num2str(totalEarnings) '. 10 euro minimum awarded');
-    paymentNotice = ['Hai guadagnato ', num2str(totalEarnings), '\n Pagamento minimo: ' num2str(earnings.amount(k)) ' euros'];
+    paymentNotice = ['Hai guadagnato ', num2str(totalEarnings, '%0.2f'), '\n Pagamento minimo: ' num2str(earnings.amount(1), '%0.2f') ' euros'];
 
 else
 %     disp('You earned ', num2str(totalEarnings), '.')
-    paymentNotice = strcat('Pagamento: ', ' ', num2str(totalEarnings), ' euros');
+    paymentNotice = strcat('Pagamento: ', ' ', num2str(totalEarnings, '%0.2f'), ' euros');
 end
 
 for i=1:length(earnings.label)
@@ -212,7 +212,7 @@ end
     Screen('Flip', window)
 
 for j=1:length(earnings.amount) % draws amount text one by one
-    DrawFormattedText(window, num2str(earnings.amount(j)), xPosAmounts, yPos(j), cfg.textColor); % draws newest amount text 
+    DrawFormattedText(window, num2str(earnings.amount(j), '%0.2f'), xPosAmounts, yPos(j), cfg.textColor); % draws newest amount text 
     if j < length(earnings.amount)
         WaitSecs(.75);
     else
@@ -220,7 +220,7 @@ for j=1:length(earnings.amount) % draws amount text one by one
     end
     if j > 1
         for k = 1:j % redraws all previously displayed amounts
-            DrawFormattedText(window, num2str(earnings.amount(k)), xPosAmounts, yPos(k), cfg.textColor);
+            DrawFormattedText(window, num2str(earnings.amount(k), '%0.2f'), xPosAmounts, yPos(k), cfg.textColor);
         end
     end
     for i=1:length(earnings.label)
@@ -239,7 +239,7 @@ while(~strcmp(keyName,'5%')) % leaves last screen up until typing 5
 keyName=KbName(keyCode);
 
     for j=1:length(earnings.amount)
-        DrawFormattedText(window, num2str(earnings.amount(j)), xPosAmounts, yPos(j), cfg.textColor);
+        DrawFormattedText(window, num2str(earnings.amount(j), '%0.2f'), xPosAmounts, yPos(j), cfg.textColor);
     end
     for i=1:length(earnings.label)
         DrawFormattedText(window, earnings.label{i}, xPosField(i), yPos(i), cfg.textColor); % keeps all labels visible

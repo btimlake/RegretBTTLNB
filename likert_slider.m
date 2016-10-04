@@ -42,9 +42,9 @@ scale_middle = mean([1:length(scale_range)]); % gets half the scale range
 % ITALIAN
 scale_question = {'Valuta come ti senti dopo questa lotteria';
 'usando i tasti freccia.'; 'Premi "spazio" per confermare la tua scelta.'};
-scale_hi_label = 'male';
+scale_hi_label = 'bene';
 scale_middle_label = 'neutrale';
-scale_low_label = 'bene';
+scale_low_label = 'male';
 
 % [window, windowRect] = Screen('OpenWindow', 0, [255, 255, 255], [0 0 640 480]); %white background
 [screenXpixels, screenYpixels] = Screen('WindowSize', window);
@@ -61,7 +61,7 @@ fontSize = round(screenYpixels * 2/60);
 low_label_width = RectWidth(Screen('TextBounds',window,scale_low_label));
 middle_label_width = RectWidth(Screen('TextBounds',window,scale_middle_label));
 spacing = 60; %physical spacing of scale intervals in pixel units
-ratingPenWidth = screenXpixels/200; % thickness of circle cursor that moves along the scale 
+ratingPenWidth = 6; % thickness of circle cursor that moves along the scale - hardcoded to work in CEEL lab
 circlePenColor = [.1333, .5451, .1333]; %ForestGreen
 % ratingPenColor = [33.9915  139.0005   33.9915]; %ForestGreen
 ratingPenColor = [0 0 0]; %black

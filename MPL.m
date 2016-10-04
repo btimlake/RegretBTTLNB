@@ -79,7 +79,7 @@ baseRect = [0 0 rectWidth rectHeight]; % like this (not numbers manually) becaus
 
 % Text
 instructions = repmat({''},3, 2);
-instructions(1,1) = {'Questionario 1/6: Lotteria dei Prezzi'};
+instructions(1,1) = {'Questionario 2/6: Lotteria dei Prezzi'};
 instructions(1,2) = {'Descrizione della Procedura di Scelta e di Pagamento'};
 instructions(2,1) = {'In questa parte dell''esperimento ti verranno presentate 10 coppie di lotterie. Ogni lotteria ti garantisce di ottenere, con una certa probabilita'', una tra due possibili vincite. Per ogni coppia di lotterie, il tuo compito sara'' quello di scegliere la lotteria che preferisci giocare. \n\nDi seguito ti verra'' presentata una descrizione dettagliata del compito.'};
 instructions(2,2) = {'Nella parte destra dello schermo sono riportate le 10 coppie di lotterie. Ci sono 10 righe che corrispondono alle 10 scelte che dovrai effettuare. Ogni riga rappresenta una scelta tra due lotterie. \n\nPer effettuare le tue scelte in ogni riga, usa le frecce sinistra o destra. Per cambiare la riga, usa le frecce su o giu''. Quando hai finito, premi "spazio". Una volta che avrai scelto una lotteria, essa diventera'' di colore verde. \n\nDopo che avrai effettuato le tue 10 scelte, il computer selezionera'' in modo casuale una delle 10 righe. Dopo di che'' la lotteria da te scelta verra'' giocata dal computer e tu riceverai la vincita corrispondente all''esito della lotteria. La vincita ti verra'' mostrata a schermo dopo che avrai completato e validato le tue scelte. \n\nRicorda, l''ammontare di denaro rappresentato nelle diverse lotterie e'' reale, percio'' sarai pagato/a in base alle scelte che effettuerai e secondo le regole appena descritte. \n\nSe hai qualche dubbio sulla procedura e/o il metodo di pagamento sentiti libero/a di chiedere chiarimenti allo sperimentatore.'};
@@ -141,20 +141,20 @@ selInstructions = 'Quando hai fatto una scelta per tutte le righe, puoi premere 
 %% Positioning and rectangles loops
 Screen('TextSize', window, cfg.fontSizeSmall);
 
-% Empty arrays to save time
-numIteration = length(citprompt(:,1));
-numPrompts = length(citprompt(1,:));
-% response = repmat({''},numIteration, numPrompts);
-selRects = NaN(numIteration, numPrompts);
-respLength = NaN(numIteration, numPrompts);
-storedXPos = NaN(numIteration, numPrompts);
-% storedXPos(2:end ,3) = cfg.screenCenter(1)/2; % should fill in all second options at center, but if loop keeps overwriting
-storedRect = NaN(numIteration, numPrompts, 4);
-% storedSizeRects = NaN(numIteration, numPrompts, 4);
-storedXRectCenter = NaN(numIteration, numPrompts);
-rectHeight = NaN(numIteration, numPrompts);
-rectWidth = NaN(numIteration, numPrompts);
-storedSelRects = NaN(numIteration, numPrompts, 4);
+% % Empty arrays to save time
+% numIteration = length(citprompt(:,1));
+% numPrompts = length(citprompt(1,:));
+% % response = repmat({''},numIteration, numPrompts);
+% selRects = NaN(numIteration, numPrompts);
+% respLength = NaN(numIteration, numPrompts);
+% storedXPos = NaN(numIteration, numPrompts);
+% % storedXPos(2:end ,3) = cfg.screenCenter(1)/2; % should fill in all second options at center, but if loop keeps overwriting
+% storedRect = NaN(numIteration, numPrompts, 4);
+% % storedSizeRects = NaN(numIteration, numPrompts, 4);
+% storedXRectCenter = NaN(numIteration, numPrompts);
+% rectHeight = NaN(numIteration, numPrompts);
+% rectWidth = NaN(numIteration, numPrompts);
+% storedSelRects = NaN(numIteration, numPrompts, 4);
 
 % dummy drawing of all text elements to get surrounding rect sizes and
 % lengths
@@ -230,7 +230,7 @@ gameXPos = storedSelRects(1,3,3)+spacer; % after right edge of rectangle, plus s
 
     Screen('TextStyle', window,1); % bold
     Screen('TextSize', window, cfg.fontSize);
-    [~, ny1] = DrawFormattedText(window, char(instructions(1,1)), 'center', cfg.topTextYpos);
+    [~, ny1] = DrawFormattedText(window, char(instructions(1,1)), 'center', cfg.topTextYpos, cfg.p1Col);
 
     Screen('TextStyle', window,0); % back to plain
     Screen('TextSize', window, cfg.fontSizeSmall); % smaller fontsize
@@ -243,6 +243,12 @@ gameXPos = storedSelRects(1,3,3)+spacer; % after right edge of rectangle, plus s
 keyName='';        
 while ~strcmp(keyName,'space')
     
+    if instructions == 1;
+        RestrictKeysForKbCheck([79, 80, 81,82]); % restricts to arrows; doesn't allow "space" on first instruction screen
+    else
+        RestrictKeysForKbCheck([30, 34, 44, 79, 80, 81,82]);
+    end
+
     [~, keyCode]=KbWait([],2);
     keyName=KbName(keyCode);
    
@@ -536,7 +542,7 @@ Screen('Flip', window)
 % else
 if game == 1
     if choice(game) == 1
-        gameText = ['Se appare 1, vinci ', euro, num2str(win(1,1)), '.\nSe invece appare 2-10, vinci ', euro, num2str(win(2,1)), '.'];
+        gameText = ['Se appare 1, vinci ', euro, num2str(win(1,1), '%0.2f'), '.\nSe invece appare 2-10, vinci ', euro, num2str(win(2,1), '%0.2f'), '.'];
         if dice <= prob(game,1)/10
             winningsMPL = win(1,1);
         elseif dice > prob(game,1)/10
@@ -545,7 +551,7 @@ if game == 1
             disp('Something went wrong with the dice roll')
         end
     elseif choice(game) == 3
-        gameText = ['Se appare 1, vinci ', euro, num2str(win(1,2)), '.\nSe invece appare 2-10, vinci ', euro, num2str(win(2,2)), '.'];
+        gameText = ['Se appare 1, vinci ', euro, num2str(win(1,2), '%0.2f'), '.\nSe invece appare 2-10, vinci ', euro, num2str(win(2,2), '%0.2f'), '.'];
         if dice <= prob(game,1)/10
             winningsMPL = win(1,2);
         elseif dice > prob(game,1)/10
@@ -556,7 +562,7 @@ if game == 1
     end
 elseif game == 9
     if choice(game) == 1
-        gameText = ['Se appare 1-9, vinci ', euro, num2str(win(1,1)), '.\nSe invece appare 10, vinci ', euro, num2str(win(2,1)), '.'];
+        gameText = ['Se appare 1-9, vinci ', euro, num2str(win(1,1), '%0.2f'), '.\nSe invece appare 10, vinci ', euro, num2str(win(2,1), '%0.2f'), '.'];
         if dice <= prob(game,1)/10
             winningsMPL = win(1,1);
         elseif dice > prob(game,1)/10
@@ -565,7 +571,7 @@ elseif game == 9
             disp('Something went wrong with the dice roll')
         end
     elseif choice(game) == 3
-        gameText = ['Se appare 1-9, vinci ', euro, num2str(win(1,2)), '.\nSe invece appare 10, vinci ', euro, num2str(win(2,2)), '.'];
+        gameText = ['Se appare 1-9, vinci ', euro, num2str(win(1,2), '%0.2f'), '.\nSe invece appare 10, vinci ', euro, num2str(win(2,2), '%0.2f'), '.'];
         if dice <= prob(game,1)/10
             winningsMPL = win(1,2);
         elseif dice > prob(game,1)/10
@@ -576,15 +582,15 @@ elseif game == 9
     end    
 elseif game == 10
     if choice(game) == 1
-        gameText = ['Vinci ', euro, num2str(win(1,1)), ' in ogni caso.'];
+        gameText = ['Vinci ', euro, num2str(win(1,1), '%0.2f'), ' in ogni caso.'];
         winningsMPL = win(1,1);
     elseif choice(game) == 3
-        gameText = ['Vinci ', euro, num2str(win(1,2)), ' in ogni caso.'];
+        gameText = ['Vinci ', euro, num2str(win(1,2), '%0.2f'), ' in ogni caso.'];
         winningsMPL = win(1,2);
     end
 else
     if choice(game) == 1
-        gameText = ['Se appare 1-', num2str(prob(game,1)/10), ', vinci ', euro, num2str(win(1,1)), '.\nSe invece appare ', num2str(prob(game,1)/10+1), '-10, vinci ', euro, num2str(win(2,1)), '.'];
+        gameText = ['Se appare 1-', num2str(prob(game,1)/10), ', vinci ', euro, num2str(win(1,1), '%0.2f'), '.\nSe invece appare ', num2str(prob(game,1)/10+1), '-10, vinci ', euro, num2str(win(2,1), '%0.2f'), '.'];
         if dice <= prob(game,1)/10
             winningsMPL = win(1,1);
         elseif dice > prob(game,1)/10
@@ -593,7 +599,7 @@ else
             disp('Something went wrong with the dice roll')
         end
     elseif choice(game) == 3
-        gameText = ['Se appare 1-', num2str(prob(game,1)/10), ', vinci ', euro, num2str(win(1,2)), '.\nSe invece appare ', num2str(prob(game,1)/10+1), '-10, vinci ', euro, num2str(win(2,2)), '.'];
+        gameText = ['Se appare 1-', num2str(prob(game,1)/10), ', vinci ', euro, num2str(win(1,2), '%0.2f'), '.\nSe invece appare ', num2str(prob(game,1)/10+1), '-10, vinci ', euro, num2str(win(2,2), '%0.2f'), '.'];
         if dice <= prob(game,1)/10
             winningsMPL = win(1,2);
         elseif dice > prob(game,1)/10
@@ -604,7 +610,7 @@ else
     end
 end
 
-winText = ['Hai vinto ', euro, num2str(winningsMPL)];
+winText = ['Hai vinto ', euro, (num2str(winningsMPL, '%0.2f'))];
 
 % Determine which part of screen game will be played on
 if game <= 5;    

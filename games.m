@@ -125,6 +125,11 @@ try
 while ~strcmp(keyName,'space')
     
 %     while ~strcmp(num2str(instructions), '5')
+        if instructions ~= 5;
+            RestrictKeysForKbCheck([79, 80, 81,82]); % restricts to arrows; doesn't allow "space" on first instruction screen MAC
+        else
+            RestrictKeysForKbCheck([30, 34, 44, 79, 80, 81,82]);
+        end
         
         [keyTime, keyCode]=KbWait([],2);
         keyName=KbName(keyCode);
@@ -137,8 +142,8 @@ while ~strcmp(keyName,'space')
                 end
             case 'RightArrow'
                 instructions = instructions + 1;
-                if instructions > 4
-                    instructions = 4;
+                if instructions > 5
+                    instructions = 5;
                 end
         end
         % update selection to last button press

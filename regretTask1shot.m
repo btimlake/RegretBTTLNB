@@ -1,4 +1,7 @@
-function [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg)% Clear the workspace and the screen
+function [wof1shotChoice, total1shotEarnings, wof1shotemotionalRating] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg)% Clear the workspace and the screen
+
+    enabledKeys = RestrictKeysForKbCheck([30, 79, 80]); % limit recognized presses to 1!, left, right arrows MAC
+%     enabledKeys = RestrictKeysForKbCheck([49,37,39]); % limit recognized presses to 1!, 5%, space, left, right, up, down arrows PC
 
 % load('regretTasktrialWheels1shot.mat')       % Load the preset wheel probabilites and values TABLE
 load('regretTasktrialWheels1shotDataset.mat')       % Load the preset wheel probabilites and values DATASET
@@ -38,7 +41,7 @@ rightArrowpos = [screenXpixels*.75-wheelRadius*.25 screenYpixels*.5-wheelRadius*
 % Select specific text font, style and size:
 fontSize = round(screenYpixels * 2/60);
     Screen('TextFont', window, 'Courier New');
-    Screen('TextSize', window, fontSize);
+    Screen('TextSize', window, cfg.fontSize);
     Screen('TextStyle', window);
     Screen('TextColor', window, [0, 0, 0]);
 
@@ -205,7 +208,7 @@ baseRect = [0 0 rectWidth rectHeight]; % like this (not numbers manually) becaus
 instructions = repmat({''},3, 2);
 instructions(1,1) = {'Compito 2/3: La Ruota della Fortuna'};
 % instructions(1,2) = {'Descrizione della Procedura di Scelta e di Pagamento'};
-instructions(2,1) = {'Ora giocherai il turno decisivo. \n\n ma in questo caso il risultato sara contatto \nnel tuo guadagne finale. \n Il guadagno o la perdito in questa giocata rappresenta \nil guadagno massimio o la perdita massima di tutto l''esperimento. \n\n Come prima, scegli quale ruota fare giocare \n premendo il tasto freccia sinistro o destro.'};
+instructions(2,1) = {'Ora giocherai il turno decisivo. \n\n Ma in questo caso il risultato sara contato \nnel tuo guadagno finale. \n Il guadagno o la perdita in questa giocata rappresenta \nil guadagno massimo o la perdita massima di tutto l''esperimento. \n\n Come prima, scegli quale ruota fare girare \n premendo il tasto freccia sinistra o destra.'};
 % instructions(2,2) = {'Nella parte destra dello schermo sono riportate le 10 coppie di lotterie. Ci sono 10 righe che corrispondono alle 10 scelte che dovrai effettuare. Ogni riga rappresenta una scelta tra due lotterie. \n\nPer effettuare le tue scelte in ogni riga, tasti le frecce sinistra o destra. Per cambiare la riga, usa le frecce su o giu''. Quando sei finito, premi ''spazio''. Una volta che avrai scelto una lotteria, essa diventera'' di colore verde. \n\nDopo che avrai effettuato le tue 10 scelte, il computer selezionera'' in modo casuale una delle 10 righe. Infine, la lotteria da te scelta verra'' giocata dal computer e tu riceverai la vincita corrispondente all''esito della lotteria. La tua vincita ti verra'' mostrata a schermo dopo che avrai completato e validato le tue scelte. \n\nRicorda, l''ammontare di denaro rappresentato nelle diverse lotterie e'' reale, percio'' sarai pagato/a in base alle scelte che effettuerai e secondo le regole appena descritte. \n\nSe hai qualche dubbio sulla procedura ed il metodo di pagamento sentiti libero/a di chiedere chiarimenti allo sperimentatore.'};
 instructions(3,1) = {'Per favore, attendi il via dello sperimentatore.'};
 % instructions(3,2) = {'Clicca la freccia sinistra per tornare o premi ''spazio'' per comminciare.'};
@@ -223,7 +226,7 @@ while(~strcmp(keyName,'1!')) % continues until the 1 button is pressed
     
     Screen('TextStyle', window,1); % bold
     Screen('TextSize', window, cfg.fontSize);
-    [~, ny1] = DrawFormattedText(window, char(instructions(1,1)), 'center', cfg.topTextYpos);
+    [~, ny1] = DrawFormattedText(window, char(instructions(1,1)), 'center', cfg.topTextYpos, cfg.textColor);
 
     Screen('TextStyle', window,0); % back to plain
     Screen('TextSize', window, cfg.fontSize/2); % smaller fontsize
@@ -240,6 +243,10 @@ end
 
 WaitSecs(.25);
 
+    Screen('TextSize', window, cfg.fontSize); % back to regular fontsize
+
+    enabledKeys = RestrictKeysForKbCheck([79, 80]); % limit recognized presses to right, left arrows MAC
+%     enabledKeys = RestrictKeysForKbCheck([37,39]); % limit recognized presses to right, left arrows PC
 
 %% Begin trial loop
 
@@ -324,6 +331,7 @@ end
     DrawFormattedText(window, loseR, rightwheelRightTextXpos, rightwheelRightTextYpos, loseColors); % loss amount
     Screen('Flip', window)
  
+
 wofTrialStartTime(i) = GetSecs; % trial time start
 
 % RestrictKeysForKbCheck([79, 80]); % limit recognized presses to left and right arrows MAC
@@ -469,6 +477,9 @@ WaitSecs(2.5);
 
 %% Screen 5 - Emotional rating
 
+    enabledKeys = RestrictKeysForKbCheck([44, 79, 80]); % limit recognized presses to space, right, left arrows MAC
+%     enabledKeys = RestrictKeysForKbCheck([32,37,39]); % limit recognized presses to space, right, left arrows PC
+
 currentRound = i;
 
 [currRatingSelection, wof1shotRatingDuration] = likert_slider(window, windowRect, enabledKeys);
@@ -501,7 +512,7 @@ for i = 1:16; % multiply second integer by .75 to get seconds; i.e. 16 means 12 
     
     if mod(i,2) == 0 %Even numbers: wait text on
         % Please Wait text
-        DrawFormattedText(window, 'Ora avrai inizio il gioco delle carte ... ', 'center', cfg.waitTextYpos, cfg.instColA);
+        DrawFormattedText(window, 'Ora avra inizio il gioco delle carte ... ', 'center', cfg.waitTextYpos, cfg.instColA);
         Screen('Flip', window)
         WaitSecs(1);
     else %Odd numbers: wait text off

@@ -1,6 +1,8 @@
 function [totalEarnings] = regretTask(particNum, DateTime, window, windowRect, enabledKeys, trials)% Clear the workspace and the screen
 
-enabledKeys;
+    enabledKeys = RestrictKeysForKbCheck([44, 79, 80]); % limit recognized presses to space, right, left arrows MAC
+%     enabledKeys = RestrictKeysForKbCheck([32,37,39]); % limit recognized presses to space, right, left arrows PC
+
 
 % load('regretTasktrialWheels.mat')       % Load the preset wheel probabilites and values TABLE
 load('regretTasktrialWheelsDataset.mat')       % Load the preset wheel probabilites and values DATASET
@@ -169,6 +171,11 @@ waitframes = 1;
 while ~strcmp(keyName,'space')
     
 %     while ~strcmp(num2str(instructions), '5')
+        if instructions == 1;
+            RestrictKeysForKbCheck([79, 80, 81,82]); % restricts to arrows; doesn't allow "space" on first instruction screen
+        else
+            RestrictKeysForKbCheck([30, 34, 44, 79, 80, 81,82]);
+        end
         
         [keyTime, keyCode]=KbWait([],2);
         keyName=KbName(keyCode);
@@ -289,6 +296,8 @@ end
     DrawFormattedText(window, loseR, rightwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
     Screen('Flip', window)
  
+    enabledKeys = RestrictKeysForKbCheck([79, 80]); % limit recognized presses to right, left arrows MAC
+%     enabledKeys = RestrictKeysForKbCheck([32,37,39]); % limit recognized presses to space, right, left arrows PC
 wofTrialStartTime(i) = GetSecs; % trial time start
 
 % RestrictKeysForKbCheck([79, 80]); % limit recognized presses to left and right arrows MAC
@@ -350,13 +359,13 @@ if wofChoice(i,1) == 1    % Participant chose wheel 1
     winAmount(i) = regretTasktrialWheels.wlv1(i);
     wofEarnings(i,1) = winAmount(i);  % set earngings for log file
 %     botResultText = ['You won ' num2str(winAmount(i)) '.'];  % Set feedback text to winning message ENGLISH
-    botResultText = ['Hai vinto ' num2str(winAmount(i)) '.'];  % Set feedback text to winning message ITALIAN
+    botResultText = ['Hai vinto ' num2str(winAmount(i), '%0.2f') '.'];  % Set feedback text to winning message ITALIAN
     botTextColor = winColors;
     else   % If endpoint of arrow is less than loss zone, loss
     lossAmount(i) = regretTasktrialWheels.wlv2(i);
     wofEarnings(i,1) = lossAmount(i);  % set losses for log file
 %     botResultText = ['You lost ' num2str(-lossAmount(i)) '.'];  % Set feedback text to losing message ENGLISH
-    botResultText = ['Hai perso ' num2str(-lossAmount(i)) '.'];  % Set feedback text to losing message ITALIAN
+    botResultText = ['Hai perso ' num2str(-lossAmount(i), '%0.2f') '.'];  % Set feedback text to losing message ITALIAN
     botTextColor = loseColors;
     end
 
@@ -366,13 +375,13 @@ elseif wofChoice(i,1) == 2    % Participant chose wheel 2
     winAmount(i) = regretTasktrialWheels.wrv1(i);
     wofEarnings(i,1) = winAmount(i);  % set earngings for log file
 %     botResultText = ['You won ' num2str(winAmount(i)) '.'];  % Set feedback text to winning message ENGLISH
-    botResultText = ['Hai vinto ' num2str(winAmount(i)) '.'];  % Set feedback text to winning message ITALIAN
+    botResultText = ['Hai vinto ' num2str(winAmount(i), '%0.2f') '.'];  % Set feedback text to winning message ITALIAN
     botTextColor = winColors;
     else   % If endpoint of arrow is less than loss zone, loss
     lossAmount(i) = regretTasktrialWheels.wrv2(i);
     wofEarnings(i,1) = lossAmount(i);  % set losses for log file
 %     botResultText = ['You lost ' num2str(-lossAmount(i)) '.'];  % Set feedback text to losing message ENGLISH
-    botResultText = ['Hai perso ' num2str(-lossAmount(i)) '.'];  % Set feedback text to losing message ITALIAN
+    botResultText = ['Hai perso ' num2str(-lossAmount(i), '%0.2f') '.'];  % Set feedback text to losing message ITALIAN
     botTextColor = loseColors;
     end
 
@@ -427,6 +436,8 @@ end
 WaitSecs(2.5); 
 
 %% Screen 5 - Emotional rating
+    enabledKeys = RestrictKeysForKbCheck([44, 79, 80]); % limit recognized presses to space, right, left arrows MAC
+%     enabledKeys = RestrictKeysForKbCheck([32,37,39]); % limit recognized presses to space, right, left arrows PC
 
 currentRound = i;
 

@@ -6,7 +6,7 @@
 % modified and amended Ben Timberlake, Feburary 2016
 
 
-function [p1GameEarnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, player2Strategy, player1maxbid, trials)
+function [player1Choice, player2Choice, p1GameEarnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, player2Strategy, player1maxbid, trials)
 
 % clearvars -except particNum DateTime window windowRect;  
 
@@ -380,8 +380,8 @@ p1GameEarnings=sum(player1Earnings)/100;
 p2GameEarnings=sum(player2Earnings)/100;
 
 % Earnings text
-earningsText11 = ['Hai guadagnato in totale in questo gioco: ' num2str(p1GameEarnings)];
-earningsText12 = ['L''avversario ha guadagnato in totale in questo gioco: ' num2str(p2GameEarnings)];
+earningsText11 = ['Hai guadagnato in totale in questo gioco: ' num2str(p1GameEarnings, '%0.2f')];
+earningsText12 = ['L''avversario ha guadagnato in totale in questo gioco: ' num2str(p2GameEarnings, '%0.2f')];
 earningsText13 = 'Attendi il prossimo gioco.';
 instruct1TextYpos = screenYpixels * 2/40; 
 instruct3TextYpos = screenYpixels * 8/40; 
@@ -418,7 +418,7 @@ for i=1:NUMROUNDS
 end
 
 % save(['/Users/bentimberlake/Documents/MATLAB/patentTaskBTMP/logfiles/patent_race-subj_' num2str(particNum) '-' DateTime], 'player1Choice', 'player2Choice', 'player1Earnings', 'player2Earnings', 'trialLength');
-save(['sub' num2str(particNum) '-' num2str(DateTime) '_3patent_race' num2str(player1maxbid)], 'player1Choice', 'player2Choice', 'player1Earnings', 'player2Earnings', 'trialLength');
+save(['sub' num2str(particNum) '-' num2str(DateTime) '_3patent_race' num2str(player1maxbid)], 'player1maxbid', 'player1Choice', 'player2Choice', 'player1Earnings', 'player2Earnings', 'trialLength');
 
 end
 

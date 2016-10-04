@@ -94,10 +94,10 @@ keyName = '';
 while ~strcmp(keyName,'space')
     
 Screen('TextStyle', window,1); % bold
-DrawFormattedText(window,'QUESTIONARIO 3/5', 'center', cfg.topTextYpos, cfg.textColor);
+DrawFormattedText(window,'QUESTIONARIO 1/6', 'center', cfg.topTextYpos, cfg.textColor);
 
 Screen('TextStyle', window,0); % back to plain
-DrawFormattedText(window,'Ora vedrai 30 griglia dei simboli. Per ognuno, scegli l''alternativa che meglio completa la griglia. Guadagni 0.20 euro per ogni risposta giusta. Poi vincere 6 euro in totale. \n\n Premi ''spazio'' per cominciare.',...
+DrawFormattedText(window,'Ora vedrai una alla volta 30 griglie contenenti diversi simboli. Per ognuno, scegli l''alternativa che meglio completa la griglia. Guadagni 0.20 euro per ogni risposta giusta. Puoi vincere 6 euro in totale. \n\n Premi ''spazio'' per cominciare.',...
     'center', cfg.uppTextYpos, cfg.textColor, 50);
  
 Screen('Flip', window);

@@ -27,7 +27,25 @@ function [rating, ratingDuration, normalizedChoice, computerSide] = debrief_slid
 % move_slider = 1;
 % RestrictKeysForKbCheck([37,39,32,49]); % limit recognized presses to left and right arrows PC
 % may not be necessary with broader Restrict Keys in umbrella script
-enabledKeys;
+if ismac
+    % Code to run on Mac plaform 
+    disp('Mac');
+    disabledKeys=[];
+    skipSyncTest=[];
+    screenRes=[];
+    enabledKeys = RestrictKeysForKbCheck([30, 34, 44, 79, 80, 81,82]); % limit recognized presses to 1!, 5%, space, left, right, up, down arrows MAC
+%     enabledKeys = RestrictKeysForKbCheck([]); % for debugging
+elseif isunix
+    % Code to run on Linux plaform
+    disp('Unix');
+elseif ispc
+    % Code to run on Windows platform
+    disp('PC');
+    enabledKeys = RestrictKeysForKbCheck([49,53,32,37,38,39,40]); % limit recognized presses to 1!, 5%, space, left, right, up, down arrows PC
+
+else
+    disp('Platform not supported')
+end
 
 %set parameters
 scale_range = 1:1:13; %requires odd number of intervals
