@@ -1,6 +1,6 @@
 function patentTaskInstructions(window, windowRect, enabledKeys, cfg, player1maxbid);
 
-enabledKeys;
+% enabledKeys;
 % [screenXpixels, screenYpixels] = Screen('WindowSize', window);
 
 %% Screen 0: Instructions
@@ -28,16 +28,32 @@ screenXpixels=cfg.screenSize.x;
 %% Instruction screens
     keyName=''; % empty initial value
     instructions = 1;
-    instFilename = ['instructions/patentRace_instructions' num2str(instructions) '-' type 'AI.png'];
+    instFilename = ['instructions/patentRace_instructions' num2str(instructions) '.png'];
     imdata=imread(instFilename);    
     tex=Screen('MakeTexture', window, imdata);
     Screen('DrawTexture', window, tex);
     Screen('Flip', window);
     
-while ~strcmp(keyName,'space')
+% show first instruction page 
+%     instFilename = ['instructions/patentRace_instructions' num2str(instructions) '-' type 'AI.png'];
+%     imdata=imread(instFilename);    
+%     tex=Screen('MakeTexture', window, imdata);    
+%     % Draw texture image to backbuffer. It will be automatically
+%     % centered in the middle of the display if you don't specify a
+%     % different destination:
+%     Screen('DrawTexture', window, tex);
+%     
+%     Screen('Flip', window);
     
-%     while ~strcmp(num2str(instructions), '5')
+    while ~strcmp(keyName,'space')
         
+        %     while ~strcmp(num2str(instructions), '5')
+        if instructions == 1;
+            RestrictKeysForKbCheck([79, 80, 81,82]); % restricts to arrows; doesn't allow "space" on first instruction screen
+        else
+            RestrictKeysForKbCheck([30, 34, 44, 79, 80, 81,82]);
+        end
+
         [keyTime, keyCode]=KbWait([],2);
         keyName=KbName(keyCode);
         
@@ -55,7 +71,7 @@ while ~strcmp(keyName,'space')
         end
         % update selection to last button press
         
-        instFilename = ['instructions/patentRace_instructions' num2str(instructions) '-' type 'AI.png'];
+        instFilename = ['instructions/patentRace_instructions' num2str(instructions) '.png'];
         imdata=imread(instFilename);
         
         tex=Screen('MakeTexture', window, imdata);
@@ -68,10 +84,10 @@ while ~strcmp(keyName,'space')
         Screen('Flip', window);
         
         
-%     end
-end
-
+        %     end
+    end
+    
     keyName=[];
-
-
+    
+    
 end
