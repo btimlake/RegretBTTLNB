@@ -28,6 +28,8 @@ prtrials = 5; % Trials for each role in Patent Race
 
 DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
 
+playOrder = [player1maxbid1, player1maxbid2];
+
 %% check what OS the software is running on; limit keyboard/mouse input
 
 if ismac
@@ -188,7 +190,7 @@ particNum = [insertDate, compNum];
 
 %% call scripts
 % TEMP VARIABLES FOR TESTING
-% gamesdatafilename = 'sub123408-3009-0117_1games2x2.dat';
+% gamesdatafilename = 'sub123422-1610-2253_1games2x2.dat';
 % total1shotEarnings = 8;
 % p1GameEarnings = 8.85;
 % earningsRaven = 6;
@@ -201,15 +203,15 @@ particNum = [insertDate, compNum];
 patentTaskInstructions(window, windowRect, enabledKeys, cfg, player1maxbid1);
 
 [wofPracticeEarnings] = regretTask(particNum, DateTime, window, windowRect, enabledKeys, 10);
-% %       regretTask(particNum, DateTime, window, windowRect, enabledKeys,
-% %       trials); % trials should be no more than 10
-[wof1shotChoice, total1shotEarnings, wof1shotemotionalRating] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg);
-% %     [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg)% Clear the workspace and the screen
+%       regretTask(particNum, DateTime, window, windowRect, enabledKeys,
+%       trials); % trials should be no more than 10
+[wof1shotChoice, total1shotEarnings, wof1shotForegoneAmount, wof1shotReError] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg);
+%     [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg)% Clear the workspace and the screen
 
-[player1Choice1, player2Choice1, p1GameEarnings1] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, 'fictive', player1maxbid1, prtrials);
-[player1Choice2, player2Choice2, p1GameEarnings2] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, 'fictive', player1maxbid2, prtrials);
+[player1Choice1, player2Choice1, p1GameEarnings1] = patentTaskBTMP(particNum, DateTime, window, windowRect, cfg, 'fictive', player1maxbid1, prtrials, 1);
+[player1Choice2, player2Choice2, p1GameEarnings2] = patentTaskBTMP(particNum, DateTime, window, windowRect, cfg, 'fictive', player1maxbid2, prtrials, 2);
 p1GameEarnings = p1GameEarnings1+p1GameEarnings2; % total of the two
-%     [p1GameEarnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, player2Strategy, player1maxbid, trials);
+%     [p1GameEarnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, player2Strategy, player1maxbid, trials, block);
 %     [player1Earnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, player2Strategy, player1maxbid, enabledKeys)
 
 [rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTime, window, windowRect, enabledKeys);
@@ -236,8 +238,8 @@ p1GameEarnings = p1GameEarnings1+p1GameEarnings2; % total of the two
 
 filepointer = ['sub' num2str(particNum) '-' num2str(DateTime) '_9all'];
 save(['sub' num2str(particNum) '-' num2str(DateTime) '_9all'], 'particNum', 'age', 'sex', 'field', 'eduLevel', ...
-    'wof1shotChoice', 'total1shotEarnings', 'wof1shotemotionalRating', ...
-    'player1Choice1', 'player2Choice1', 'player1Choice2', 'player2Choice2', 'p1GameEarnings', ...
+    'wof1shotChoice', 'total1shotEarnings', 'wof1shotForegoneAmount', 'wof1shotReError', ...
+    'playOrder', 'player1Choice1', 'player2Choice1', 'player1Choice2', 'player2Choice2', 'p1GameEarnings', ...
     'ravenChoice', 'ravenWinnings', 'choiceMPL', 'winningsMPL', 'cit', ...
     'winnings2x2', 'chosenGame2x2', 'opponentChoice2x2', 'totalEarnings');
 
