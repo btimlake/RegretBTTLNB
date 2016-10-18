@@ -240,10 +240,13 @@ gameXPos = storedSelRects(1,3,3)+spacer; % after right edge of rectangle, plus s
     
     Screen('Flip', window);
     
-keyName='';        
+keyName='';   
+
+instructPage = 1;
+
 while ~strcmp(keyName,'space')
     
-    if instructions == 1;
+    if instructPage == 1;
         RestrictKeysForKbCheck([79, 80, 81,82]); % restricts to arrows; doesn't allow "space" on first instruction screen
     else
         RestrictKeysForKbCheck([30, 34, 44, 79, 80, 81,82]);
@@ -252,7 +255,6 @@ while ~strcmp(keyName,'space')
     [~, keyCode]=KbWait([],2);
     keyName=KbName(keyCode);
    
-    instructPage = 1;
     
     switch keyName
         case 'LeftArrow'
