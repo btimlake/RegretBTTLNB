@@ -72,7 +72,7 @@ for i=1:2
     Screen('TextColor', window, [0, 0, 0]);
     
     spacing = 60; %physical spacing of scale intervals in pixel units
-    ratingPenWidth = screenXpixels/200; % thickness of circle cursor that moves along the scale
+    ratingPenWidth = 6; % thickness of circle cursor that moves along the scale - hard-coded to work in CEEL Lab
     circlePenColor = [.1333, .5451, .1333]; %ForestGreen
     % ratingPenColor = [33.9915  139.0005   33.9915]; %ForestGreen
     ratingPenColor = [0 0 0]; %black
