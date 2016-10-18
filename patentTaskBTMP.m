@@ -6,7 +6,7 @@
 % modified and amended Ben Timberlake, Feburary 2016
 
 
-function [player1Choice, player2Choice, p1GameEarnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, player2Strategy, player1maxbid, trials)
+function [player1Choice, player2Choice, p1GameEarnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, cfg, player2Strategy, player1maxbid, trials, block)
 
 % clearvars -except particNum DateTime window windowRect;  
 
@@ -25,6 +25,8 @@ player2Earnings=nan(NUMROUNDS,1);       % Keeps track of winnings for player2
 player1Choice=nan(NUMROUNDS,1);         % Keeps track of player1 choices
 player2Choice=nan(NUMROUNDS,1);         % Keeps track of player2 choices
 trialLength=nan(NUMROUNDS,1);           % Keeps track of length of each trial
+trialnum = nan(NUMROUNDS,1);            % tracks trial number
+outcome = nan(NUMROUNDS,1);             % tracks trial outcome
 % player2Strategy='Fictive';
 % player2Strategy='random'; %COMMENT AFTER DEBUGGING
 % Shorter delays
@@ -35,11 +37,11 @@ feedbackDelay = 1 + (3-1).*rand(NUMROUNDS,1); % Creates array of random delay be
 % feedbackDelay = 2 + (6-2).*rand(NUMROUNDS,1); % Creates array of random delay between choice and feedback of 2-6 seconds
 % KbName('UnifyKeyNames');
 % RestrictKeysForKbCheck([37,39,32]); % limit recognized presses to left and right arrows PC
-enabledKeys;
+% enabledKeys;
 %RESTORE AFTER DEBUGGING
-% if (nargin<1)                           % If the function is called without update method
-%     player2Strategy='random';
-% end
+if (nargin<1)                           % If the function is called without update method
+    player2Strategy='random';
+end
 % Screen('Preference', 'SkipSyncTests', 1); %COMMENT AFTER DEBUGGING (or change 1 to 0)
 
 %% Screen -1: Participant number entry
@@ -155,8 +157,10 @@ uppInstructText = ['Il tuo avversario puo'' investire fino a ' num2str(PLAYER2MA
 lowInstructText = 'Puoi vincere 10, piu'' la quantita'' che non investi';
 % botInstructText = 'the amount you don''t invest.';
 
+    
 % Trials begin here
 for i=1:NUMROUNDS
+    trialnum(i) = i;
 
 %% Screen 1a: Fixation cross
 % DrawFormattedText(win, '+','center','center'); % Fixation cross as
@@ -266,8 +270,17 @@ uppSelectText = ['Il tuo avversario puo'' investire fino a ' num2str(PLAYER2MAXB
     player2ChoiceInd=find(rand < cumsum(exp(player2Options.*TAU)/sum(exp(player2Options.*TAU))),1);  % uses softmax to make a choice (TAU -> 0 = more random)
     player2Choice(i)=player2ChoiceInd-1;
     
-player1Earnings(i) = PLAYER1MAXBID + (PRIZE-player1Choice(i))*(player1ChoiceInd > player2ChoiceInd) - player1Choice(i)*(player1ChoiceInd<=player2ChoiceInd); %calculates how much the strong player wins
+player1Earnings(i) = PLAYER1MAXBID + (PRIZE-player1Choice(i))*(player1ChoiceInd > player2ChoiceInd) - player1Choice(i)*(player1ChoiceInd<=player2ChoiceInd); %calculates how much the strong player wins (Tobias here uses t/f of </> to allow or cancel winnings)
    player2Earnings(i) = PLAYER2MAXBID + (PRIZE-player2Choice(i))*((player2ChoiceInd) > player1ChoiceInd) - player2Choice(i)*(player2ChoiceInd<=player1ChoiceInd); %calculates how much the weak player wins
+   
+   % set outcome based on index choice
+   if player1ChoiceInd > player2ChoiceInd
+       outcome(i) = 1; % win
+   elseif player1ChoiceInd > player2ChoiceInd
+       outcome(i) = 2; % loss
+   else
+       outcome(i) = 3; % tie
+   end
    
 %    player1Earnings(i) = PLAYER1MAXBID + (PRIZE-player1Choice(i))*(player1ChoiceInd > player2Choice(i)) - player1Choice(i)*(player1ChoiceInd<=player2Choice(i)); %calculates how much the strong player wins
 %     player2Earnings(i) = PLAYER2MAXBID + (PRIZE-player2Choice(i))*(player2Choice(i) > player1ChoiceInd) - player2Choice(i)*(player2Choice(i)<=player1ChoiceInd); %calculates how much the weak player wins
@@ -385,10 +398,11 @@ earningsText12 = ['L''avversario ha guadagnato in totale in questo gioco: ' num2
 earningsText13 = 'Attendi il prossimo gioco.';
 instruct1TextYpos = screenYpixels * 2/40; 
 instruct3TextYpos = screenYpixels * 8/40; 
+% instruct5TextYpos = screenYpixels * 12/40; 
 
     DrawFormattedText(window, earningsText11, 'center', instruct1TextYpos); % Draw player earnings text
     DrawFormattedText(window, earningsText12, 'center', instruct3TextYpos); % Draw opponent earnings text
-%     DrawFormattedText(win, instructText0, 'center', instructbotTextYpos); % Draw space bar instructions
+    DrawFormattedText(window, earningsText13, 'center', cfg.botTextYpos); % Draw space bar instructions
     Screen('Flip', window); % Flip to the screen
 
 WaitSecs(4);
@@ -418,7 +432,7 @@ for i=1:NUMROUNDS
 end
 
 % save(['/Users/bentimberlake/Documents/MATLAB/patentTaskBTMP/logfiles/patent_race-subj_' num2str(particNum) '-' DateTime], 'player1Choice', 'player2Choice', 'player1Earnings', 'player2Earnings', 'trialLength');
-save(['sub' num2str(particNum) '-' num2str(DateTime) '_3patent_race' num2str(player1maxbid)], 'player1maxbid', 'player1Choice', 'player2Choice', 'player1Earnings', 'player2Earnings', 'trialLength');
+save(['sub' num2str(particNum) '-' num2str(DateTime) '_3patent_race' num2str(player1maxbid)], 'block', 'trialnum', 'player1maxbid', 'player1Choice', 'player2Choice', 'player1Earnings', 'player2Earnings', 'trialLength');
 
 end
 
