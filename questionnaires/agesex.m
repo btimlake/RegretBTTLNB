@@ -40,7 +40,7 @@ function [sex, sexNum, age, eduLevel, field] = agesex(cfg, particNum, DateTime, 
 %% Variables
 sexReq = 'Di che sesso sei? \n(Scegli e poi premi "spazio")';
 % dobReq = 'Inserisci la data della tua nascit? (ddmmyyyy): ';
-prompt = {'Inserisci la tua eta'' oggi e premi "invio": ', 'Quale l''anno di studio corrente?', 'Cosa studi?'};
+prompt = {'Inserisci la tua eta'' oggi e premi "invio": ', 'Quale l''anno di studio corrente?', 'Cosa studi?', 'Sei daltonico/a? (si'' o no)'};
 sexResp = {'maschio', 'femmina'};
 
 % Font
