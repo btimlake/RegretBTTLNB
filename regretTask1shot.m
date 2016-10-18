@@ -1,4 +1,4 @@
-function [wof1shotChoice, total1shotEarnings, wof1shotemotionalRating] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg)% Clear the workspace and the screen
+function [wof1shotChoice, total1shotEarnings, wof1shotForegoneAmount, wof1shotReError] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg)% Clear the workspace and the screen
 
     enabledKeys = RestrictKeysForKbCheck([30, 79, 80]); % limit recognized presses to 1!, left, right arrows MAC
 %     enabledKeys = RestrictKeysForKbCheck([49,37,39]); % limit recognized presses to 1!, 5%, space, left, right, up, down arrows PC
@@ -120,7 +120,8 @@ switch condition % could probably tidy this up so it gets selected for down belo
         % Generate pseudo-random outcomes with determined win/loss results
         lotteryOutcome1shot = [wlp2r1*regretTasktrialWheels1shot.wlp2 wrp2r1*regretTasktrialWheels1shot.wrp2; ...
             wlp2r2*regretTasktrialWheels1shot.wlp2 wrp2r2*regretTasktrialWheels1shot.wrp2]; % Creates array of outcomes for both wheels for either left choice (:,1) or right choice (:,2)
-
+        lotteryOutcome1shotkey = ['left wheel lose' 'right wheel win'; 'left wheel win' 'right wheel lose'];
+        
     case 2    % make it so selection wins, other loses (arrow has to make it past losing portion to win)
         wlp2r1 = 1.1 + (1.3-1.1).*rand(1); % randomized range 1.1-1.3 for winning arrow
         wrp2r1 = .60 + (.85-.60).*rand(1); % randomized range .60-.85 for losing arrow
@@ -129,6 +130,7 @@ switch condition % could probably tidy this up so it gets selected for down belo
         % Generate pseudo-random outcomes with determined win/loss results
         lotteryOutcome1shot = [wlp2r1*regretTasktrialWheels1shot.wlp2 wrp2r1*regretTasktrialWheels1shot.wrp2; ...
             wlp2r2*regretTasktrialWheels1shot.wlp2 wrp2r2*regretTasktrialWheels1shot.wrp2]; % Creates array of outcomes for both wheels for either left choice (:,1) or right choice (:,2)
+        lotteryOutcome1shotkey = ['left wheel win' 'right wheel lose'; 'left wheel lose' 'right wheel win'];
 
 end
 
@@ -229,7 +231,7 @@ while(~strcmp(keyName,'1!')) % continues until the 1 button is pressed
     [~, ny1] = DrawFormattedText(window, char(instructions(1,1)), 'center', cfg.topTextYpos, cfg.textColor);
 
     Screen('TextStyle', window,0); % back to plain
-    Screen('TextSize', window, cfg.fontSize/2); % smaller fontsize
+    Screen('TextSize', window, cfg.fontSizeSmall); % smaller fontsize
     DrawFormattedText(window,char(instructions(2,1)), 'center', ny1*2, 0, 70);
     DrawFormattedText(window,char(instructions(3,1)), 'center', cfg.botTextYpos, cfg.p1Col, 70);
     Screen('TextColor', window, cfg.textColor);
@@ -387,11 +389,15 @@ arrowAngleR=360*lotteryOutcome1shot(j,2);
     wof1shotEarnings(i) = winAmount(i);  % set earngings for log file
     botResultText = ['Hai vinto ' num2str(winAmount(i)) ' euro.'];  % Set feedback text to winning message
     botTextColor = winColors;
+    wof1shotForegoneAmount(i) = regretTasktrialWheels1shot.wrv2(i); % hard-codes the foregone outcome by predetermined odds
+  
     else   % If endpoint of arrow is less than loss zone, loss
     lossAmount(i) = regretTasktrialWheels1shot.wlv2(i);
     wof1shotEarnings(i) = lossAmount(i);  % set losses for log file
     botResultText = ['Hai perso ' num2str(-lossAmount(i)) ' euro.'];  % Set feedback text to losing message
     botTextColor = loseColors;
+    wof1shotForegoneAmount(i) = regretTasktrialWheels1shot.wrv1(i);
+    
     end
 
 elseif wof1shotChoice(i) == 2    % Participant chose wheel 2
@@ -405,14 +411,19 @@ arrowAngleR=360*lotteryOutcome1shot(j,2);
     wof1shotEarnings(i) = winAmount(i);  % set earngings for log file
     botResultText = ['Hai vinto ' num2str(winAmount(i)) ' euro.'];  % Set feedback text to winning message
     botTextColor = winColors;
+    wof1shotForegoneAmount(i) = regretTasktrialWheels1shot.wlv2(i);
+
     else   % If endpoint of arrow is less than loss zone, loss
     lossAmount(i) = regretTasktrialWheels1shot.wrv2(i);
     wof1shotEarnings(i) = lossAmount(i);  % set losses for log file
     botResultText = ['Hai perso ' num2str(-lossAmount(i)) ' euro.'];  % Set feedback text to losing message
     botTextColor = loseColors;
-    end
+    wof1shotForegoneAmount(i) = regretTasktrialWheels1shot.wlv1(i);
+   end
 
 end
+  wof1shotReError = abs(wof1shotEarnings(i)) + abs(wof1shotForegoneAmount(i)); % figures the regret or relief error with the difference between earned outcome and foregone outcome
+  
 %% Screen 3 - Animation loop
 
 %     lotteryOutcome = 0.33;      %%!! this is the outcome of the lottery's probability roll, a number between 0 and 1
@@ -532,7 +543,7 @@ end
 total1shotEarnings = sum(wof1shotEarnings);
 
 % Write logfile
-save(['sub' num2str(particNum) '-' DateTime '_2b-oneshot'], 'regretTasktrialWheels1shotDataset', 'wof1shotChoice', 'wof1shotEarnings', 'wof1shotChoiceDuration', 'wof1shotemotionalRating', 'wof1shotRatingDuration');
+save(['sub' num2str(particNum) '-' DateTime '_2b-oneshot'], 'regretTasktrialWheels1shotDataset', 'wof1shotChoice', 'wof1shotEarnings', 'wof1shotForegoneAmount', 'wof1shotReError', 'wof1shotChoiceDuration', 'wof1shotemotionalRating', 'wof1shotRatingDuration', 'lotteryOutcome1shot', 'lotteryOutcome1shotkey');
 
 %% Screen 6 - Wait screen
 % message = 'Si prega di attendere un attimo.';
