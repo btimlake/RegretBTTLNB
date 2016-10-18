@@ -731,6 +731,21 @@ end
             
     end % phase loop
     fclose(datafilepointer);
+    %% Screen 4a - Please wait; hold on result
+
+for i = 1:16; % multiply second integer by .75 to get seconds; i.e. 16 means 12 seconds
+      
+    if mod(i,2) == 0 %Even numbers: wait text on
+        % Please Wait text
+        DrawFormattedText(w, 'Si prega di attendere un attimo le prossime istruzione ... ', 'center', cfg.waitTextYpos, cfg.instColA);
+        Screen('Flip', w)
+        WaitSecs(1);
+    else %Odd numbers: wait text off
+        Screen('Flip', w)
+        WaitSecs(.5);
+    end
+    
+end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %EYELINK
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -763,21 +778,7 @@ catch
     % Output the error message that describes the error:
     psychrethrow(psychlasterror);
     
-    %% Screen 4a - Please wait; hold on result
 
-for i = 1:16; % multiply second integer by .75 to get seconds; i.e. 16 means 12 seconds
-      
-    if mod(i,2) == 0 %Even numbers: wait text on
-        % Please Wait text
-        DrawFormattedText(window, 'Si prega di attendere un attimo Le Ruote della Fortuna ? ', 'center', cfg.waitTextYpos, cfg.instColA);
-        Screen('Flip', window)
-        WaitSecs(1);
-    else %Odd numbers: wait text off
-        Screen('Flip', window)
-        WaitSecs(.5);
-    end
-    
-end
 end % try ... catch %
 end
 
