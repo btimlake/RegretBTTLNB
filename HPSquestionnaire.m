@@ -141,7 +141,7 @@ numChoice = height(HPSItalian);
 %     end
 %     storedXRectCenter(k)=rectXCenter;
 %     storedXPos(k)=xPos;
-%     storedSelRects(:,k) = [rectXCenter-rectWidth(k)/2-spacer cfg.screenCenter(2)-spacer rectXCenter+rectWidth(k)/2+spacer cfg.screenCenter(2)+rectHeight(k)+spacer];
+%     storedSelRects(k,:) = [rectXCenter-rectWidth(k)/2-spacer cfg.screenCenter(2)-spacer rectXCenter+rectWidth(k)/2+spacer cfg.screenCenter(2)+rectHeight(k)+spacer];
 % end
 
 % This makes both rects the same size
@@ -164,7 +164,7 @@ for k = 1:length(hpsResp);
     xPos = rectXCenter - respLength/2;
     storedXRectCenter(k)=rectXCenter;
     storedXPos(k)=xPos;
-    storedSelRects(:,k) = [rectXCenter-rectWidth/2-spacer cfg.midTextYpos-spacer rectXCenter+rectWidth/2+spacer cfg.midTextYpos+rectHeight+spacer];
+    storedSelRects(k,:) = [rectXCenter-rectWidth/2-spacer cfg.midTextYpos-spacer rectXCenter+rectWidth/2+spacer cfg.midTextYpos+rectHeight+spacer];
                             % [left, top, right, bottom]
 end
 
@@ -192,10 +192,13 @@ for i = 1:numChoice
     % responses
     for k = 1:length(hpsResp);
         Screen('TextStyle', window,0); %  plain text  resp onses
-        DrawFormattedText(window, char(hpsResp(k)), storedXPos(k), cfg.midTextYpos, cfg.textColor);
+%         DrawFormattedText(window, char(hpsResp(k)), storedXPos(k), cfg.midTextYpos, cfg.textColor, ~, ~, ~, ~, ~, storedSelRects(k,:));
+        DrawFormattedText(window, char(hpsResp(k)), storedXPos(k), cfg.midTextYpos, cfg.textColor, [], [], [], [], [], storedSelRects(k,:));
         %         Screen('FrameRect', window, cfg.instColB, storedSelRects(:,currSelection)); % Draws a frame rectangle around current selection k
     end
-    
+%     The optional argument 'winRect' allows to specify a [left top right bottom]
+%   rectange, in which the text should be centered/placed etc. By default,
+%   the rectangle of the whole 'win'dow is used.
     % counter & instructions
         Screen('TextSize', window, cfg.fontSizeSmall);
         DrawFormattedText(window, counter, 'center', cfg.topTextYpos) % question counter
@@ -231,7 +234,8 @@ for i = 1:numChoice
         % responses
         for k = 1:length(hpsResp);
             Screen('TextStyle', window,0); %  plain text  resp onses
-            DrawFormattedText(window, char(hpsResp(k)), storedXPos(k), cfg.midTextYpos, cfg.textColor);
+%         DrawFormattedText(window, char(hpsResp(k)), storedXPos(k), cfg.midTextYpos, cfg.textColor, ~, ~, ~, ~, ~, storedSelRects(k,:));
+        DrawFormattedText(window, char(hpsResp(k)), storedXPos(k), cfg.midTextYpos, cfg.textColor, [], [], [], [], [], storedSelRects(k,:));
             if currSelection == 1.5;
             	RestrictKeysForKbCheck(limitedKeys); % limit recognized presses to space, left, right arrows MAC
             else
