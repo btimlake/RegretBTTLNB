@@ -174,7 +174,7 @@ aOK=0; % initial value for aOK
 
 while aOK ~= 1
 
-    age = str2num(GetEchoString(window, char(prompt(1)), storedPromptXPos(1), cfg.uppTextYpos, cfg.textColor)); % displays string in PTB; allows backspace
+    age = str2num(GetEchoStringForm(window, char(prompt(1)), storedPromptXPos(1), cfg.uppTextYpos, cfg.textColor)); % displays string in PTB; allows backspace
 
     switch isempty(age)
         case 1 %deals with both cancel and X presses
@@ -201,7 +201,7 @@ for i = 2:length(prompt);
     
     while aOK ~= 1
         
-        response = GetEchoString(window, char(prompt(i)), storedPromptXPos(i), cfg.uppTextYpos, cfg.textColor); % displays string in PTB; allows backspace
+        response = GetEchoStringForm(window, char(prompt(i)), storedPromptXPos(i), cfg.uppTextYpos, cfg.textColor); % displays string in PTB; allows backspace
         
         switch isempty(response)
             case 1 %deals with both cancel and X presses
