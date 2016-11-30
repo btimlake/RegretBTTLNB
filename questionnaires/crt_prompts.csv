@@ -1,0 +1,6 @@
+question, prompt1, prompt2, prompt3, prompt4, prompt5, prompt6, prompt7
+Una racchetta e una palla costano 1.10 euro. \nLa racchetta costa 1 euro in piu' della palla. \nQuanto costa la palla?\n\nCentesimi di euro: ,,,,,,
+"Se 5 macchine impiegano 5 minuti per fare 5 oggetti, \nquanto tempo occorre a 100 macchine \nper fare 100 oggetti?\n\nMinuti: ",,,,,,
+"In un lago c'e' una chiazza di gigli. \nOgni giorno la chiazza raddoppia le sue dimensioni. \nSe impiega 48 giorni per ricoprire l'intero lago, \nquanti giorni impieghera' per ricoprirne meta'?\n\nGiorni: ",,,,,,
+Conosci qualcuno dei test che ti sono stati proposti?,"Scrivi si'' o no, e se si'', quali? \n(1 per la racchetta e la palla, 2 per le macchine, e 3 per il lago. [e.g. si 1,3]): '",,,,,,
+Quale?, racchetta/palla,le macchine,il lago,racchetta/palla e le macchine,racchetta/palla e il lago,le macchine e il lago,tutte le tre
