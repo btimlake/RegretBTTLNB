@@ -1,4 +1,4 @@
-function [cit] = CITquestionnaire(cfg, particNum, DateTime, window, windowRect, enabledKeys)
+function [cit] = CITquestionnaire(cfg, particNum, DateTime, window, windowRect)
 % CIT - done
 % SCREENS: 4
 % QUESTIONS/SCREEN: 1
@@ -13,6 +13,8 @@ addpath('questionnaires');
 load('citpromptARRAY.mat')       % Load CIT prompts and responses DATASET - PC Lab
 [screenXpixels, screenYpixels] = Screen('WindowSize', window);
 [xCenter, yCenter] = RectCenter(windowRect);
+
+RestrictKeysForKbCheck(cfg.enabledSelectKeys); % space, left, right arrows
 
 %% Developing/debugging material
 % PsychDefaultSetup(2);
@@ -202,6 +204,6 @@ for i = 1:length(citprompt(:,1))
 
 end
 
-save(['sub' num2str(particNum) '-' num2str(DateTime) '_q3cit'], 'cit');
+save(['sub' num2str(particNum) '-' num2str(DateTime) '_q3cit'], 'particNum', 'cit');
 
 end

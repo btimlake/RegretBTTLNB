@@ -1,5 +1,6 @@
-function [rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTime, window, windowRect, enabledKeys)
+function [rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTime, window, windowRect, cfg)
 % function [slider_position_now] = likert_slider(screenInfo, slider_position_old, move_slider)
+RestrictKeysForKbCheck(cfg.enabledSelectKeys); % space, left, right arrows
 
 % draw rating line
 % sepLineYpos = screenYpixels * 39/80; % Screen Y position of separator line
@@ -33,7 +34,7 @@ if ismac
     disabledKeys=[];
     skipSyncTest=[];
     screenRes=[];
-    enabledKeys = RestrictKeysForKbCheck([30, 34, 44, 79, 80, 81,82]); % limit recognized presses to 1!, 5%, space, left, right, up, down arrows MAC
+%     enabledKeys = RestrictKeysForKbCheck([30, 34, 44, 79, 80, 81,82]); % limit recognized presses to 1!, 5%, space, left, right, up, down arrows MAC
 %     enabledKeys = RestrictKeysForKbCheck([]); % for debugging
 elseif isunix
     % Code to run on Linux plaform
@@ -41,7 +42,7 @@ elseif isunix
 elseif ispc
     % Code to run on Windows platform
     disp('PC');
-    enabledKeys = RestrictKeysForKbCheck([49,53,32,37,38,39,40]); % limit recognized presses to 1!, 5%, space, left, right, up, down arrows PC
+%     enabledKeys = RestrictKeysForKbCheck([49,53,32,37,38,39,40]); % limit recognized presses to 1!, 5%, space, left, right, up, down arrows PC
 
 else
     disp('Platform not supported')

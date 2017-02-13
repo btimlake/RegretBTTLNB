@@ -1,5 +1,7 @@
 function [ravenChoice, ravenWinnings] = Raven(cfg, particNum, DateTime, window, windowRect)
 
+RestrictKeysForKbCheck(cfg.enabledSelectKeys); % space, left, right arrows
+
 %% Developing/debugging material
 % addpath('REGRET_task', 'patentTaskBTMP', 'ratingslider', 'instructions', 'games', 'games/stimoli');
 % 
@@ -120,9 +122,9 @@ Screen('TextSize', window, cfg.fontSizeSmall); % change prompt size to small
 % Find X position
 [~, ~, rect]=DrawFormattedText(window, ravenInput, 0, 0, cfg.bgColor); % get bounding rect of invisible text
 ravenInputLength = rect(3)-rect(1); % finds spatial length of the prompt
-xPos = cfg.screenCenter(1)-ravenInputLength/2; % Finds starting xPos so prompt is centered
+xPos = cfg.screenCenter(1)-(ravenInputLength/2); % Finds starting xPos so prompt is centered
 
-
+RestrictKeysForKbCheck(cfg.enabledNumberKeys); % 1-10, return, decimal, keypad 1-10 & decimal
 
 %% Loop of images
 for k = 1 : NUMROUNDS
@@ -215,7 +217,7 @@ for i=1:NUMROUNDS
         trialLength(i) = trialEndTime(i)-trialStartTime(i);
 end
 
-save(['sub' num2str(particNum) '-' num2str(DateTime) '_q1Raven'], 'ravenChoice', 'ravenAnswers', 'ravenCorrect', 'ravenWinnings', 'trialLength');
+save(['sub' num2str(particNum) '-' num2str(DateTime) '_q1Raven'], 'particNum', 'ravenChoice', 'ravenAnswers', 'ravenCorrect', 'ravenWinnings', 'trialLength');
 
 Screen('TextSize', window, cfg.fontSize);
 

@@ -36,8 +36,8 @@ feedbackDelay = 1 + (3-1).*rand(NUMROUNDS,1); % Creates array of random delay be
 % fixationDelay = 4 + (8-4).*rand(NUMROUNDS,1); % Creates array of random fixation cross presentation time of 4-8 seconds
 % feedbackDelay = 2 + (6-2).*rand(NUMROUNDS,1); % Creates array of random delay between choice and feedback of 2-6 seconds
 % KbName('UnifyKeyNames');
-% RestrictKeysForKbCheck([37,39,32]); % limit recognized presses to left and right arrows PC
-% enabledKeys;
+RestrictKeysForKbCheck(cfg.enabledSelectKeys); % space, left, right arrows
+
 %RESTORE AFTER DEBUGGING
 if (nargin<1)                           % If the function is called without update method
     player2Strategy='random';
@@ -113,7 +113,7 @@ fontSize = round(screenYpixels * 2/60);
     Screen('TextColor', window, black);
     
 % Set standard line weight    
-lineWidthPix = round(screenXpixels * 2 / 560);
+lineWidthPix = 7;
    
 keyName=''; % empty initial value
 
@@ -151,17 +151,24 @@ for i = 1:numbotRect
     botRects(:, i) = CenterRectOnPointd(baseRect, botRectXpos(i), botRectYpos);
 end
 
-% Instruction text strings
-topInstructText = ['Scegli il tuo investimento (0 - ' num2str(PLAYER1MAXBID) ') e poi premi "spazio".'];
-uppInstructText = ['Il tuo avversario puo'' investire fino a ' num2str(PLAYER2MAXBID) '.'];
-lowInstructText = 'Puoi vincere 10, piu'' la quantita'' che non investi';
+% % Instruction text strings ITALIAN
+% topInstructText = ['Scegli il tuo investimento (0 - ' num2str(PLAYER1MAXBID) ') e poi premi "spazio".'];
+% uppInstructText = ['Il tuo avversario puo'' investire fino a ' num2str(PLAYER2MAXBID) '.'];
+% lowInstructText = 'Puoi vincere 10, piu'' la quantita'' che non investi';
+% Instruction text strings ENGLISH
+topInstructText = ['Choose how much to invest (0 - ' num2str(PLAYER1MAXBID) ') then press "space".'];
+uppInstructText = ['Your opponent can invest up to ' num2str(PLAYER2MAXBID) '.'];
+lowInstructText = ['You can win ' num2str(PRIZE) ', plus the amount you don''t invest'];
+
 % botInstructText = 'the amount you don''t invest.';
 
     
 % Trials begin here
 for i=1:NUMROUNDS
-    trialnum(i) = i;
+    trialnum(i,:) = i;
 
+    global_trial(i,:) = trialnum(i)+((block == 2) * 50); 
+   
 %% Screen 1a: Fixation cross
 % DrawFormattedText(win, '+','center','center'); % Fixation cross as
 % typeset character; commented out now that draw cross works
@@ -226,11 +233,13 @@ keyName=KbName(keyCode);
                 if currPlayerSelection < 0
                     currPlayerSelection = 0;
                 end
+%                 selection = left_press;
             case 'RightArrow'
                 currPlayerSelection = currPlayerSelection + 1;
                 if currPlayerSelection > PLAYER1MAXBID
                     currPlayerSelection = PLAYER1MAXBID;
                 end
+%                 selection = right_press;
         end
         % update selection to last button press
 
@@ -260,9 +269,12 @@ end
 trialEndTime(i) = GetSecs;
 player1Choice(i) = currPlayerSelection; 
 
-% Selection text strings
-topSelectText = ['Hai investito ' num2str(player1Choice(i)) '.'];
-uppSelectText = ['Il tuo avversario puo'' investire fino a ' num2str(PLAYER2MAXBID) '.'];
+% % Selection text strings ITALIAN
+% topSelectText = ['Hai investito ' num2str(player1Choice(i)) '.'];
+% uppSelectText = ['Il tuo avversario puo'' investire fino a ' num2str(PLAYER2MAXBID) '.'];
+% Selection text strings ENGLISH
+topSelectText = ['You invested ' num2str(player1Choice(i)) '.'];
+uppSelectText = ['Your opponent can invest up to ' num2str(PLAYER2MAXBID) '.'];
 % botSelectText = botInstructText;
     
     player1ChoiceInd = player1Choice(i)+1;      %because choosing 0 is an option, there's a discrepancy between choices and index of options...
@@ -276,10 +288,17 @@ player1Earnings(i) = PLAYER1MAXBID + (PRIZE-player1Choice(i))*(player1ChoiceInd 
    % set outcome based on index choice
    if player1ChoiceInd > player2ChoiceInd
        outcome(i) = 1; % win
-   elseif player1ChoiceInd > player2ChoiceInd
+   elseif player1ChoiceInd < player2ChoiceInd
        outcome(i) = 2; % loss
    else
        outcome(i) = 3; % tie
+   end
+   
+   % calculate regret/relief error for each trial
+   if ((PLAYER1MAXBID == 4)*(player2Choice(i) == 4 || player2Choice(i) == 5)*(player1Choice(i) == 0) == 1)
+       reError(i,:) = 0;
+   else
+       reError(i,:)  = (PLAYER1MAXBID - player2Choice(i) + 1) + PRIZE - player1Earnings(i);
    end
    
 %    player1Earnings(i) = PLAYER1MAXBID + (PRIZE-player1Choice(i))*(player1ChoiceInd > player2Choice(i)) - player1Choice(i)*(player1ChoiceInd<=player2Choice(i)); %calculates how much the strong player wins
@@ -292,10 +311,13 @@ selectedRects = topRects(:,1:playerSelection);
 unSelected = playerSelection + 1;
 unselectedRects = topRects(:,unSelected:PLAYER1MAXBID);
 
-% Win Result text strings
+% Win Result text strings ITALIAN
 topWinText = topSelectText;
-uppWinText = ['Il tuo avversario ha investito ' num2str(player2Choice(i)) '.'];
-botWinText = ['In questo round hai guadagnato ' num2str(player1Earnings(i)) '.']; 
+% uppWinText = ['Il tuo avversario ha investito ' num2str(player2Choice(i)) '.'];
+% botWinText = ['In questo round hai guadagnato ' num2str(player1Earnings(i)) '.']; 
+% Win Result text strings ENGLISH
+uppWinText = ['Your opponent chose ' num2str(player2Choice(i)) '.'];
+botWinText = ['You won ' num2str(player1Earnings(i)) ' in this round.']; 
 % lowWinText = ['Your opponent earned ' num2str(player2Earnings(i)) ' in this round.']; 
 
 % Draw choice explanation
@@ -392,10 +414,15 @@ end
 p1GameEarnings=sum(player1Earnings)/100; 
 p2GameEarnings=sum(player2Earnings)/100;
 
-% Earnings text
-earningsText11 = ['Hai guadagnato in totale in questo gioco: ' num2str(p1GameEarnings, '%0.2f')];
-earningsText12 = ['L''avversario ha guadagnato in totale in questo gioco: ' num2str(p2GameEarnings, '%0.2f')];
-earningsText13 = 'Attendi il prossimo gioco.';
+% % Earnings text ITALIAN
+% earningsText11 = ['Hai guadagnato in totale in questo gioco: ' num2str(p1GameEarnings, '%0.2f')];
+% earningsText12 = ['L''avversario ha guadagnato in totale in questo gioco: ' num2str(p2GameEarnings, '%0.2f')];
+% earningsText13 = 'Attendi il prossimo gioco.';
+% Earnings text ENGLISH
+earningsText11 = ['Your total winnings for this game: ' num2str(p1GameEarnings, '%0.2f')];
+earningsText12 = ['Your opponent''s total winnings for this game: ' num2str(p2GameEarnings, '%0.2f')];
+earningsText13 = 'Please wait for the next task.';
+
 instruct1TextYpos = screenYpixels * 2/40; 
 instruct3TextYpos = screenYpixels * 8/40; 
 % instruct5TextYpos = screenYpixels * 12/40; 
@@ -432,7 +459,7 @@ for i=1:NUMROUNDS
 end
 
 % save(['/Users/bentimberlake/Documents/MATLAB/patentTaskBTMP/logfiles/patent_race-subj_' num2str(particNum) '-' DateTime], 'player1Choice', 'player2Choice', 'player1Earnings', 'player2Earnings', 'trialLength');
-save(['sub' num2str(particNum) '-' num2str(DateTime) '_3patent_race' num2str(player1maxbid)], 'block', 'trialnum', 'player1maxbid', 'player1Choice', 'player2Choice', 'player1Earnings', 'player2Earnings', 'trialLength');
+save(['sub' num2str(particNum) '-' num2str(DateTime) '_3patent_race' num2str(block)], 'particNum', 'block', 'trialnum', 'global_trial', 'player1maxbid', 'player1Choice', 'player2Choice', 'outcome', 'player1Earnings', 'reError', 'player2Earnings', 'trialLength');
 
 end
 

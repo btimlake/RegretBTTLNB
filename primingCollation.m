@@ -17,14 +17,15 @@
 
 % Set any input variables
 NUMBLOCKS = 2;
+PRIZE = 10;
 
 priming_effect_table.Properties.VariableNames = {'subject' 'sex' 'age' ...
-    'WoFChoice' 'WoFearnings' 'WoFforegone' 'PRorder' ...
-    'block' 'role' 'trial' 'SubjectPR' 'ComputerPR'};
+    'primingCondition' 'WoFChoice' 'WoFearnings' 'WoFforegone' 'ReError' ...
+    'PRorder' 'block' 'role' 'trial' 'trLength' 'SubjectPR' 'ComputerPR' 'outcome' 'earnings' 'reError'};
 
 priming_effect_table.Properties.VariableDescriptions = {'' '1=f;2=m' '' ...
-    '' '' '' '54=s/w; 45=w/s' ...
-    '' '' '' '' ''};
+    '1=regret; 2=relief' '' '' '' '' ...
+    '54=s/w; 45=w/s' '' '' '' '' '' '' '' '' ''};
 
 subject_data_dir = dir;
 subject_data = subject_data_dir(4:end); % gets all files and folders in the directory (after three invisible files)
@@ -63,7 +64,7 @@ end
 
 
 for i=1:length(all9all)
-    clearvars -except i all9all pr pr_filenames priming_effect_table subject_folder_dir subject_folder NUMBLOCKS
+    clearvars -except i all9all pr pr_filenames priming_effect_table subject_folder_dir subject_folder NUMBLOCKS PRIZE
     
 %%%%%%DELETE
 %     all9all(i).name;
@@ -76,8 +77,8 @@ for i=1:length(all9all)
 
     subData = load(all9all(i).name);    
                 
-    p1Choice = [subData.player1Choice1; subData.player1Choice2];
-    p2Choice = [subData.player2Choice1; subData.player2Choice2];
+%     p1Choice = [subData.player1Choice1; subData.player1Choice2];
+%     p2Choice = [subData.player2Choice1; subData.player2Choice2];
     
     if subData.sex == 'f'
         sex = 1;
@@ -92,7 +93,7 @@ for i=1:length(all9all)
         prData(k) = load(pr_datafile); % load that file        
     end
     
-    
+
 %%%%%%DELETE
 %     maxbid1 = subData.playOrder(1); % which role did player play first (4 or 5) - corresponds to filename
 %     pr_data1 = eval(['pr.maxbid', num2str(maxbid1), '(', num2str(i), ').name']); % construct the filename and make it a variable
@@ -115,9 +116,9 @@ for i=1:length(all9all)
 % filePattern = fullfile(subject_folder(i).name, '*3patent_race5.mat'); % Change to whatever pattern you need.
 
 
-
-for m = 1:NUMBLOCKS
-    for n = 1:length(prData(m).trialnum)
+% figure outcome based on each choice
+for m = 1:NUMBLOCKS % go through each block
+    for n = 1:length(prData(m).trialnum) % go through each trial in this block
         if prData(m).player1Choice(n) > prData(m).player2Choice(n)
             prData(m).outcome(n, :) = 1; % win
         elseif prData(m).player1Choice(n) < prData(m).player2Choice(n)
@@ -125,29 +126,51 @@ for m = 1:NUMBLOCKS
         else
             prData(m).outcome(n, :) = 3; % tie
         end
+        %         % calculate regret/relief error for each trial
+        %         if prData(m).player1maxbid == 4
+        %             if prData(m).player2Choice(n) == 4 && prData(m).player1Choice(n) == 0 % account for the fact that can't do anything more in weak condition
+        %                 prData(m).reError(n, :) = 0;
+        %             elseif prData(m).player2Choice(n) == 5 && prData(m).player1Choice(n) == 0
+        %                 prData(m).reError(n, :) = 0;
+        %             else
+        %                 prData(m).reError(n, :) = (prData(m).player1maxbid - (prData(m).player2Choice(n) + 1) + PRIZE - prData(m).player1Earnings(n));
+        %             end
+        %         else
+        %             prData(m).reError(n, :) = (prData(m).player1maxbid - (prData(m).player2Choice(n) + 1) + PRIZE - prData(m).player1Earnings(n));
+        %         end
+        
+        % Simplified calculate regret/relief error for each trial
+        if ((prData(m).player1maxbid == 4)*(prData(m).player2Choice(n) == 4 || prData(m).player2Choice(n) == 5)*(prData(m).player1Choice(n) == 0) == 1)
+            prData(m).reError(n, :) = 0;
+        else
+            prData(m).reError(n, :)  = (player1maxbid - player2Choice(n) + 1) + PRIZE - player1Earnings(n);
+        end
+        
+        % reError is difference between actual outcome and greatest possbile outcome: the minimum amount needed to win, so computer bid plus
+        % one, subtracted from subject maxbid, then add
     end
 end
 
-%%%%%%HAVE TO TEST THIS
-%%%%%%***Check to see if adding priming condition variable works
+
+
 
 % add in variable for priming condition (1-regret, 2-relief, 3-disappointment, 4-satisfaction)
-switch subData.1shotEarnings
-    case < 0
-        if subData.forgoneEarnings < 0
+switch subData.total1shotEarnings
+    case subData.total1shotEarnings < 0
+        if subData.wof1shotForegoneAmount < 0
             disp('Something is not right with ')
             disp(subData(i).name(1:14))
         end
-    case > 0
-        if subData.forgoneEarnings > 0
+    case subData.total1shotEarnings > 0
+        if subData.wof1shotForegoneAmount > 0
             disp('Something is not right with ')
             disp(subData(i).name(1:14))
         end
 end
 
-if subData.1shotEarnings < subData.forgoneEarnings
+if subData.total1shotEarnings < subData.wof1shotForegoneAmount
     priming = 1; %regret
-elseif subData.1shotEarnings > subData.forgoneEarnings
+elseif subData.total1shotEarnings > subData.wof1shotForegoneAmount
     priming = 2; %relief
 end
 
@@ -200,9 +223,12 @@ playOrder = repmat(subData.playOrder, 100, 1);
 block = [prData(1).block.*ones(50,1); prData(2).block.*ones(50,1)];
 role = [prData(1).player1maxbid.*ones(50,1); prData(2).player1maxbid.*ones(50,1)];
 trial = [prData(1).trialnum; prData(2).trialnum];
+trialLength = [prData(1).trialLength; prData(2).trialLength];
 p1Choice = [subData.player1Choice1; subData.player1Choice2];
 p2Choice = [subData.player2Choice1; subData.player2Choice2];
 outcome = [prData(1).outcome; prData(2).outcome];
+p1Earnings = [prData(1).player1Earnings; prData(2).player1Earnings];
+reError = [prData(1).reError; prData(2).reError];
 particNum = eval(subData.particNum);
 
 %%%%%%DELETE
@@ -233,10 +259,10 @@ particNum = eval(subData.particNum);
 
 priming_effect = table(particNum.*ones(100,1), sex.*ones(100,1), subData.age.*ones(100,1), ...
     priming.*ones(100,1), subData.wof1shotChoice.*ones(100,1), subData.total1shotEarnings.*ones(100,1), subData.wof1shotForegoneAmount.*ones(100,1), subData.wof1shotReError.*ones(100,1), ...
-    playOrder, block, role, trial, p1Choice, p2Choice, outcome, ...
+    playOrder, block, role, trial, trialLength, p1Choice, p2Choice, outcome, p1Earnings, reError,...
     'VariableNames', {'subNum', 'sex', 'age', ...
     'primingCondition', 'wof1shotChoice', 'wof1shotEarn', 'wof1shotForegone', 'wof1shotReError', ...
-    'playOrder', 'block', 'role', 'trial', 'p1Choice', 'p2Choice', 'outcome'});
+    'playOrder', 'block', 'role', 'trial', 'duration', 'p1Choice', 'p2Choice', 'outcome', 'earnings', 'reError'});
 % priming_effect.Properties.VariableUnits =  {'' '' 'Yrs'  ''  'euros'  'euros' '' 'cards' 'cards'};
 
 priming_effect_table = [priming_effect_table; priming_effect];

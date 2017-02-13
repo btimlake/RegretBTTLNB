@@ -13,17 +13,17 @@ screenXpixels=cfg.screenSize.x;
     Screen('TextColor', window, cfg.textColor);
     
     
-    if player1maxbid == 5;
-%         addpath(matlabroot,'instructions/strong');
-%         txtInstr = fileread('patentRace-strong.txt');
-        type = 'strong';
-    elseif player1maxbid == 4;
-%         addpath(matlabroot,'instructions/weak');
-%         txtInstr = fileread('patentRace-weak.txt');
-        type = 'weak';
-    else
-        disp('Player 1 max bid needs to be fixed')
-    end
+%     if player1maxbid == 5;
+% %         addpath(matlabroot,'instructions/strong');
+% %         txtInstr = fileread('patentRace-strong.txt');
+%         type = 'strong';
+%     elseif player1maxbid == 4;
+% %         addpath(matlabroot,'instructions/weak');
+% %         txtInstr = fileread('patentRace-weak.txt');
+%         type = 'weak';
+%     else
+%         disp('Player 1 max bid needs to be fixed')
+%     end
 
 %% Instruction screens
     keyName=''; % empty initial value
@@ -49,9 +49,9 @@ screenXpixels=cfg.screenSize.x;
         
         %     while ~strcmp(num2str(instructions), '5')
         if instructions == 1;
-            RestrictKeysForKbCheck([79, 80, 81,82]); % restricts to arrows; doesn't allow "space" on first instruction screen
+            RestrictKeysForKbCheck(cfg.limitedKeys); % left, right arrows; doesn't allow "space" on first instruction screen 
         else
-            RestrictKeysForKbCheck([30, 34, 44, 79, 80, 81,82]);
+            RestrictKeysForKbCheck(cfg.enabledSelectKeys); % space, left, right arrows
         end
 
         [keyTime, keyCode]=KbWait([],2);

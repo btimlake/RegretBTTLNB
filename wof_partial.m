@@ -1,12 +1,12 @@
-function [totalEarnings] = regretTask(particNum, DateTime, window, windowRect, cfg, trials)% Clear the workspace and the screen
+function [totalEarnings] = wof_partial(particNum, DateTime, window, windowRect, cfg, feedback, feedback_code, trials)% Clear the workspace and the screen
 
 %     enabledKeys = RestrictKeysForKbCheck([44, 79, 80]); % limit recognized presses to space, right, left arrows MAC
 %     enabledKeys = RestrictKeysForKbCheck([32,37,39]); % limit recognized presses to space, right, left arrows PC
 
-
-% load('regretTasktrialWheels.mat')       % Load the preset wheel probabilites and values TABLE
-load('regretTasktrialWheelsDataset.mat')       % Load the preset wheel probabilites and values DATASET
-regretTasktrialWheels = regretTasktrialWheelsDataset; % Needed to equate variable to different filename
+load('regretTasktrialWheels.mat')       % Load the preset wheel probabilites and values TABLE
+% load('regretTasktrialWheelsDataset.mat')       % Load the preset wheel probabilites and values DATASET
+% regretTasktrialWheels = regretTasktrialWheelsDataset; % Needed to equate variable to different filename
+% regretTasktrialWheels = regretTasktrialWheels; % Needed to equate variable to different filename
 % DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
 
 % Set some variables
@@ -87,8 +87,8 @@ rateLineXposLeft = round(screenXpixels * 0.09 - screenXpixels * 2/56); % left po
 rateLineXposRight = round(screenXpixels * 0.91 + screenXpixels * 2/56); % right endpoint of separator line
 
 % Rect positions/dimensions based on wheel positions/dimensions
-rectWidth = screenXpixels*.3; % based on wheelRadius = (screenXpixels*.13);
-rectHeight = screenYpixels*.45;
+rectWidth = screenXpixels*.28; % based on wheelRadius = (screenXpixels*.13);
+rectHeight = screenYpixels*.5;
 baseRect = [0 0 rectWidth rectHeight];
 rectYpos = screenYpixels*.5;
 leftRectXpos = screenXpixels*.25;
@@ -133,6 +133,7 @@ degPerFrame = 10;
 % posYs = ones(1, numRects) .* (screenYpixels / 2);
 
 arrow=imread(fullfile('arrow.png'), 'BackgroundColor',BG); %load image of arrow
+dot=imread(fullfile('invisible_arrow.png'), 'BackgroundColor',BG); % load dummy image of nothing
 texArrow = Screen('MakeTexture', window, arrow); % Draw arrow to the offscreen window
 prop25=imread(fullfile('propCircle25-75.png'), 'BackgroundColor',BG); %load image of circle
 prop33=imread(fullfile('propCircle33-66.png'), 'BackgroundColor',BG ); %load image of circle
@@ -144,6 +145,15 @@ texProb33 = Screen('MakeTexture', window, prop33); % Draw circle to the offscree
 texProb50 = Screen('MakeTexture', window, prop50); % Draw circle to the offscreen window
 texProb66 = Screen('MakeTexture', window, prop66); % Draw circle to the offscreen window
 texProb75 = Screen('MakeTexture', window, prop75); % Draw circle to the offscreen window
+
+switch feedback
+    case 'partial'
+        altArrow = Screen('MakeTexture', window, dot); % Draw invisible arrow for unchosen wheel
+
+    case 'complete'
+        altArrow = Screen('MakeTexture', window, arrow); % Draw visible arrow for unchosen wheel
+end
+
 
 %     [...] = imread(...,'BackgroundColor',BG) composites any transparent 
 %     pixels in the input image against the color specified in BG.  If BG is
@@ -162,8 +172,14 @@ waitframes = 1;
 
     keyName=''; % empty initial value
     instructions = 1;
-    instFilename = ['instructions/WoF_instructions' num2str(instructions) '.png'];
-    imdata=imread(instFilename);    
+    switch feedback
+      case 'partial'
+        instFilename = ['instructions/WoF_part_instructions' num2str(instructions) '.png'];
+      case 'complete'
+        instFilename = ['instructions/WoF_comp_instructions' num2str(instructions) '.png'];
+    end
+    
+    imdata=imread(instFilename);
     tex=Screen('MakeTexture', window, imdata);
     Screen('DrawTexture', window, tex);
     Screen('Flip', window);
@@ -194,7 +210,12 @@ while ~strcmp(keyName,'space')
         end
         % update selection to last button press
         
-        instFilename = ['instructions/WoF_instructions' num2str(instructions) '.png'];
+        switch feedback
+            case 'partial'
+                instFilename = ['instructions/WoF_part_instructions' num2str(instructions) '.png'];
+            case 'complete'
+                instFilename = ['instructions/WoF_comp_instructions' num2str(instructions) '.png'];
+        end
         imdata=imread(instFilename);
         
         tex=Screen('MakeTexture', window, imdata);
@@ -238,10 +259,10 @@ RestrictKeysForKbCheck(cfg.limitedKeys); % left, right arrows
 %         end
 
 % Set win/lose values based on trial round
-winL = num2str(regretTasktrialWheels.wlv1(i), '%.2f');
-loseL = num2str(regretTasktrialWheels.wlv2(i), '%.2f');
-winR = num2str(regretTasktrialWheels.wrv1(i), '%.2f');
-loseR = num2str(regretTasktrialWheels.wrv2(i), '%.2f');
+winL = num2str(regretTasktrialWheels.wlv1(i), '%0.2f');
+loseL = num2str(regretTasktrialWheels.wlv2(i), '%0.2f');
+winR = num2str(regretTasktrialWheels.wrv1(i), '%0.2f');
+loseR = num2str(regretTasktrialWheels.wrv2(i), '%0.2f');
 % wheelL = ['texProb' num2str(regretTasktrialWheels.wlp1(i)*100)];
 % wheelR = ['texProb' num2str(regretTasktrialWheels.wrp1(i)*100)];
 
@@ -309,9 +330,15 @@ keyName=KbName(keyCode); % get the name of which key was pressed
     if strcmp(keyName,'LeftArrow') % If left arrow pressed, set the rectangle to the left side
         rectPos = leftRect;
         wofChoice(i,1) = 1;   % and note the choice for the log file
+        leftArrow = texArrow; 
+        rightArrow = altArrow;
+
     elseif strcmp(keyName,'RightArrow')
         rectPos = rightRect;
         wofChoice(i,1) = 2;
+        leftArrow = altArrow; 
+        rightArrow = texArrow;    
+
     end
     
 wofTrialEndTime(i) = GetSecs; % trial time end
@@ -319,13 +346,13 @@ wofTrialEndTime(i) = GetSecs; % trial time end
 
 %% show choice rect over wheels
     Screen('DrawTexture', window, wheelL, [0 0 550 550], locChoice); % Draw probability circle
-    Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowChoice, angChoice);
+    Screen('DrawTexture', window, leftArrow, [0 0 96 960], arrowChoice, angChoice);
     DrawFormattedText(window, winL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount 
     DrawFormattedText(window, loseL, leftwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
     % non-choice wheel & arrow
     
     Screen('DrawTexture', window, wheelR, [0 0 550 550], locNonChoice); % Draw probability circle
-    Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowNonChoice, angNonChoice);
+    Screen('DrawTexture', window, rightArrow, [0 0 96 960], arrowNonChoice, angNonChoice);
     DrawFormattedText(window, winR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount
     DrawFormattedText(window, loseR, rightwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
         Screen('FrameRect', window, chooseColors, rectPos, lineWeight); % Draw the choice rect to the screen
@@ -371,7 +398,7 @@ if wofChoice(i,1) == 1    % Participant chose wheel 1
     end
 
 elseif wofChoice(i,1) == 2    % Participant chose wheel 2
-    
+
     if arrowAngleR > 360*regretTasktrialWheels.wrp2(i);   % If endpoint of arrow is greater than loss zone, win
     winAmount(i) = regretTasktrialWheels.wrv1(i);
     wofEarnings(i,1) = winAmount(i);  % set earngings for log file
@@ -403,12 +430,12 @@ while( (angChoice < (4*360 + 360*lotteryOutcome(i,1))) || (angNonChoice < (4*360
     end
 % Left wheel & arrow
     Screen('DrawTexture', window, wheelL, [0 0 550 550], locChoice); % Draw probability circle
-    Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowChoice, angChoice);
+    Screen('DrawTexture', window, leftArrow, [0 0 96 960], arrowChoice, angChoice);
     DrawFormattedText(window, winL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount 
     DrawFormattedText(window, loseL, leftwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
 % Right wheel & arrow    
     Screen('DrawTexture', window, wheelR, [0 0 550 550], locNonChoice); % Draw probability circle
-    Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowNonChoice, angNonChoice);
+    Screen('DrawTexture', window, rightArrow, [0 0 96 960], arrowNonChoice, angNonChoice);
     DrawFormattedText(window, winR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount
     DrawFormattedText(window, loseR, rightwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
         Screen('FrameRect', window, chooseColors, rectPos, lineWeight); % Draw the choice rect to the screen
@@ -422,12 +449,12 @@ end
     angRightArrow=(4*360 + 360*lotteryOutcome(i,2)); % final right arrow position
 % Left wheel & arrow
     Screen('DrawTexture', window, wheelL, [0 0 550 550], locChoice); % Draw probability circle
-    Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowChoice, angLeftArrow);
+    Screen('DrawTexture', window, leftArrow, [0 0 96 960], arrowChoice, angLeftArrow);
     DrawFormattedText(window, winL, leftwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount 
     DrawFormattedText(window, loseL, leftwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
 % Right wheel & arrow        
     Screen('DrawTexture', window, wheelR, [0 0 550 550], locNonChoice); % Draw probability circle
-    Screen('DrawTexture', window, texArrow, [0 0 96 960], arrowNonChoice, angRightArrow);
+    Screen('DrawTexture', window, rightArrow, [0 0 96 960], arrowNonChoice, angRightArrow);
     DrawFormattedText(window, winR, rightwheelLeftTextXpos, leftwheelLeftTextYpos, winColors); % win amount
     DrawFormattedText(window, loseR, rightwheelRightTextXpos, leftwheelRightTextYpos, loseColors); % loss amount
         Screen('FrameRect', window, chooseColors, rectPos, lineWeight); % Draw the choice rect to the screen
@@ -458,7 +485,7 @@ totalEarnings = sum(wofEarnings);
 % wofTrialLength = wofTrialLength';
 
 % Write logfile
-save(['sub' num2str(particNum) '-' DateTime '_2a-wofPractice'], 'regretTasktrialWheelsDataset', 'wofChoice', 'lotteryOutcome', 'wofEarnings', 'wofChoiceDuration', 'emotionalRating', 'ratingDuration');
+save(['sub' num2str(particNum) '-' DateTime '_2a-wofPractice'], 'regretTasktrialWheels', 'feedback', 'feedback_code', 'wofChoice', 'lotteryOutcome', 'wofEarnings', 'wofChoiceDuration', 'emotionalRating', 'ratingDuration');
 
 % RestrictKeysForKbCheck([]); % re-recognize all key presses
 

@@ -1,63 +1,65 @@
-function [crtResponse, crtPrevious] = CRTquestionnaire(cfg, particNum, DateTime, window, windowRect)
+function [crtResponse] = CRTquestionnaire(cfg, particNum, DateTime, window, windowRect)
+
+RestrictKeysForKbCheck(cfg.enabledSelectKeys); % space, left, right arrows
 
 %% Developing/debugging material
-addpath('REGRET_task', 'patentTaskBTMP', 'ratingslider', 'instructions', 'games', 'games/stimoli');
-
-PsychDefaultSetup(2);
-screens = Screen('Screens');
-screenNumber = 1;
-white = WhiteIndex(screenNumber);
-black = BlackIndex(screenNumber);
-% [window, windowRect] = PsychImaging('OpenWindow', screenNumber, white, [0 0 640 480]); % for one screen setup
-[window, windowRect] = PsychImaging('OpenWindow', screenNumber, white); % for two-screen setup
-[xCenter, yCenter] = RectCenter(windowRect);
-
-particNum = '1212';
-DateTime = '0101-1235';
-enabledKeys = RestrictKeysForKbCheck([30, 44, 79, 80, 81,82]);
-addpath('questionnaires');
-[screenXpixels, screenYpixels] = Screen('WindowSize', window);
-
-cfg.enabledSelectKeys = [44, 79, 80]; % limit recognized presses to space, left, right arrows MAC
-cfg.enabledChoiceKeys = [44, 81, 82]; % space, up, down arrows MAC
-cfg.limitedChoiceKeys = [81, 82]; % up, down arrows MAC
-cfg.enabledExpandedKeys = [30, 34, 44, 79:82, 89, 93]; % limit recognized presses to 1!, 5%, space, left, right, up, down arrows, keypad1, keypad5 MAC
-cfg.limitedKeys = [79, 80]; % limit recognized presses to left, right arrows MAC
-cfg.enabledNumberKeys = [30:40, 55, 89:99,]; % limit recognized presses to 1-10, return, decimal, keypad 1-10 & decimal MAC
-
-cfg.screenSize.x = screenXpixels;
-cfg.screenSize.y = screenYpixels;
-cfg.font = 'Courier New';
-cfg.fontSize = round(screenYpixels * 2/80);
-cfg.fontSizeSmall = round(screenYpixels * 2/100);
-% Colors
-cfg.textColor = [0, 0, 0]; % black
-% cfg.bgColor = [255, 255, 255];
-cfg.bgColor = [1 1 1]; % white
-cfg.instColA = [0, 0.4078, 0.5451]; %DeepSkyBlue4
-cfg.instColB = [0.8039, 0.5843, 0.0471]; %DarkGoldenRod3
-cfg.p1Col = [0, 0, 0.8039]; %MediumBlue
-cfg.p2Col = [0.4314, 0.4824, 0.5451]; % LightSteelBlue4
-cfg.winCol = [.1333, .5451, .1333]; %ForestGreen
-% Positions
-cfg.screenCenter = [xCenter, yCenter]; % center coordinatesf
-cfg.topTextYpos = screenYpixels * 2/40; % Screen Y positions of top/instruction text
-cfg.uppTextYpos = screenYpixels * 6/40;
-cfg.midTextYpos = screenYpixels * 20/40;
-cfg.botTextYpos = screenYpixels * 35/40; % Screen Y positions of bottom/result text
-cfg.waitTextYpos = screenYpixels * 38/40; % Y position of lowest "Please Wait" text
-cfg.LeftTextXpos = screenXpixels*.035;
-
-cfg.fontSizeSmall = round(cfg.fontSize/2);
-
-Screen('TextFont', window, cfg.font);
-% Screen('TextSize', window, cfg.fontSize);
-Screen('TextStyle', window, 0); % start out plaintext
-Screen('TextColor', window, cfg.textColor);
-%     Screen('Preference', 'TextAlphaBlending', 1);
-oldTextBackgroundColor=Screen('TextBackgroundColor', window, [255 255 255]);
-load('crtpromptsARRAY.mat')       % Load CRT prompts and responses DATASET - PC Lab
-numChoice = length(crtprompts);
+% addpath('REGRET_task', 'patentTaskBTMP', 'ratingslider', 'instructions', 'games', 'games/stimoli');
+% 
+% PsychDefaultSetup(2);
+% screens = Screen('Screens');
+% screenNumber = 1;
+% white = WhiteIndex(screenNumber);
+% black = BlackIndex(screenNumber);
+% % [window, windowRect] = PsychImaging('OpenWindow', screenNumber, white, [0 0 640 480]); % for one screen setup
+% [window, windowRect] = PsychImaging('OpenWindow', screenNumber, white); % for two-screen setup
+% [xCenter, yCenter] = RectCenter(windowRect);
+% 
+% particNum = '1212';
+% DateTime = '0101-1235';
+% enabledKeys = RestrictKeysForKbCheck([30, 44, 79, 80, 81,82]);
+% addpath('questionnaires');
+% [screenXpixels, screenYpixels] = Screen('WindowSize', window);
+% 
+% cfg.enabledSelectKeys = [44, 79, 80]; % limit recognized presses to space, left, right arrows MAC
+% cfg.enabledChoiceKeys = [44, 81, 82]; % space, up, down arrows MAC
+% cfg.limitedChoiceKeys = [81, 82]; % up, down arrows MAC
+% cfg.enabledExpandedKeys = [30, 34, 44, 79:82, 89, 93]; % limit recognized presses to 1!, 5%, space, left, right, up, down arrows, keypad1, keypad5 MAC
+% cfg.limitedKeys = [79, 80]; % limit recognized presses to left, right arrows MAC
+% cfg.enabledNumberKeys = [30:40, 55, 89:99,]; % limit recognized presses to 1-10, return, decimal, keypad 1-10 & decimal MAC
+% 
+% cfg.screenSize.x = screenXpixels;
+% cfg.screenSize.y = screenYpixels;
+% cfg.font = 'Courier New';
+% cfg.fontSize = round(screenYpixels * 2/80);
+% cfg.fontSizeSmall = round(screenYpixels * 2/100);
+% % Colors
+% cfg.textColor = [0, 0, 0]; % black
+% % cfg.bgColor = [255, 255, 255];
+% cfg.bgColor = [1 1 1]; % white
+% cfg.instColA = [0, 0.4078, 0.5451]; %DeepSkyBlue4
+% cfg.instColB = [0.8039, 0.5843, 0.0471]; %DarkGoldenRod3
+% cfg.p1Col = [0, 0, 0.8039]; %MediumBlue
+% cfg.p2Col = [0.4314, 0.4824, 0.5451]; % LightSteelBlue4
+% cfg.winCol = [.1333, .5451, .1333]; %ForestGreen
+% % Positions
+% cfg.screenCenter = [xCenter, yCenter]; % center coordinatesf
+% cfg.topTextYpos = screenYpixels * 2/40; % Screen Y positions of top/instruction text
+% cfg.uppTextYpos = screenYpixels * 6/40;
+% cfg.midTextYpos = screenYpixels * 20/40;
+% cfg.botTextYpos = screenYpixels * 35/40; % Screen Y positions of bottom/result text
+% cfg.waitTextYpos = screenYpixels * 38/40; % Y position of lowest "Please Wait" text
+% cfg.LeftTextXpos = screenXpixels*.035;
+% 
+% cfg.fontSizeSmall = round(cfg.fontSize/2);
+% 
+% Screen('TextFont', window, cfg.font);
+% % Screen('TextSize', window, cfg.fontSize);
+% Screen('TextStyle', window, 0); % start out plaintext
+% Screen('TextColor', window, cfg.textColor);
+% %     Screen('Preference', 'TextAlphaBlending', 1);
+% oldTextBackgroundColor=Screen('TextBackgroundColor', window, [255 255 255]);
+% load('crtpromptsARRAY.mat')       % Load CRT prompts and responses DATASET - PC Lab
+% numChoice = length(crtprompts);
 
 
 % CRT
@@ -81,7 +83,9 @@ if ismac
     screenRes=[];
     %     load('crtpromptsTABLE.mat')       % Load CRT prompts and responses TABLE - when available - Mac
     %     numChoice = height(crtprompts);
-    
+    load('crtpromptsARRAY.mat')       % Load CRT prompts and responses DATASET - PC Lab
+    numChoice = length(crtprompts);
+
 elseif isunix
     % Code to run on Linux plaform
     disp('Unix');
@@ -95,7 +99,6 @@ else
     disp('Platform not supported')
 end
 
-RestrictKeysForKbCheck(cfg.enabledNumberKeys);
 % ListenChar(2); %disable transmission of keypresses to Matlab command window; press CTRL+C to reenable
 
 
@@ -180,18 +183,40 @@ for k = 2:8
     
 end
 %% dummy drawing of prompts to get positions
-textXPos = NaN(3, 1);
+% textXPos = NaN(3, 1);
+% 
+% for k = 1:3
+%     %     thisprompt = char(crtprompts(5,k));
+%     [~, ~, rect]=DrawFormattedText(window, char(crtprompts(k,2)), 0, 0, cfg.bgColor);
+%     
+%     Screen('Flip', window)
+%     textWidth = rect(3)-rect(1);
+%     textXPos(k) = cfg.screenCenter(1) - textWidth/2;
+% 
+% end
 
-for k = 1:3
-    %     thisprompt = char(crtprompts(5,k));
-    [~, ~, rect]=DrawFormattedText(window, char(crtprompts(k,2)), 0, 0, cfg.bgColor);
+%% EXPLANATION SCREEN
+
+keyName = '';
+while(~strcmp(keyName,'space')) % leaves questionnaire explanation up until 'space' is hit
+
+    Screen('TextStyle', window,1); % bold
     
-    Screen('Flip', window)
-    textWidth = rect(3)-rect(1);
-    textXPos(k) = cfg.screenCenter(1) - textWidth/2;
+    DrawFormattedText(window,'Questionario 4/6: ragionamento', 'center', cfg.topTextYpos, [255 0 0]);
+    
+    DrawFormattedText(window,'Rispondi ai seguenti quesiti:', 'center', cfg.uppTextYpos, 0, 50);
+    DrawFormattedText(window, 'Premi "spazio" per continuare.', 'center', cfg.botTextYpos, cfg.p1Col, 70);
+    Screen('Flip', window);
+    Screen('TextStyle', window,0); % back to plain
+    
+    
+    [~, keyCode]=KbWait([],2);
+    keyName=KbName(keyCode);
 
 end
 %% Number Qs
+RestrictKeysForKbCheck(cfg.enabledNumberKeys); % 1-10, return, decimal, keypad 1-10 & decimal
+
 for i = 1:3;
     
     counter = ['Domanda ', num2str(i), '/4'];
@@ -205,18 +230,18 @@ for i = 1:3;
         DrawFormattedText(window, instructionText, 'center', cfg.botTextYpos, cfg.textColor) % instructions
         Screen('TextSize', window, cfg.fontSize);
         %         DrawFormattedText(window, char(crtprompts.question(i)), 'center', cfg.topTextYpos, cfg.textColor) % displays question
-        DrawFormattedText(window, char(crtprompts(i,1)), 'center', cfg.uppTextYpos, cfg.textColor) % displays question
+%         DrawFormattedText(window, char(crtprompts(i,1)), 'center', cfg.uppTextYpos, cfg.textColor) % displays question
 
 %         Screen('TextSize', window, cfg.fontSizeSmall);
 %         Screen('TextSize', window, cfg.fontSize);
-        Screen('TextStyle', window,1); % bold question
+%         Screen('TextStyle', window,1); % bold question
         
         %         DrawFormattedText(window, crtInputHelp, 'center', cfg.waitTextYpos, cfg.p1Col);
         trialStartTime(i) = GetSecs;
         %         thisChoice = str2num(GetEchoString(window, char(crtprompts.Var2(i)), 10, cfg.midTextYpos, cfg.textColor)); % displays prompt string in PTB; allows backspace
-        thisChoice = str2num(GetEchoStringForm(window, char(crtprompts(i,2)), textXPos(i), cfg.midTextYpos, cfg.textColor)); % displays prompt string in PTB; allows backspace ARRAY
-        Screen('TextStyle', window,0); % bold question
-        Screen('TextSize', window, cfg.fontSize);
+        thisChoice = str2num(GetEchoStringForm(window, char(crtprompts(i,1)), 'center', cfg.uppTextYpos, cfg.textColor)); % displays prompt string in PTB; allows backspace ARRAY
+%         Screen('TextStyle', window,0); % bold question
+%         Screen('TextSize', window, cfg.fontSize);
         
         switch isempty(thisChoice)
             case 1 %deals with both cancel and X presses
@@ -224,16 +249,24 @@ for i = 1:3;
 %                 DrawFormattedText(window, counter, 'center', cfg.topTextYpos) % question counter
 %                 DrawFormattedText(window, instructionText, 'center', cfg.botTextYpos, cfg.textColor) % instructions
 %                 Screen('TextSize', window, cfg.fontSize);
-                Screen('Flip', window)
+%                 Screen('Flip', window)
                 continue
             case 0
                 if isnan(thisChoice)
 %                     Screen('TextSize', window, cfg.fontSizeSmall);
 %                     DrawFormattedText(window, counter, 'center', cfg.topTextYpos) % question counter
-%                     DrawFormattedText(window, instructionText, 'center', cfg.botTextYpos, cfg.textColor) % instructions
+                    DrawFormattedText(window, 'Inserisci solamente numeri', 'center', cfg.midTextYpos, cfg.textColor) % instructions
 %                     Screen('TextSize', window, cfg.fontSize);
                     Screen('Flip', window)
+                    WaitSecs(2);
                     continue
+                elseif length(thisChoice) > 1
+                    DrawFormattedText(window, 'Inserisci solamente numeri', 'center', cfg.midTextYpos, cfg.textColor) % instructions
+%                     Screen('TextSize', window, cfg.fontSize);
+                    Screen('Flip', window)
+                    WaitSecs(2);
+                    continue
+                    
                 else
 %                     Screen('TextSize', window, cfg.fontSizeSmall);
 %                     DrawFormattedText(window, counter, 'center', cfg.topTextYpos) % question counter
@@ -247,17 +280,16 @@ for i = 1:3;
         end
         %         respLog(i) = response
     end
-    Screen('TextSize', window, cfg.fontSizeSmall);
-    DrawFormattedText(window, counter, 'center', cfg.topTextYpos) % question counter
-    DrawFormattedText(window, instructionText, 'center', cfg.botTextYpos, cfg.textColor) % instructions
-    Screen('TextSize', window, cfg.fontSize);
+%     Screen('TextSize', window, cfg.fontSizeSmall);
+%     DrawFormattedText(window, counter, 'center', cfg.topTextYpos) % question counter
+%     DrawFormattedText(window, instructionText, 'center', cfg.botTextYpos, cfg.textColor) % instructions
+%     Screen('TextSize', window, cfg.fontSize);
     
 %     Screen('Flip', window)
 end
 
 %% Question 4: two choices
-
-RestrictKeysForKbCheck(cfg.enabledSelectKeys)
+RestrictKeysForKbCheck(cfg.enabledSelectKeys); % space, left, right arrows
 
 % counter & instructions
 counter = ['Domanda 4/4'];
@@ -268,7 +300,7 @@ while ~strcmp(keyName,'space')
     % while abs(char) ~= 10
     Screen('TextSize', window, cfg.fontSizeSmall);
     DrawFormattedText(window, counter, 'center', cfg.topTextYpos) % question counter
-    DrawFormattedText(window, instructionTextChoice, 'center', cfg.botTextYpos, cfg.textColor) % instructions
+    DrawFormattedText(window, instructionTextChoice, 'center', cfg.botTextYpos) % instructions
     Screen('TextSize', window, cfg.fontSize);
     
     % Draw prompt and responses
@@ -298,7 +330,7 @@ while ~strcmp(keyName,'space')
 %         DrawFormattedText(window, char(crtRespChoice(k)), storedXPos(k), cfg.midTextYpos, cfg.textColor, [], [], [], [], [], storedSelRects(k,:));
         DrawFormattedText(window, char(crtRespChoice(k)), storedXPos(k), cfg.midTextYpos, cfg.textColor);
         if currSelection == 1.5;
-            RestrictKeysForKbCheck(cfg.limitedKeys); % limit recognized presses to space, left, right arrows MAC
+            RestrictKeysForKbCheck(cfg.limitedKeys); % limit recognized presses to space, left, right arrows 
         else
             Screen('FrameRect', window, cfg.instColB, storedSelRects(currSelection, :), rectLineWeight); % Draws a frame rectangle around current selection k
             RestrictKeysForKbCheck(cfg.enabledSelectKeys);
@@ -321,7 +353,7 @@ Screen('Flip', window)
 if crtResponse(4) == 1;
     %% Question 4a: 7 choices
     counter = ['Domanda 4a/4'];
-    RestrictKeysForKbCheck(cfg.enabledChoiceKeys)
+    RestrictKeysForKbCheck(cfg.limitedChoiceKeys); % up, down arrows
     currSelection = 1.9;
     keyName = '';
     
@@ -336,7 +368,8 @@ if crtResponse(4) == 1;
         Screen('TextStyle', window,1); % bold question
         %         thisChoice = str2num(GetEchoString(window, char(crtprompts.question(4)), 10, cfg.topTextYpos, cfg.textColor)); % displays string in PTB; allows backspace
         %         DrawFormattedText(window, char(crtprompts.question(4)), 'center', cfg.midTextYpos, cfg.textColor) % displays question
-        DrawFormattedText(window, char(crtprompts(5,1)), 'center', cfg.uppTextYpos, cfg.textColor) % displays question
+%         DrawFormattedText(window, char(crtprompts(5,1)), 'center', cfg.uppTextYpos, cfg.textColor) % displays question
+        DrawFormattedText(window, 'Quali?', 'center', cfg.uppTextYpos, cfg.textColor) % displays question
         Screen('TextStyle', window,0); % back to plain
         
         switch keyName
@@ -359,11 +392,11 @@ if crtResponse(4) == 1;
 %             DrawFormattedText(window, char(crtprompts(5,k)), 'center', yPos(k), cfg.textColor, [], [], [], [], [], storedYesRects(k,:));
             DrawFormattedText(window, char(crtprompts(5,k)), 'center', yPos(k), cfg.textColor);
             if currSelection == 1.9;
-                RestrictKeysForKbCheck(cfg.limitedChoiceKeys); % limit recognized presses to space, left, right arrows MAC
+                RestrictKeysForKbCheck(cfg.limitedChoiceKeys); % up, down arrows
             else
                 Screen('FrameRect', window, cfg.instColB, storedYesRects(currSelection, :), rectLineWeight); % Draws a frame rectangle around current selection k
-                RestrictKeysForKbCheck(cfg.enabledChoiceKeys);
-            end
+                RestrictKeysForKbCheck(cfg.enabledChoiceKeys); % space, up, down arrows
+            end        
         end
         
         
@@ -381,20 +414,19 @@ if crtResponse(4) == 1;
     
 else
     crtResponse(5) = [];
+    trialStartTime(5) = 100;
+    trialEndTime(5) = 200;
 end
 
 for i=1:numIteration
     trialLength(i) = trialEndTime(i)-trialStartTime(i);
 end
 
-save(['sub' num2str(particNum) '-' num2str(DateTime) '_q4CRT'], 'crtResponse', 'trialStartTime', 'trialEndTime', 'trialLength');
+save(['sub' num2str(particNum) '-' num2str(DateTime) '_q4CRT'], 'particNum', 'crtResponse', 'trialStartTime', 'trialEndTime', 'trialLength');
 
 % Block this after debugging
 % ListenChar(0); %re-enable transmission of keypresses to Matlab command window; press CTRL+C to reenable
 
 end
-
-
-
 
 

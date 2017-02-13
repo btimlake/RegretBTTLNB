@@ -247,9 +247,9 @@ instructPage = 1;
 while ~strcmp(keyName,'space')
     
     if instructPage == 1;
-        RestrictKeysForKbCheck([79, 80, 81,82]); % restricts to arrows; doesn't allow "space" on first instruction screen
+        RestrictKeysForKbCheck(cfg.limitedKeys); % left, right arrows; doesn't allow "space" on first instruction screen
     else
-        RestrictKeysForKbCheck([30, 34, 44, 79, 80, 81,82]);
+        RestrictKeysForKbCheck(cfg.enabledSelectKeys); % space, left, right arrows
     end
 
     [~, keyCode]=KbWait([],2);
@@ -387,10 +387,10 @@ while ~strcmp(keyName,'space')
     % should be a way to do this (restrict space button press and change colors) with a while loop instead, but no time
     % right now
     if length(nonzeros(choice)) < 10
-        enabledKeys = RestrictKeysForKbCheck([37,38,39,40, 79, 80, 81,82]); % no space
+        RestrictKeysForKbCheck(cfg.limitedNavKeys); % up, down, left, right arrows
         botInstructCol = cfg.p1Col;
     else
-        enabledKeys = RestrictKeysForKbCheck([30, 44, 79, 80, 81,82,37,38,39,40,32,49]); % allows space
+        RestrictKeysForKbCheck(cfg.enabledNavKeys); % space, up, down, left, right arrows
         botInstructCol = cfg.instColB;
     end
     
@@ -731,7 +731,7 @@ WaitSecs(2)
 % winningsMPL
 
 % Save data just in case
-save(['sub' num2str(particNum) '-' num2str(DateTime) '_q2MPL'], 'choice', 'game', 'dice', 'winningsMPL', 'prob', 'win');
+save(['sub' num2str(particNum) '-' num2str(DateTime) '_q2MPL'], 'particNum', 'choice', 'game', 'dice', 'winningsMPL', 'prob', 'win');
 
 end
 

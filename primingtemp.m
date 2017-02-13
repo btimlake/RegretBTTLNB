@@ -52,9 +52,8 @@ end
 particNum = [insertDate, num2str(compNum)];
 
 %% VARIABLES
-gamestrials = 10; % Trials for 2x2 games
-practice_trials = 4; % Trials for WoF practice
-prtrials = 10; % Trials for each role in Patent Race
+gamestrials = 4; % Trials for 2x2 games
+prtrials = 5; % Trials for each role in Patent Race
 DateTime=datestr(now,'ddmm-HHMM');      % Get date and time for log file
 
 % % FEEDBACK variable by session
@@ -110,11 +109,11 @@ end
 
 % % Priming CONDITION by SPECIFIC position [UNUSUAL]
 % switch str2num(compNum)
-%     case {2, 4, 6, 8, 9, 10, 13, 14, 15, 17, 18, 19, 20, 21, 22};
+%     case {2, 4, 5, 6, 8, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22};
 %         condition = 2; % WIN: satisfaction & relief
 %         cfg.condition_desc = win_condition_desc;
 %         
-%     case {1, 3, 5, 7, 11, 12, 16};
+%     case {1, 3, 7, 11};
 %         condition = 1; % LOSE: regret & disappointment
 %         cfg.condition_desc = lose_condition_desc;
 % end
@@ -176,16 +175,16 @@ end
 screens = Screen('Screens');
 
 % Draw to the external screen if avaliable
-screenNumber = min(screens);
+screenNumber = max(screens);
 % screenNumber = 0;
 white = WhiteIndex(screenNumber);
 black = BlackIndex(screenNumber);
 
 % Open an on screen window
-% [window, windowRect] = PsychImaging('OpenWindow', screenNumber, white, [0 0 640 480]); % for one screen setup 
-[window, windowRect] = PsychImaging('OpenWindow', screenNumber, white); % for two-screen setup
+[window, windowRect] = PsychImaging('OpenWindow', screenNumber, white, [0 0 640 480]); % for one screen setup 
+% [window, windowRect] = PsychImaging('OpenWindow', screenNumber, white); % for two-screen setup
 [xCenter, yCenter] = RectCenter(windowRect);
- 
+
 %% Create cfg structure to be passed into subsequent functions
 [screenXpixels, screenYpixels] = Screen('WindowSize', window);
 cfg.screenSize.x = screenXpixels; 
@@ -308,51 +307,51 @@ cfg.waitTextYpos = screenYpixels * 38/40; % Y position of lowest "Please Wait" t
 % winningsMPL = 3.85;
 % winnings2x2 = 1;
 
-[gamesdatafilename]=games(particNum, DateTime, window, windowRect, gamestrials, compNum, cfg);
-%    [gamesdatafilename]=games(subNo, anni, w, wRect, NUMROUNDS, enabledKeys, cfg)
-
-patentTaskInstructions(window, windowRect, enabledKeys, cfg, player1maxbid1);
-
-% % % switch feedback
-% % %     case 'partial'
-[wofPracticeEarnings] = wof_partial(particNum, DateTime, window, windowRect, cfg, feedback, feedback_code, practice_trials);
-%       regretTask(particNum, DateTime, window, windowRect, enabledKeys,
-%       trials); % trials should be no more than 10
-
-[wof1shotChoice, total1shotEarnings, wof1shotForegoneAmount, wof1shotPreError] = wof_partial1shot(particNum, DateTime, window, windowRect, condition, screenNumber, cfg, feedback, feedback_code);
-%     [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg)% Clear the workspace and the screen
-        
-% % %     case 'complete'
-% % % [wofPracticeEarnings] = regretTask(particNum, DateTime, window, windowRect, cfg, 10);
-% % % %       regretTask(particNum, DateTime, window, windowRect, enabledKeys,
-% % % %       trials); % trials should be no more than 10
-% % % 
-% % % [wof1shotChoice, total1shotEarnings, wof1shotForegoneAmount, wof1shotReError] = regretTask1shot(particNum, DateTime, window, windowRect, condition, screenNumber, cfg);
-% % % %     [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg)% Clear the workspace and the screen
-% % % 
-% % % end
-
-[player1Choice1, player2Choice1, p1GameEarnings1] = patentTaskBTMP(particNum, DateTime, window, windowRect, cfg, 'fictive', player1maxbid1, prtrials, 1);
-[player1Choice2, player2Choice2, p1GameEarnings2] = patentTaskBTMP(particNum, DateTime, window, windowRect, cfg, 'fictive', player1maxbid2, prtrials, 2);
-p1GameEarnings = p1GameEarnings1+p1GameEarnings2; % total of the two
-%     [p1GameEarnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, player2Strategy, player1maxbid, trials, block);
-%     [player1Earnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, player2Strategy, player1maxbid, enabledKeys)
-
-[rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTime, window, windowRect, cfg);
-%     [rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTi me,  wi n dow, windowRect, enabledKeys)
-
-[ravenChoice, ravenWinnings] = Raven(cfg, particNum, DateTime, window, windowRect);
-
-[choiceMPL, winningsMPL] = MPL(cfg, particNum, DateTime, window, windowRect, enabledKeys);
-
-[cit] = CITquestionnaire(cfg, particNum, DateTime, window, windowRect);
-%   [winningsMPL, earningsRaven] = questionnaires(particNum, DateTime, window, windowRect)
-
-[crtResponse] = CRTquestionnaire(cfg, particNum, DateTime, window, windowRect);
-
-[hpsResponsesIdx, hpsResponses] = HPSquestionnaire(cfg, particNum, DateTime, window, windowRect);
-
-[sex, sexNum, age, eduLevel, field] = agesex(cfg, particNum, DateTime, window);
+% [gamesdatafilename]=games(particNum, DateTime, window, windowRect, gamestrials, compNum, cfg);
+% %    [gamesdatafilename]=games(subNo, anni, w, wRect, NUMROUNDS, enabledKeys, cfg)
+% 
+% patentTaskInstructions(window, windowRect, enabledKeys, cfg, player1maxbid1);
+% 
+% % % % switch feedback
+% % % %     case 'partial'
+% [wofPracticeEarnings] = wof_partial(particNum, DateTime, window, windowRect, cfg, feedback, feedback_code, 3);
+% %       regretTask(particNum, DateTime, window, windowRect, enabledKeys,
+% %       trials); % trials should be no more than 10
+% 
+% [wof1shotChoice, total1shotEarnings, wof1shotForegoneAmount, wof1shotPreError] = wof_partial1shot(particNum, DateTime, window, windowRect, condition, screenNumber, cfg, feedback, feedback_code);
+% %     [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg)% Clear the workspace and the screen
+%         
+% % % %     case 'complete'
+% % % % [wofPracticeEarnings] = regretTask(particNum, DateTime, window, windowRect, cfg, 10);
+% % % % %       regretTask(particNum, DateTime, window, windowRect, enabledKeys,
+% % % % %       trials); % trials should be no more than 10
+% % % % 
+% % % % [wof1shotChoice, total1shotEarnings, wof1shotForegoneAmount, wof1shotReError] = regretTask1shot(particNum, DateTime, window, windowRect, condition, screenNumber, cfg);
+% % % % %     [total1shotEarnings, wof1shotRatingDuration] = regretTask1shot(particNum, DateTime, window, windowRect, enabledKeys, screenNumber, cfg)% Clear the workspace and the screen
+% % % % 
+% % % % end
+% 
+% [player1Choice1, player2Choice1, p1GameEarnings1] = patentTaskBTMP(particNum, DateTime, window, windowRect, cfg, 'fictive', player1maxbid1, prtrials, 1);
+% [player1Choice2, player2Choice2, p1GameEarnings2] = patentTaskBTMP(particNum, DateTime, window, windowRect, cfg, 'fictive', player1maxbid2, prtrials, 2);
+% p1GameEarnings = p1GameEarnings1+p1GameEarnings2; % total of the two
+% %     [p1GameEarnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, enabledKeys, player2Strategy, player1maxbid, trials, block);
+% %     [player1Earnings] = patentTaskBTMP(particNum, DateTime, window, windowRect, player2Strategy, player1maxbid, enabledKeys)
+% 
+% [rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTime, window, windowRect, cfg);
+% %     [rating, ratingDuration, normalizedChoice, computerSide] = debrief_slider(particNum, DateTi me,  wi n dow, windowRect, enabledKeys)
+% 
+% [ravenChoice, ravenWinnings] = Raven(cfg, particNum, DateTime, window, windowRect);
+% 
+% [choiceMPL, winningsMPL] = MPL(cfg, particNum, DateTime, window, windowRect, enabledKeys);
+% 
+% [cit] = CITquestionnaire(cfg, particNum, DateTime, window, windowRect);
+% %   [winningsMPL, earningsRaven] = questionnaires(particNum, DateTime, window, windowRect)
+% 
+% [crtResponse] = CRTquestionnaire(cfg, particNum, DateTime, window, windowRect);
+% 
+% [hpsResponsesIdx, hpsResponses] = HPSquestionnaire(cfg, particNum, DateTime, window, windowRect);
+% 
+% [sex, sexNum, age, eduLevel, field] = agesex(cfg, particNum, DateTime, window);
 
 [winnings2x2, chosenGame2x2, opponentChoice2x2] = games2x2winningsRemote(compNum, cfg, window);
 % [winnings2x2, chosenGame2x2, opponentChoice2x2]=games2x2winnings(gamesdatafilename, cfg, window);

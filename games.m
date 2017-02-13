@@ -1,4 +1,4 @@
-function [gamesdatafilename]=games(subNo, anni, w, wRect, NUMROUNDS, enabledKeys, cfg)
+function [gamesdatafilename]=games(subNo, anni, w, wRect, NUMROUNDS, compNum, cfg)
 % games(participant number, date/time, window size, window rectangle size,
 % number of rounds)
 
@@ -99,7 +99,7 @@ try
     % input:
 %     Screen('TextSize', w, 32);
     TextSize = round(screenYpixels * 2/40);
-    lineWidthPix = round(screenXpixels * 2 / 560);
+    lineWidthPix = 6;
     silver=[192 192 192,(w)];
     %white=WhiteIndex(w);
     % Do dummy calls to GetSecs, WaitSecs, KbCheck to make sure
@@ -126,9 +126,9 @@ while ~strcmp(keyName,'space')
     
 %     while ~strcmp(num2str(instructions), '5')
         if instructions ~= 5;
-            RestrictKeysForKbCheck([79, 80, 81,82]); % restricts to arrows; doesn't allow "space" on first instruction screen MAC
+            RestrictKeysForKbCheck(cfg.limitedKeys); % left, right arrows; doesn't allow "space" on first instruction screen 
         else
-            RestrictKeysForKbCheck([30, 34, 44, 79, 80, 81,82]);
+            RestrictKeysForKbCheck(cfg.enabledSelectKeys); % space, left, right arrows
         end
         
         [keyTime, keyCode]=KbWait([],2);
@@ -378,6 +378,7 @@ end
             
         end
         
+RestrictKeysForKbCheck(cfg.limitedChoiceKeys); % up, down arrows
 
         % Wait a second before starting trial
         WaitSecs(0.500);
@@ -733,6 +734,10 @@ end
     fclose(datafilepointer);
     %% Screen 4a - Please wait; hold on result
 
+%     compNum = particNum(7:8);
+    save(['comp' num2str(compNum) '-' num2str(DateTime) '_0matchups'], 'compNum', 'objnumber', 'resp');
+
+    
 for i = 1:16; % multiply second integer by .75 to get seconds; i.e. 16 means 12 seconds
       
     if mod(i,2) == 0 %Even numbers: wait text on

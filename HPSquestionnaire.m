@@ -10,8 +10,8 @@ if ismac
     disabledKeys=[];
     skipSyncTest=[];
     screenRes=[];
-    enabledKeys = [44, 79, 80]; % limit recognized presses to space, left, right arrows MAC
-    limitedKeys = [79, 80]; % limit recognized presses to left, right arrows PC
+%     enabledKeys = [44, 79, 80]; % limit recognized presses to space, left, right arrows MAC
+%     limitedKeys = [79, 80]; % limit recognized presses to left, right arrows PC
     load('hps_italian_TABLE.mat')       % Load HPS prompts and responses TABLE - Mac
     numChoice = height(HPSItalian);
     
@@ -21,8 +21,8 @@ elseif isunix
 elseif ispc
     % Code to run on Windows platform
     disp('PC');
-    enabledKeys = [32,37,39]; % limit recognized presses to space, left, right arrows PC
-    limitedKeys = [37,39]; % limit recognized presses to left, right arrows PC
+%     enabledKeys = [32,37,39]; % limit recognized presses to space, left, right arrows PC
+%     limitedKeys = [37,39]; % limit recognized presses to left, right arrows PC
     load('hps_italian_ARRAY.mat')       % Load HPS prompts and responses DATASET - PC Lab
     numChoice = length(HPSItalian);
 
@@ -30,56 +30,56 @@ else
     disp('Platform not supported')
 end
 
-RestrictKeysForKbCheck(enabledKeys);
+RestrictKeysForKbCheck(cfg.enabledSelectKeys); % space, left, right arrows
 
 %% Developing/debugging material
-addpath('REGRET_task', 'patentTaskBTMP', 'ratingslider', 'instructions', 'games', 'games/stimoli');
-
-PsychDefaultSetup(2);
-screens = Screen('Screens');
-screenNumber = 1;
-white = WhiteIndex(screenNumber);
-black = BlackIndex(screenNumber);
-% [window, windowRect] = PsychImaging('OpenWindow', screenNumber, white, [0 0 640 480]); % for one screen setup
-[window, windowRect] = PsychImaging('OpenWindow', screenNumber, white); % for two-screen setup
-[xCenter, yCenter] = RectCenter(windowRect);
-
-particNum = '1212';
-DateTime = '0101-1235';
-% enabledKeys = RestrictKeysForKbCheck([30, 44, 79, 80, 81,82]);
-% addpath('questionnaires');
-% load('citpromptARRAY.mat')       % Load CIT prompts and responses DATASET - PC Lab
-[screenXpixels, screenYpixels] = Screen('WindowSize', window);
-
-cfg.screenSize.x = screenXpixels;
-cfg.screenSize.y = screenYpixels;
-cfg.font = 'Courier New';
-cfg.fontSize = round(screenYpixels * 2/40);
-cfg.fontSizeSmall = round(screenYpixels * 2/100);
-% Colors
-cfg.textColor = [0, 0, 0]; % black
-% cfg.bgColor = [255, 255, 255];
-cfg.bgColor = [1 1 1]; % white
-cfg.instColA = [0, 0.4078, 0.5451]; %DeepSkyBlue4
-cfg.instColB = [0.8039, 0.5843, 0.0471]; %DarkGoldenRod3
-cfg.p1Col = [0, 0, 0.8039]; %MediumBlue
-cfg.p2Col = [0.4314, 0.4824, 0.5451]; % LightSteelBlue4
-cfg.winCol = [.1333, .5451, .1333]; %ForestGreen
-% Positions
-cfg.screenCenter = [xCenter, yCenter]; % center coordinatesf
-cfg.topTextYpos = screenYpixels * 2/40; % Screen Y positions of top/instruction text
-cfg.uppTextYpos = screenYpixels * 6/40;
-cfg.midTextYpos = screenYpixels * 20/40;
-cfg.botTextYpos = screenYpixels * 35/40; % Screen Y positions of bottom/result text
-cfg.waitTextYpos = screenYpixels * 38/40; % Y position of lowest "Please Wait" text
-cfg.LeftTextXpos = screenXpixels*.035;
-
-cfg.fontSizeSmall = round(cfg.fontSize/2);
-
-Screen('TextFont', window, cfg.font);
-Screen('TextSize', window, cfg.fontSize);
-Screen('TextStyle', window);
-Screen('TextColor', window, cfg.textColor);
+% addpath('REGRET_task', 'patentTaskBTMP', 'ratingslider', 'instructions', 'games', 'games/stimoli');
+% 
+% PsychDefaultSetup(2);
+% screens = Screen('Screens');
+% screenNumber = 1;
+% white = WhiteIndex(screenNumber);
+% black = BlackIndex(screenNumber);
+% % [window, windowRect] = PsychImaging('OpenWindow', screenNumber, white, [0 0 640 480]); % for one screen setup
+% [window, windowRect] = PsychImaging('OpenWindow', screenNumber, white); % for two-screen setup
+% [xCenter, yCenter] = RectCenter(windowRect);
+% 
+% particNum = '1212';
+% DateTime = '0101-1235';
+% % enabledKeys = RestrictKeysForKbCheck([30, 44, 79, 80, 81,82]);
+% % addpath('questionnaires');
+% % load('citpromptARRAY.mat')       % Load CIT prompts and responses DATASET - PC Lab
+% [screenXpixels, screenYpixels] = Screen('WindowSize', window);
+% 
+% cfg.screenSize.x = screenXpixels;
+% cfg.screenSize.y = screenYpixels;
+% cfg.font = 'Courier New';
+% cfg.fontSize = round(screenYpixels * 2/40);
+% cfg.fontSizeSmall = round(screenYpixels * 2/100);
+% % Colors
+% cfg.textColor = [0, 0, 0]; % black
+% % cfg.bgColor = [255, 255, 255];
+% cfg.bgColor = [1 1 1]; % white
+% cfg.instColA = [0, 0.4078, 0.5451]; %DeepSkyBlue4
+% cfg.instColB = [0.8039, 0.5843, 0.0471]; %DarkGoldenRod3
+% cfg.p1Col = [0, 0, 0.8039]; %MediumBlue
+% cfg.p2Col = [0.4314, 0.4824, 0.5451]; % LightSteelBlue4
+% cfg.winCol = [.1333, .5451, .1333]; %ForestGreen
+% % Positions
+% cfg.screenCenter = [xCenter, yCenter]; % center coordinatesf
+% cfg.topTextYpos = screenYpixels * 2/40; % Screen Y positions of top/instruction text
+% cfg.uppTextYpos = screenYpixels * 6/40;
+% cfg.midTextYpos = screenYpixels * 20/40;
+% cfg.botTextYpos = screenYpixels * 35/40; % Screen Y positions of bottom/result text
+% cfg.waitTextYpos = screenYpixels * 38/40; % Y position of lowest "Please Wait" text
+% cfg.LeftTextXpos = screenXpixels*.035;
+% 
+% cfg.fontSizeSmall = round(cfg.fontSize/2);
+% 
+% Screen('TextFont', window, cfg.font);
+% Screen('TextSize', window, cfg.fontSize);
+% Screen('TextStyle', window);
+% Screen('TextColor', window, cfg.textColor);
 %     Screen('Preference', 'TextAlphaBlending', 1);
 % 	oldTextBackgroundColor=Screen('TextBackgroundColor', window, [255 255 255]);
 
@@ -111,10 +111,10 @@ Screen('TextColor', window, cfg.textColor);
 
 %% Variables
 
-hpsResp = {'vero', 'falso'};
+hpsResp = {'Vero', 'Falso'};
 instructionText = 'Scegli e poi premi "spazio"';
 hpsResponsesIdx = zeros(numChoice, 1);
-numChoice = height(HPSItalian);
+% numChoice = height(HPSItalian);
 
 %% dummy drawing of all text elements to get surrounding rect sizes and lengths
 
@@ -127,7 +127,8 @@ numChoice = height(HPSItalian);
 %     storedRect(k,:) = rect;
 %     rectHeight(k) = rect(4)-rect(2);
 %     rectWidth(k) = rect(3)-rect(1);
-%     
+%     rectLineWeight = 4;
+% 
 %     %         selRects(1:2,k) = rect(1:2)-spacer; % left and top sides of rect for answer (i, k)
 %     %         selRects(3:4,k) = rect(3:4)+spacer; % right and bottom sides of rect for answer (i, k)
 %     %         storedSizeRects(i,:,k) = [rect(1:2)-spacer/2 rect(3:4)+spacer/2]; % left and top, right and bottom sides of rect for answer (i, k)
@@ -178,6 +179,25 @@ end
 %     storedPromptXPos(k)=promptXPos;
 %
 % end
+%% EXPLANATION SCREEN
+
+keyName = '';
+while(~strcmp(keyName,'space')) % leaves questionnaire explanation up until 'space' is hit
+
+    Screen('TextStyle', window,1); % bold
+    
+    DrawFormattedText(window,'Questionario 5/6: personalita''', 'center', cfg.topTextYpos, [255 0 0]);
+    
+    DrawFormattedText(window,'Per cortesia, per ogni affermazione scegli l''opzione (Vero o Falso) che meglio si adatta a te.', 'center', cfg.uppTextYpos, 0, 50);
+    DrawFormattedText(window, 'Premi "spazio" per continuare.', 'center', cfg.botTextYpos, cfg.p1Col, 70);
+    Screen('Flip', window);
+    Screen('TextStyle', window,0); % back to plain
+    
+    
+    [~, keyCode]=KbWait([],2);
+    keyName=KbName(keyCode);
+
+end
 %% Show each prompt with true/false response buttons
 
 for i = 1:numChoice
@@ -187,7 +207,7 @@ for i = 1:numChoice
 
     % question
     Screen('TextStyle', window,1); % bold question
-    DrawFormattedText(window, char(HPSItalian.question(i)), 'center', cfg.uppTextYpos, cfg.textColor, 45)
+    DrawFormattedText(window, char(HPSItalian(i,1)), 'center', cfg.uppTextYpos, cfg.textColor, 45)
     
     % responses
     for k = 1:length(hpsResp);
@@ -215,7 +235,7 @@ for i = 1:numChoice
         
         % Draw prompt and responses
         Screen('TextStyle', window,1); % bold question
-        DrawFormattedText(window, char(HPSItalian.question(i)), 'center', cfg.uppTextYpos, cfg.textColor, 45)
+        DrawFormattedText(window, char(HPSItalian(i,1)), 'center', cfg.uppTextYpos, cfg.textColor, 45)
         
         switch keyName
             case 'LeftArrow'
@@ -237,10 +257,10 @@ for i = 1:numChoice
 %         DrawFormattedText(window, char(hpsResp(k)), storedXPos(k), cfg.midTextYpos, cfg.textColor, ~, ~, ~, ~, ~, storedSelRects(k,:));
         DrawFormattedText(window, char(hpsResp(k)), storedXPos(k), cfg.midTextYpos, cfg.textColor, [], [], [], [], [], storedSelRects(k,:));
             if currSelection == 1.5;
-            	RestrictKeysForKbCheck(limitedKeys); % limit recognized presses to space, left, right arrows MAC
+            	RestrictKeysForKbCheck(cfg.limitedKeys); % left, right arrows
             else
-                Screen('FrameRect', window, cfg.instColB, storedSelRects(:,currSelection), rectLineWeight); % Draws a frame rectangle around current selection k
-                RestrictKeysForKbCheck(enabledKeys);    
+                Screen('FrameRect', window, cfg.instColB, storedSelRects(currSelection, :), rectLineWeight); % Draws a frame rectangle around current selection k
+                RestrictKeysForKbCheck(cfg.enabledSelectKeys); % space, left, right arrows
             end
         end
         
@@ -269,6 +289,6 @@ for i = 1:numChoice
     
 end
 
-save(['sub' num2str(particNum) '-' num2str(DateTime) '_q6hps'], 'hpsResponsesIdx', 'hpsResponses');
+save(['sub' num2str(particNum) '-' num2str(DateTime) '_q5hps'], 'particNum', 'hpsResponsesIdx', 'hpsResponses');
 
 end

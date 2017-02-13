@@ -1,5 +1,5 @@
 function [totalEarnings] = payouts(cfg, window, particNum, DateTime, varargin)
-
+RestrictKeysForKbCheck(cfg.enabledExpandedKeys);
 % jsut varargin
 % 
 % then can do sanity checks for str v num
@@ -197,13 +197,15 @@ end
 % runningTotal = runningTotal + 
 % totalEarnings = sum(earnings.amount);
 
-if totalEarnings <= earnings.amount(1)
+roundTotalEarnings = ceil(totalEarnings*10)/10;
+
+if totalEarnings <= earnings.amount(1) % should be show-up amount
 %     disp('You earned ', num2str(totalEarnings) '. 10 euro minimum awarded');
-    paymentNotice = ['Hai guadagnato ', num2str(totalEarnings, '%0.2f'), '\n Pagamento minimo: ' num2str(earnings.amount(1), '%0.2f') ' euros'];
+    paymentNotice = ['Hai guadagnato ', num2str(roundTotalEarnings, '%0.2f'), '\n Pagamento minimo: ' num2str(earnings.amount(1), '%0.2f') ' euros'];
 
 else
 %     disp('You earned ', num2str(totalEarnings), '.')
-    paymentNotice = strcat('Pagamento: ', ' ', num2str(totalEarnings, '%0.2f'), ' euros');
+    paymentNotice = strcat('Pagamento: ', ' ', num2str(roundTotalEarnings, '%0.2f'), ' euros');
 end
 
 for i=1:length(earnings.label)
@@ -235,8 +237,6 @@ keyName=''; % empty initial value
 
 while(~strcmp(keyName,'5%')) % leaves last screen up until typing 5
 
-[~, keyCode]=KbWait([],2);
-keyName=KbName(keyCode);
 
     for j=1:length(earnings.amount)
         DrawFormattedText(window, num2str(earnings.amount(j), '%0.2f'), xPosAmounts, yPos(j), cfg.textColor);
@@ -247,8 +247,11 @@ keyName=KbName(keyCode);
     DrawFormattedText(window, paymentNotice, 'center', cfg.botTextYpos, cfg.winCol);
     
     Screen('Flip', window)
-    WaitSecs(10)
+%     WaitSecs(10)
     
+[~, keyCode]=KbWait([],2);
+keyName=KbName(keyCode);
+
 end
 
 end

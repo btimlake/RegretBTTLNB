@@ -1,5 +1,6 @@
 function [sex, sexNum, age, eduLevel, field] = agesex(cfg, particNum, DateTime, window) 
 
+RestrictKeysForKbCheck(cfg.enabledSelectKeys); % space, left, right arrows
 
 
 %% Developing/debugging material
@@ -39,9 +40,11 @@ function [sex, sexNum, age, eduLevel, field] = agesex(cfg, particNum, DateTime, 
 
 %% Variables
 sexReq = 'Di che sesso sei? \n(Scegli e poi premi "spazio")';
+colorBlindReq = 'Sei daltonico/a? \n(Scegli e poi premi "spazio")';
 % dobReq = 'Inserisci la data della tua nascit? (ddmmyyyy): ';
-prompt = {'Inserisci la tua eta'' oggi e premi "invio": ', 'Quale l''anno di studio corrente?', 'Cosa studi?', 'Sei daltonico/a? (si'' o no)'};
-sexResp = {'maschio', 'femmina'};
+prompt = {'Inserisci la tua eta'' oggi e premi "invio": ', 'Quale l''anno di studio corrente?', 'Cosa studi?'};
+sexResp = {'Maschio', 'Femmina'};
+colorBlindResp = {'Si''', 'No'};
 
 % Font
 Screen('TextFont', window, cfg.font);
@@ -49,7 +52,7 @@ Screen('TextSize', window, cfg.fontSize);
 Screen('TextColor', window, cfg.textColor);
 
 
-%% dummy drawing of all text elements to get surrounding rect sizes and lengths
+%% dummy drawing of all SEX text elements to get surrounding rect sizes and lengths
  
 for k = 1:length(sexResp);
     
@@ -95,8 +98,8 @@ while(~strcmp(keyName,'space')) % leaves questionnaire explanation up until 'spa
     Screen('TextStyle', window, 1); % bold
     DrawFormattedText(window,'Questionario 6/6: demografia', 'center', cfg.topTextYpos, [255 0 0]);
     Screen('TextStyle', window,0); % back to plain
-    DrawFormattedText(window,'Dopo ogni risposta, premi "invio".', 'center', cfg.uppTextYpos, 0, 50);
-    DrawFormattedText(window, 'Premi "spazio" per continuare.', 'center', cfg.botTextYpos, cfg.p1Col, 70);
+    DrawFormattedText(window,'Scegli una risposta e premi "spazio" o inserisci una risposta e premi "invio".', 'center', cfg.uppTextYpos, 0, 50);
+    DrawFormattedText(window, 'Premi "spazio" per iniziare.', 'center', cfg.botTextYpos, cfg.p1Col, 70);
     Screen('Flip', window);
     
     [~, keyCode]=KbWait([],2);
@@ -105,7 +108,7 @@ while(~strcmp(keyName,'space')) % leaves questionnaire explanation up until 'spa
     
 end
 
-%% Choose sex response
+%% Choose SEX response
 
 currSelection = 1; % initial value - numbers reflect responses (since value 1 is associated with prompt)
 keyName='';
@@ -166,9 +169,69 @@ else
     sex = 'something went wrong';
 end
 
+%% Choose COLORBLIND response
+
+currSelection = 1; % initial value - numbers reflect responses (since value 1 is associated with prompt)
+keyName='';
+
+Screen('TextStyle', window,1); % bold question
+DrawFormattedText(window, colorBlindReq, 'center', cfg.uppTextYpos, cfg.textColor); % Sex prompt
+
+for i = 1:length(colorBlindResp);
+    Screen('TextStyle', window,0); %  plain text  resp onses
+    DrawFormattedText(window, char(colorBlindResp(i)), storedXPos(i), cfg.screenCenter(2), cfg.textColor);
+    Screen('FrameRect', window, cfg.instColB, storedSelRects(:,currSelection)); % Draws a frame rectangle around current selection k
+end
+
+Screen('Flip', window)
+    
+
+while ~strcmp(keyName,'space')
+% while abs(char) ~= 10
+
+    % Draw prompt and responses
+    Screen('TextStyle', window,1); % bold question
+    DrawFormattedText(window, colorBlindReq, 'center', cfg.uppTextYpos, cfg.textColor); % Sex prompt
+    
+    switch keyName
+        case 'LeftArrow'
+            currSelection = currSelection - 1;
+            if currSelection < 1
+                currSelection = 2; % Loops around
+            end
+        case 'RightArrow'
+            currSelection = currSelection + 1;
+            if currSelection > 2
+                currSelection = 1; % Loops around
+            end
+    end
+    %         update selection to last button press
+    
+    for i = 1:length(colorBlindResp);
+        Screen('TextStyle', window,0); %  plain text  resp onses
+        DrawFormattedText(window, char(colorBlindResp(i)), storedXPos(i), cfg.screenCenter(2), cfg.textColor);
+        Screen('FrameRect', window, cfg.instColB, storedSelRects(:,currSelection)); % Draws a frame rectangle around current selection k
+    end
+        
+    Screen('Flip', window)
+    
+    [~, keyCode]=KbWait([],2);
+    keyName=KbName(keyCode);
+    
+end 
+       
+colorBlindNum = currSelection; % reflects numeric choice (1=male; 2=female)
+
+if currSelection == 1
+    colorBlind = 'y'; 
+elseif currSelection == 2
+    colorBlind = 'n'; 
+else
+    colorBlind = 'something went wrong';
+end
 
 %% Typed response prompts
-
+RestrictKeysForKbCheck(cfg.enabledNumberKeys); % 1-10, return, decimal, keypad 1-10 & decimal
 % Age prompt
 aOK=0; % initial value for aOK
 
@@ -196,6 +259,7 @@ end
 
 % Field and level prompts
 aOK=0; % initial value for aOK
+RestrictKeysForKbCheck([]); % re-recognize all key presses
 
 for i = 2:length(prompt);
     
@@ -221,6 +285,7 @@ for i = 2:length(prompt);
 
 end
 
-save(['sub' num2str(particNum) '-' num2str(DateTime) '_q6demographics'], 'sex', 'sexNum', 'age', 'eduLevel', 'field');
+save(['sub' num2str(particNum) '-' num2str(DateTime) '_q6demographics'], 'sex', 'sexNum', 'colorBlind', 'colorBlindNum', 'age', 'eduLevel', 'field');
+RestrictKeysForKbCheck(cfg.enabledExpandedKeys); % 1!, 5%, space, left, right, up, down arrows, kp1, kp5
 
 end

@@ -1,5 +1,6 @@
-function [currRatingSelection, ratingDuration] = likert_slider(window, windowRect, enabledKeys)
+function [currRatingSelection, ratingDuration] = likert_slider(window, windowRect, cfg)
 % function [slider_position_now] = likert_slider(screenInfo, slider_position_old, move_slider)
+RestrictKeysForKbCheck(cfg.enabledSelectKeys); % space, left, right arrows
 
 % draw rating line
 % sepLineYpos = screenYpixels * 39/80; % Screen Y position of separator line
@@ -27,7 +28,6 @@ function [currRatingSelection, ratingDuration] = likert_slider(window, windowRec
 % move_slider = 1;
 % RestrictKeysForKbCheck([37,39,32,49]); % limit recognized presses to left and right arrows PC
     % may not be necessary with broader Restrict Keys in umbrella script
-enabledKeys;
 
 %set parameters 
 scale_range = 1:1:13; %requires odd number of intervals
