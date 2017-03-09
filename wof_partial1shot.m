@@ -94,8 +94,8 @@ arrowChoice = leftArrowpos;
 arrowNonChoice = rightArrowpos;
 
 % Display text
-% topInstructText = ['Choose which wheel to play.']; % English
-topInstructText = 'Scegli quale ruota fare girare.'; % Italian
+topInstructText = 'Choose which wheel to play.'; % English
+% topInstructText = 'Scegli quale ruota fare girare.'; % Italian
     
 % Set some variables
 NUMROUNDS = 1;
@@ -418,14 +418,16 @@ arrowAngleR=360*lotteryOutcome1shot(j,2);
     if arrowAngleL > 360*regretTasktrialWheels1shot.wlp2(i);   % If endpoint of arrow is greater than loss zone, win
     winAmount(i) = regretTasktrialWheels1shot.wlv1(i);
     wof1shotEarnings(i) = winAmount(i);  % set earngings for log file
-    botResultText = ['Hai vinto ' num2str(winAmount(i)) ' euro.'];  % Set feedback text to winning message
+%     botResultText = ['Hai vinto ' num2str(winAmount(i)) ' euro.'];  % Set feedback text to winning message
+    botResultText = ['You won ' num2str(winAmount(i)) ' euro.'];  % Set feedback text to winning message
     botTextColor = winColors;
     wof1shotForegoneAmount(i) = regretTasktrialWheels1shot.wlv2(i); % hard-codes the foregone outcome by predetermined odds SAME WHEEL
   
     else   % If endpoint of arrow is less than loss zone, loss
     lossAmount(i) = regretTasktrialWheels1shot.wlv2(i);
     wof1shotEarnings(i) = lossAmount(i);  % set losses for log file
-    botResultText = ['Hai perso ' num2str(-lossAmount(i)) ' euro.'];  % Set feedback text to losing message
+%     botResultText = ['Hai perso ' num2str(-lossAmount(i)) ' euro.'];  % Set feedback text to losing message
+    botResultText = ['You lost ' num2str(-lossAmount(i)) ' euro.'];  % Set feedback text to losing message
     botTextColor = loseColors;
     wof1shotForegoneAmount(i) = regretTasktrialWheels1shot.wlv1(i);
     
@@ -440,14 +442,16 @@ arrowAngleR=360*lotteryOutcome1shot(j,2);
     if arrowAngleR > 360*regretTasktrialWheels1shot.wrp2(i);   % If endpoint of arrow is greater than loss zone, win
     winAmount(i) = regretTasktrialWheels1shot.wrv1(i);
     wof1shotEarnings(i) = winAmount(i);  % set earngings for log file
-    botResultText = ['Hai vinto ' num2str(winAmount(i)) ' euro.'];  % Set feedback text to winning message
+%     botResultText = ['Hai vinto ' num2str(winAmount(i)) ' euro.'];  % Set feedback text to winning message
+    botResultText = ['You won ' num2str(winAmount(i)) ' euro.'];  % Set feedback text to winning message
     botTextColor = winColors;
     wof1shotForegoneAmount(i) = regretTasktrialWheels1shot.wrv2(i);
 
     else   % If endpoint of arrow is less than loss zone, loss
     lossAmount(i) = regretTasktrialWheels1shot.wrv2(i);
     wof1shotEarnings(i) = lossAmount(i);  % set losses for log file
-    botResultText = ['Hai perso ' num2str(-lossAmount(i)) ' euro.'];  % Set feedback text to losing message
+%     botResultText = ['Hai perso ' num2str(-lossAmount(i)) ' euro.'];  % Set feedback text to losing message
+    botResultText = ['You lost ' num2str(-lossAmount(i)) ' euro.'];  % Set feedback text to losing message
     botTextColor = loseColors;
     wof1shotForegoneAmount(i) = regretTasktrialWheels1shot.wrv1(i);
    end
