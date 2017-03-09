@@ -10,8 +10,8 @@ function games2x2globalResults
 %% Files
 % Set file location
 % Make sure that only files from this session are in this directory
-addpath('RegretBTTLNB', 'RegretBTTLNB/games', 'RegretBTTLNB/games/stimoli', 'Subject data/02122016pm-games/');
-subject_data_dir = dir('Subject data/02122016pm-games/');
+addpath('/Users/bentimberlake/Documents/MATLAB-Drive/RegretBTTLNB', '/Users/bentimberlake/Documents/MATLAB-Drive/RegretBTTLNB/games', '/Users/bentimberlake/Documents/MATLAB-Drive/RegretBTTLNB/games/stimoli', '/Users/bentimberlake/Documents/MATLAB-Drive/Subject data/24012017_pmB-games/');
+subject_data_dir = dir('Subject data/24012017_pmB-games/');
 subject_data = subject_data_dir(4:end); % gets all files and folders in the directory (after three invisible files)
 
 % Determine which game will be played
@@ -22,10 +22,12 @@ load('RegretBTTLNB/games/matching_responsesTABLE'); % becomes variable matchingr
 % load('RegretBTTLNB/games/matching_responsesDATASET'); % becomes variable matchingresponses - PC
 matchedGame = find(matchingresponses.column == chosenGame); % get the corresponding game from standard list
 
-games2x2files = dir('Subject data/02122016pm-games/*1games2x2.dat'); % get all the instances of games files
+games2x2files = dir('/Users/bentimberlake/Documents/MATLAB-Drive/Subject data/24012017_pmB-games/*1games2x2.dat'); % get all the instances of games files
 
 % Check that there are an even number of files for the matchups
-if mod(length(games2x2files),2) == 0
+if isempty(games2x2files)
+  disp('PROBLEM: There are no files');    
+elseif mod(length(games2x2files),2) == 0
   disp('There are an even number of files');
 else
   disp('PROBLEM: There are an odd number of files');
@@ -65,7 +67,7 @@ for i=1:length(games2x2files)
 %   global2x2.compNum(i,:) = str2num(tempString(5:6)); % Set computer name for easier matching
 %   For 7-character, string-based participant number
     tempString = char(gamesData.Var1(1));
-    global2x2.compNum(i,:) = str2num(tempString(7:8)); % Set computer name for easier matching 
+    global2x2.compNum(i,:) = str2num(tempString(8:9)); % Set computer name for easier matching 
 
 end
 
@@ -76,10 +78,17 @@ matchPositions = [matchPositions flipud(matchPositions)];
 for i = 1:length(games2x2files)
     % figure out which row belongs to the opponent, then what the opponents
     % match choice is; becomes a given player's opponent choice
-    matchRow = find(matchPositions(:,1) == i);
+    matchRow = find(matchPositions(:,1) == global2x2.compNum(i));
     global2x2.opponent(i,:) = matchPositions(matchRow,2);
-    global2x2.opponentChoice(i,:) = global2x2.numberMatch(global2x2.opponent(i,:));
+    
+    global2x2.opponentPosition(i,:) = find(matchPositions(:,1) == global2x2.opponent(i,:));
 
+%     if global2x2.opponent(i,:) == 23
+%         global2x2.opponentChoice(i,:) = global2x2.numberMatch(22);
+%     else
+    global2x2.opponentChoice(i,:) = global2x2.numberMatch(global2x2.opponentPosition(i,:));
+%     end
+    
     % for TABLE, winnings stored as matchingresponses.r_c(game, player choice, opponent choice)
     global2x2.winnings2x2(i,:) = matchingresponses.r_c(chosenGame, global2x2.numberChoice(i), global2x2.opponentChoice(i));
     % for DATASET winnings stored as matchingresponses{game,9}(:, player choice, opponent choice)
@@ -88,10 +97,14 @@ for i = 1:length(games2x2files)
 end    
 
 % Determines filename for results based on morning/afternoon session
-if str2num(datestr(now,'HHMM')) < 1400
-    save(['games', datestr(now,'ddmm'), 'am.mat'], 'chosenGame', 'global2x2')
+time = str2double(datestr(now,'HHMM'));
+if time < 1300
+    save(['games', datestr(now,'ddmm'), 'amA.mat'], 'chosenGame', 'global2x2')
+elseif time > 1300 && time < 1600 
+    save(['games', datestr(now,'ddmm'), 'pmB.mat'], 'chosenGame', 'global2x2')
 else
-    save(['games', datestr(now,'ddmm'), 'pm.mat'], 'chosenGame', 'global2x2')
+    save(['games', datestr(now,'ddmm'), 'pmC.mat'], 'chosenGame', 'global2x2')
 end
+
 
 end

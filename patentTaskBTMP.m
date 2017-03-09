@@ -282,8 +282,8 @@ uppSelectText = ['Your opponent can invest up to ' num2str(PLAYER2MAXBID) '.'];
     player2ChoiceInd=find(rand < cumsum(exp(player2Options.*TAU)/sum(exp(player2Options.*TAU))),1);  % uses softmax to make a choice (TAU -> 0 = more random)
     player2Choice(i)=player2ChoiceInd-1;
     
-player1Earnings(i) = PLAYER1MAXBID + (PRIZE-player1Choice(i))*(player1ChoiceInd > player2ChoiceInd) - player1Choice(i)*(player1ChoiceInd<=player2ChoiceInd); %calculates how much the strong player wins (Tobias here uses t/f of </> to allow or cancel winnings)
-   player2Earnings(i) = PLAYER2MAXBID + (PRIZE-player2Choice(i))*((player2ChoiceInd) > player1ChoiceInd) - player2Choice(i)*(player2ChoiceInd<=player1ChoiceInd); %calculates how much the weak player wins
+    player1Earnings(i) = PLAYER1MAXBID + (PRIZE-player1Choice(i))*(player1ChoiceInd > player2ChoiceInd) - player1Choice(i)*(player1ChoiceInd<=player2ChoiceInd); %calculates how much the strong player wins (Tobias here uses t/f of </> to allow or cancel winnings)
+    player2Earnings(i) = PLAYER2MAXBID + (PRIZE-player2Choice(i))*((player2ChoiceInd) > player1ChoiceInd) - player2Choice(i)*(player2ChoiceInd<=player1ChoiceInd); %calculates how much the weak player wins
    
    % set outcome based on index choice
    if player1ChoiceInd > player2ChoiceInd
@@ -295,10 +295,12 @@ player1Earnings(i) = PLAYER1MAXBID + (PRIZE-player1Choice(i))*(player1ChoiceInd 
    end
    
    % calculate regret/relief error for each trial
-   if ((PLAYER1MAXBID == 4)*(player2Choice(i) == 4 || player2Choice(i) == 5)*(player1Choice(i) == 0) == 1)
-       reError(i,:) = 0;
+%    if ((PLAYER1MAXBID == 4)*(player2Choice(i) == 4 || player2Choice(i) == 5)*(player1Choice(i) == 0) == 1)
+%    if ((PLAYER1MAXBID == 4)*(player2Choice(i) == 4 || player2Choice(i) == 5)
+   if (PLAYER1MAXBID == 4)*((player2Choice(i) >= 4)) == 1
+       reError(i,:) = player1Choice(i); % if P2 plays 4 or 5, then reError is equal to amount played
    else
-       reError(i,:)  = (PLAYER1MAXBID - player2Choice(i) + 1) + PRIZE - player1Earnings(i);
+       reError(i,:)  = (PLAYER1MAXBID - (player2Choice(i) + 1)) + PRIZE - player1Earnings(i);
    end
    
 %    player1Earnings(i) = PLAYER1MAXBID + (PRIZE-player1Choice(i))*(player1ChoiceInd > player2Choice(i)) - player1Choice(i)*(player1ChoiceInd<=player2Choice(i)); %calculates how much the strong player wins

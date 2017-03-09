@@ -6,10 +6,13 @@ function [winnings2x2, chosenGame2x2, opponentChoice2x2] = games2x2winningsRemot
 % Group, University of Trento 
     
 %% load data
-if str2num(datestr(now,'HHMM')) < 1200
-    gamesData = load(['games', datestr(now,'ddmm'), 'am.mat']);
+time = str2double(datestr(now,'HHMM'));
+if time < 1300
+    gamesData = load(['games', datestr(now,'ddmm'), 'amA.mat']);
+elseif time > 1300 && time < 1600 
+    gamesData = load(['games', datestr(now,'ddmm'), 'pmB.mat']);
 else
-    gamesData = load(['games', datestr(now,'ddmm'), 'pm.mat']);
+    gamesData = load(['games', datestr(now,'ddmm'), 'pmC.mat']);
 end
 
 % Find the row that corresponds to this user's information
